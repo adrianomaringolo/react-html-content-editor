@@ -1,0 +1,32 @@
+{
+  "name": "react-html-content-editor-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo for React HTML Content Editor library and demo app",
+  "scripts": {
+    "dev": "pnpm --filter demo dev",
+    "build": "pnpm --filter @sympro/react-html-content-editor build",
+    "build:all": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm build && changeset publish"
+  },
+  "keywords": [
+    "react",
+    "html-editor",
+    "css-editor",
+    "monaco-editor",
+    "content-editor"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

@@ -1,0 +1,128 @@
+/* Dialog overlay */
+.dialogOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: overlayShow 0.2s ease-out;
+}
+
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Dialog content */
+.dialogContent {
+  position: relative;
+  background-color: var(--bg-primary, #ffffff);
+  border-radius: var(--radius-lg, 0.5rem);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 32rem;
+  width: 100%;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  animation: contentShow 0.2s ease-out;
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.dialogContent:focus {
+  outline: none;
+}
+
+/* Dialog header */
+.dialogHeader {
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+/* Dialog title */
+.dialogTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary, #111827);
+  margin: 0;
+}
+
+/* Dialog description */
+.dialogDescription {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-secondary, #6b7280);
+  margin: 0.5rem 0 0 0;
+}
+
+/* Dialog footer */
+.dialogFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+/* Dark theme support */
+[data-theme="dark"] .dialogContent {
+  background-color: var(--bg-primary, #111827);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.5),
+    0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .dialogHeader {
+  border-bottom-color: var(--color-border, #374151);
+}
+
+[data-theme="dark"] .dialogTitle {
+  color: var(--text-primary, #f9fafb);
+}
+
+[data-theme="dark"] .dialogDescription {
+  color: var(--text-secondary, #d1d5db);
+}
+
+[data-theme="dark"] .dialogFooter {
+  border-top-color: var(--color-border, #374151);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .dialogContent {
+    max-width: calc(100vw - 2rem);
+  }
+
+  .dialogHeader {
+    padding: 1rem 1rem 0.75rem 1rem;
+  }
+
+  .dialogFooter {
+    padding: 0.75rem 1rem 1rem 1rem;
+    flex-direction: column-reverse;
+  }
+
+  .dialogFooter > * {
+    width: 100%;
+  }
+}
