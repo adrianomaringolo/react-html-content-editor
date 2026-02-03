@@ -126,3 +126,29 @@
     width: 100%;
   }
 }
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .dialogOverlay {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  .dialogContent {
+    border: 3px solid var(--text-primary, #000000);
+  }
+
+  .dialogContent:focus {
+    outline: 3px solid var(--color-primary, #0000ff);
+    outline-offset: 3px;
+  }
+
+  .dialogHeader {
+    border-bottom-width: 2px;
+    border-bottom-color: var(--text-primary, #000000);
+  }
+
+  .dialogFooter {
+    border-top-width: 2px;
+    border-top-color: var(--text-primary, #000000);
+  }
+}

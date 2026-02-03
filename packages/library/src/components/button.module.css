@@ -111,3 +111,44 @@
 [data-theme="dark"] .button-ghost:hover:not(:disabled) {
   background-color: var(--bg-muted, #374151);
 }
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .button {
+    border-width: 2px;
+  }
+
+  .button:focus-visible {
+    outline-width: 3px;
+    outline-offset: 3px;
+  }
+
+  .button-default {
+    background-color: var(--color-primary, #0000ff);
+    border-color: var(--color-primary, #0000ff);
+  }
+
+  .button-default:hover:not(:disabled) {
+    background-color: var(--color-primary-hover, #0000cc);
+    border-color: var(--color-primary-hover, #0000cc);
+  }
+
+  .button-outline {
+    border-color: var(--text-primary, #000000);
+    color: var(--text-primary, #000000);
+  }
+
+  .button-outline:hover:not(:disabled) {
+    background-color: var(--text-primary, #000000);
+    color: var(--bg-primary, #ffffff);
+  }
+
+  .button-ghost {
+    border-color: transparent;
+  }
+
+  .button-ghost:hover:not(:disabled) {
+    border-color: var(--text-primary, #000000);
+    background-color: transparent;
+  }
+}

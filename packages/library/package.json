@@ -1,5 +1,5 @@
 {
-  "name": "@sympro/react-html-content-editor",
+  "name": "react-html-content-editor",
   "version": "0.1.0",
   "description": "A sophisticated HTML and CSS content editor with Monaco Editor integration, multiple view modes, and auto-save functionality",
   "type": "module",

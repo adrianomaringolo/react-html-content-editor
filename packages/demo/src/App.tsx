@@ -1,4 +1,4 @@
-import { version } from "@sympro/react-html-content-editor";
+import { version } from "react-html-content-editor";
 
 function App() {
   return (

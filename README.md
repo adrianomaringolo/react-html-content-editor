@@ -50,7 +50,7 @@ pnpm test
 
 ## Packages
 
-### @sympro/react-html-content-editor
+### react-html-content-editor
 
 The main library package. See `packages/library/README.md` for detailed documentation.
 

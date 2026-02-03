@@ -56,7 +56,7 @@ react-html-content-editor/
 ### ✅ Library Package
 
 - Created `packages/library/package.json` with proper metadata
-- Configured as `@sympro/react-html-content-editor`
+- Configured as `react-html-content-editor`
 - Set up peer dependencies:
   - `@monaco-editor/react ^4.6.0`
   - `monaco-editor ^0.44.0`

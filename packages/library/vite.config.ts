@@ -51,6 +51,7 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
+    testTimeout: 15000, // Increase timeout for property-based tests
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],

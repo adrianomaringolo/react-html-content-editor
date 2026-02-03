@@ -57,208 +57,208 @@ This implementation plan breaks down the creation of the React HTML Content Edit
 - [x] 3. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 4. Implement custom hooks
-  - [ ] 4.1 Create useScrollSync hook
+- [x] 4. Implement custom hooks
+  - [x] 4.1 Create useScrollSync hook
     - Implement scroll percentage calculation
     - Implement bidirectional sync (editor ↔ preview)
     - Add infinite loop prevention with ref
     - Use requestAnimationFrame for debouncing
     - _Requirements: 4.1, 4.2, 4.4, 4.5_
-  - [ ] 4.2 Write property test for useScrollSync
+  - [x] 4.2 Write property test for useScrollSync
     - **Property 4: Scroll Synchronization Proportionality**
     - **Validates: Requirements 4.1, 4.2**
-  - [ ] 4.3 Create useAutoSave hook
+  - [x] 4.3 Create useAutoSave hook
     - Track saved value separately from current value
     - Implement save status state machine (saved/unsaved/saving)
     - Detect unsaved changes by comparing values
     - Handle save success and failure
     - _Requirements: 3.12, 3.13_
-  - [ ]\* 4.4 Write property test for useAutoSave
+  - [x] 4.4 Write property test for useAutoSave
     - **Property 8: Save Status State Machine**
     - **Validates: Requirements 3.12, 3.13**
-  - [ ] 4.5 Create useKeyboardShortcuts hook
+  - [x] 4.5 Create useKeyboardShortcuts hook
     - Listen for Ctrl+S / Cmd+S
     - Prevent default browser save dialog
     - Trigger save callback when available
     - Handle beforeunload event for unsaved changes
     - _Requirements: 3.9, 3.10_
-  - [ ]\* 4.6 Write unit tests for useKeyboardShortcuts
+  - [x] 4.6 Write unit tests for useKeyboardShortcuts
     - Test Ctrl+S triggers save
     - Test Cmd+S triggers save (Mac)
     - Test beforeunload warning with unsaved changes
     - Test no warning when saved
     - _Requirements: 3.9, 3.10_
 
-- [ ] 5. Implement ContentEditor core component
-  - [ ] 5.1 Create ContentEditor component structure
+- [x] 5. Implement ContentEditor core component
+  - [x] 5.1 Create ContentEditor component structure
     - Define ContentEditorProps interface with all props
     - Define ContentValue interface (html, css)
     - Set up component state (activeTab, activeEditor, isFullscreen, etc.)
     - Create content-editor.module.css with base styles
     - _Requirements: 2.1, 2.2, 2.3, 11.2, 11.5_
-  - [ ] 5.2 Implement HTML editor with Monaco
+  - [x] 5.2 Implement HTML editor with Monaco
     - Integrate @monaco-editor/react for HTML
     - Configure Monaco options (language: html, theme, etc.)
     - Handle onChange to update html value
     - Handle onMount to store editor ref
     - _Requirements: 3.1, 14.1, 14.3, 14.4, 14.5, 14.6, 14.7_
-  - [ ] 5.3 Implement CSS editor with Monaco
+  - [x] 5.3 Implement CSS editor with Monaco
     - Integrate @monaco-editor/react for CSS
     - Configure Monaco options (language: css, theme, etc.)
     - Handle onChange to update css value
     - Handle onMount to store editor ref
     - _Requirements: 2.1, 2.6, 2.7, 2.8, 3.2, 14.2, 14.3_
-  - [ ] 5.4 Implement tab switching between HTML and CSS
+  - [x] 5.4 Implement tab switching between HTML and CSS
     - Add tabs for HTML and CSS editors
     - Show active editor based on activeEditor state
     - Preserve both values when switching
     - _Requirements: 2.4, 3.3_
-  - [ ]\* 5.5 Write property test for content change propagation
+  - [x] 5.5 Write property test for content change propagation
     - **Property 1: Content Change Propagation**
     - **Validates: Requirements 2.3, 3.1, 3.2**
-  - [ ]\* 5.6 Write property test for tab switching
+  - [x] 5.6 Write property test for tab switching
     - **Property 2: Tab Switching Preserves Content**
     - **Validates: Requirements 3.3**
 
-- [ ] 6. Implement preview functionality
-  - [ ] 6.1 Create preview pane component
+- [x] 6. Implement preview functionality
+  - [x] 6.1 Create preview pane component
     - Render HTML using dangerouslySetInnerHTML
     - Inject CSS using style tag
     - Apply scoped class to preview container
     - Show placeholder when no content
     - _Requirements: 2.5, 15.1, 15.2, 15.3, 15.4_
-  - [ ] 6.2 Implement edit/preview tab switching
+  - [x] 6.2 Implement edit/preview tab switching
     - Add tabs for edit and preview modes
     - Show editor or preview based on activeTab
     - _Requirements: 3.4_
-  - [ ]\* 6.3 Write property test for CSS injection
+  - [x] 6.3 Write property test for CSS injection
     - **Property 5: CSS Injection in Preview**
     - **Validates: Requirements 2.5, 15.2**
-  - [ ]\* 6.4 Write property test for preview rendering
+  - [x] 6.4 Write property test for preview rendering
     - **Property 6: Preview Renders HTML with Styles**
     - **Validates: Requirements 15.1**
 
-- [ ] 7. Checkpoint - Ensure all tests pass
+- [x] 7. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 8. Implement fullscreen mode
-  - [ ] 8.1 Create fullscreen overlay component
+- [x] 8. Implement fullscreen mode
+  - [x] 8.1 Create fullscreen overlay component
     - Implement fixed position overlay (z-index: 9999)
     - Add header with mode switcher (edit/preview/split)
     - Add close button with unsaved changes confirmation
     - _Requirements: 3.5, 3.6, 3.10_
-  - [ ] 8.2 Implement split view mode
+  - [x] 8.2 Implement split view mode
     - Create grid layout with editor and preview side-by-side
     - Integrate scroll sync in split view
     - Add sync toggle button
     - _Requirements: 3.6, 4.1, 4.2, 4.3_
-  - [ ] 8.3 Add fullscreen button to normal view
+  - [x] 8.3 Add fullscreen button to normal view
     - Add button to open fullscreen
     - Pass current mode to fullscreen
     - _Requirements: 3.5_
-  - [ ]\* 8.4 Write unit tests for fullscreen mode
+  - [x] 8.4 Write unit tests for fullscreen mode
     - Test opening fullscreen
     - Test closing with unsaved changes
     - Test mode switching in fullscreen
     - Test split view layout
     - _Requirements: 3.5, 3.6, 3.10_
 
-- [ ] 9. Implement formatting functionality
-  - [ ] 9.1 Add format button for HTML editor
+- [x] 9. Implement formatting functionality
+  - [x] 9.1 Add format button for HTML editor
     - Add button to trigger Monaco's formatDocument action
     - Show button only when HTML editor is active
     - _Requirements: 3.7_
-  - [ ] 9.2 Add format button for CSS editor
+  - [x] 9.2 Add format button for CSS editor
     - Add button to trigger Monaco's formatDocument action
     - Show button only when CSS editor is active
     - _Requirements: 3.8_
-  - [ ]\* 9.3 Write property test for formatting
+  - [x] 9.3 Write property test for formatting
     - **Property 3: Format Preserves Validity**
     - **Validates: Requirements 3.7, 3.8**
 
-- [ ] 10. Implement save functionality and status display
-  - [ ] 10.1 Integrate useAutoSave hook
+- [x] 10. Implement save functionality and status display
+  - [x] 10.1 Integrate useAutoSave hook
     - Pass value, onSave, isSaving to hook
     - Get savedValue, saveStatus, hasUnsavedChanges from hook
     - _Requirements: 3.11, 3.12, 3.13_
-  - [ ] 10.2 Create save status indicator component
+  - [x] 10.2 Create save status indicator component
     - Show "Saved" with checkmark when saved
     - Show "Unsaved changes" with warning when unsaved
     - Show "Saving..." with spinner when saving
     - Add aria-live for screen reader announcements
     - _Requirements: 3.12, 3.13, 17.4_
-  - [ ] 10.3 Add save button
+  - [x] 10.3 Add save button
     - Show save button when onSave prop is provided
     - Disable when no unsaved changes or currently saving
     - Trigger handleSave on click
     - _Requirements: 3.9, 3.11_
-  - [ ]\* 10.4 Write unit tests for save functionality
+  - [x] 10.4 Write unit tests for save functionality
     - Test save status updates
     - Test save button disabled states
     - Test save success flow
     - Test save error flow
     - _Requirements: 3.11, 3.12, 3.13_
 
-- [ ] 11. Implement styling and theming
-  - [ ] 11.1 Create CSS variables for theming
+- [x] 11. Implement styling and theming
+  - [x] 11.1 Create CSS variables for theming
     - Define color variables (primary, border, error, success, etc.)
     - Define spacing variables
     - Define border radius variables
     - Create dark theme overrides with [data-theme="dark"]
     - _Requirements: 5.5, 5.6_
-  - [ ] 11.2 Implement responsive design
+  - [x] 11.2 Implement responsive design
     - Use mobile-first approach
     - Stack split view vertically on mobile
     - Adjust button sizes for mobile
     - _Requirements: 5.4_
-  - [ ] 11.3 Add className prop support
+  - [x] 11.3 Add className prop support
     - Accept className prop on ContentEditor
     - Apply to root container
     - _Requirements: 5.3, 19.1_
-  - [ ]\* 11.4 Write unit tests for styling
+  - [x] 11.4 Write unit tests for styling
     - Test className prop applied
     - Test CSS variables present
     - Test dark theme styles
     - _Requirements: 5.3, 5.5, 19.1_
 
-- [ ] 12. Checkpoint - Ensure all tests pass
+- [x] 12. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 13. Implement customization props
-  - [ ] 13.1 Add label customization props
+- [x] 13. Implement customization props
+  - [x] 13.1 Add label customization props
     - Accept htmlLabel and cssLabel props
     - Use in editor labels
     - Default to "HTML" and "CSS"
     - _Requirements: 19.2_
-  - [ ] 13.2 Add height customization prop
+  - [x] 13.2 Add height customization prop
     - Accept height prop (string or number)
     - Apply to editor container in normal mode
     - _Requirements: 19.6_
-  - [ ] 13.3 Add defaultTab prop
+  - [x] 13.3 Add defaultTab prop
     - Accept defaultTab prop ('html' or 'css')
     - Set initial activeEditor state
     - _Requirements: 19.7_
-  - [ ] 13.4 Add editorOptions prop
+  - [x] 13.4 Add editorOptions prop
     - Accept editorOptions prop (Monaco options)
     - Merge with default options
     - Pass to Monaco Editor
     - _Requirements: 19.3_
-  - [ ] 13.5 Add theme prop
+  - [x] 13.5 Add theme prop
     - Accept theme prop ('vs-dark' or 'vs-light')
     - Pass to Monaco Editor
     - _Requirements: 19.4_
-  - [ ]\* 13.6 Write property test for customization props
+  - [x] 13.6 Write property test for customization props
     - **Property 7: Customization Props Applied**
     - **Validates: Requirements 19.1, 19.2, 19.3, 19.4, 19.5, 19.6, 19.7**
 
-- [ ] 14. Implement error handling
-  - [ ] 14.1 Add error prop and display
+- [x] 14. Implement error handling
+  - [x] 14.1 Add error prop and display
     - Accept error prop (string)
     - Display error message below editor
     - Apply error border styling
     - Add role="alert" for accessibility
     - _Requirements: 16.1, 16.2, 17.2_
-  - [ ] 14.2 Handle null/undefined values
+  - [x] 14.2 Handle null/undefined values
     - Treat null/undefined as empty strings
     - Prevent crashes from invalid values
     - _Requirements: 16.5_
@@ -269,91 +269,91 @@ This implementation plan breaks down the creation of the React HTML Content Edit
     - Test save error handling
     - _Requirements: 16.1, 16.2, 16.3, 16.4, 16.5_
 
-- [ ] 15. Implement accessibility features
-  - [ ] 15.1 Add ARIA labels to all buttons
+- [x] 15. Implement accessibility features
+  - [x] 15.1 Add ARIA labels to all buttons
     - Add aria-label to icon-only buttons
     - Add aria-pressed for toggle buttons
     - _Requirements: 17.2_
-  - [ ] 15.2 Implement keyboard navigation
+  - [x] 15.2 Implement keyboard navigation
     - Ensure all interactive elements are keyboard accessible
     - Add visible focus indicators
     - Test tab order
     - _Requirements: 17.1_
-  - [ ] 15.3 Add focus management
+  - [x] 15.3 Add focus management
     - Manage focus when switching modes
     - Return focus to trigger when closing dialog
     - _Requirements: 17.3_
-  - [ ] 15.4 Add high contrast mode support
+  - [x] 15.4 Add high contrast mode support
     - Add @media (prefers-contrast: high) styles
     - Use CSS variables for easy customization
     - _Requirements: 17.5_
-  - [ ]\* 15.5 Write accessibility tests
+  - [x] 15.5 Write accessibility tests
     - Test ARIA labels present
     - Test keyboard navigation
     - Test focus management
     - Test screen reader announcements
     - _Requirements: 17.1, 17.2, 17.3, 17.4_
 
-- [ ] 16. Create demo application
-  - [ ] 16.1 Set up demo app structure
+- [ ] 16. Export ContentEditor from library
+  - [ ] 16.1 Export ContentEditor component from index.ts
+    - Add ContentEditor to main library exports
+    - Ensure all types are exported
+    - _Requirements: 1.2, 1.3_
+
+- [ ] 17. Create demo application
+  - [ ] 17.1 Set up demo app structure
     - Create App.tsx with routing/tabs for examples
-    - Create main.tsx entry point
-    - Add index.html
+    - Add demo-specific styling
     - _Requirements: 9.1, 9.11_
-  - [ ] 16.2 Create BasicExample component
+  - [ ] 17.2 Create BasicExample component
     - Demonstrate basic usage with html and css
     - Show onChange handler
     - _Requirements: 9.2, 9.3_
-  - [ ] 16.3 Create FullscreenExample component
+  - [ ] 17.3 Create FullscreenExample component
     - Demonstrate fullscreen mode
     - Show all view modes (edit, preview, split)
     - _Requirements: 9.4, 9.5_
-  - [ ] 16.4 Create AutoSaveExample component
+  - [ ] 17.4 Create AutoSaveExample component
     - Demonstrate auto-save functionality
     - Show save status indicator
     - Simulate save delay
     - _Requirements: 9.6, 9.7_
-  - [ ] 16.5 Create ThemeExample component
+  - [ ] 17.5 Create ThemeExample component
     - Demonstrate dark and light themes
     - Show theme switching
     - _Requirements: 9.3_
-  - [ ] 16.6 Create ErrorHandlingExample component
+  - [ ] 17.6 Create ErrorHandlingExample component
     - Demonstrate error display
     - Show validation errors
     - _Requirements: 9.8, 9.9_
-  - [ ] 16.7 Add demo app styling
-    - Create demo-specific styles
-    - Add navigation between examples
-    - Make it visually appealing
-    - _Requirements: 9.3_
 
-- [ ] 17. Checkpoint - Ensure all tests pass
+- [ ] 18. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 18. Configure semantic versioning
-  - [ ] 18.1 Initialize Changesets
+- [x] 19. Configure semantic versioning
+  - [x] 19.1 Initialize Changesets
     - Install @changesets/cli
     - Run `pnpm changeset init`
     - Configure .changeset/config.json
     - _Requirements: 8.7_
-  - [ ] 18.2 Add changeset scripts to package.json
+  - [x] 19.2 Add changeset scripts to package.json
     - Add "changeset" script
     - Add "version" script
     - Add "release" script
     - _Requirements: 8.8_
-  - [ ] 18.3 Create initial changeset
+  - [ ] 19.3 Create initial changeset
     - Run `pnpm changeset` to create first changeset
     - Document initial release
     - _Requirements: 8.4, 8.5, 8.6_
-  - [ ]\* 18.4 Test versioning workflow
+  - [ ]\* 19.4 Test versioning workflow
     - Create test changesets for feat, fix, breaking
     - Run version command
     - Verify package.json updated
     - Verify CHANGELOG.md generated
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6_
 
-- [ ] 19. Configure NPM publishing
-  - [ ] 19.1 Configure package.json for publishing
+- [x] 20. Configure NPM publishing
+  - [x] 20.1 Configure package.json for publishing
     - Add "files" field with dist, README, LICENSE, CHANGELOG
     - Add "main" field pointing to dist/index.cjs
     - Add "module" field pointing to dist/index.mjs
@@ -361,18 +361,18 @@ This implementation plan breaks down the creation of the React HTML Content Edit
     - Add "exports" field with conditional exports
     - Add proper metadata (name, description, keywords, license, repository)
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.7, 13.8, 13.9, 13.10_
-  - [ ] 19.2 Configure peer dependencies
+  - [x] 20.2 Configure peer dependencies
     - Add @monaco-editor/react as peer dependency
     - Add monaco-editor as peer dependency
     - Add react and react-dom as peer dependencies
     - Add lucide-react as peer dependency
     - _Requirements: 1.8, 1.9, 6.7_
-  - [ ] 19.3 Add .npmignore file
+  - [ ] 20.3 Add .npmignore file
     - Exclude src directory
     - Exclude tests
     - Exclude development config files
     - _Requirements: 13.6_
-  - [ ]\* 19.4 Test package installation
+  - [ ]\* 20.4 Test package installation
     - Build the library
     - Pack the tarball (pnpm pack)
     - Install in a test project
@@ -380,8 +380,8 @@ This implementation plan breaks down the creation of the React HTML Content Edit
     - Verify types work
     - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ] 20. Write documentation
-  - [ ] 20.1 Create comprehensive README.md
+- [ ] 21. Write documentation
+  - [ ] 21.1 Create comprehensive library README.md
     - Add installation instructions
     - Add basic usage example
     - Document all props with types
@@ -390,57 +390,57 @@ This implementation plan breaks down the creation of the React HTML Content Edit
     - Add keyboard shortcuts section
     - Add security warning about XSS
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6_
-  - [ ] 20.2 Add JSDoc comments to all exports
+  - [ ] 21.2 Add JSDoc comments to all exports
     - Document ContentEditor component
     - Document ContentEditorProps interface
     - Document ContentValue interface
     - Document all type exports
     - _Requirements: 10.8_
-  - [ ] 20.3 Create LICENSE file
+  - [x] 21.3 Create LICENSE file
     - Add MIT license
     - _Requirements: 10.7_
-  - [ ] 20.4 Create CONTRIBUTING.md
+  - [ ] 21.4 Create CONTRIBUTING.md
     - Document development setup
     - Document how to run demo app
     - Document how to run tests
     - Document how to create changesets
     - Document how to publish
     - _Requirements: 10.10_
-  - [ ] 20.5 Create initial CHANGELOG.md
+  - [ ] 21.5 Create initial CHANGELOG.md
     - Document initial release
     - _Requirements: 10.9_
 
-- [ ] 21. Final testing and polish
-  - [ ]\* 21.1 Run full test suite
+- [ ] 22. Final testing and polish
+  - [ ]\* 22.1 Run full test suite
     - Run all unit tests
     - Run all property tests
     - Verify 80%+ code coverage
     - _Requirements: All_
-  - [ ] 21.2 Test in demo app
+  - [ ] 22.2 Test in demo app
     - Run demo app
     - Test all examples
     - Verify hot reload works
     - Test in different browsers
     - _Requirements: 9.10_
-  - [ ] 21.3 Build and verify bundle
+  - [ ] 22.3 Build and verify bundle
     - Build library
     - Check bundle size (< 55KB target)
     - Verify source maps generated
     - Verify both ES and CJS builds exist
     - _Requirements: 7.2, 7.3, 7.4_
-  - [ ] 21.4 Accessibility audit
+  - [ ] 22.4 Accessibility audit
     - Test with keyboard only
     - Test with screen reader
     - Verify ARIA labels
     - Test high contrast mode
     - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.5_
-  - [ ] 21.5 Performance testing
+  - [ ] 22.5 Performance testing
     - Test with large documents (10,000+ lines)
     - Verify scroll sync performance
     - Verify formatting performance
     - _Requirements: 18.1, 18.2, 18.3_
 
-- [ ] 22. Final checkpoint - Ensure all tests pass
+- [ ] 23. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

@@ -15,6 +15,7 @@ export {
   DialogTitle,
   DialogDescription,
   DialogFooter,
+  ContentEditor,
 } from "./components";
 
 export type {

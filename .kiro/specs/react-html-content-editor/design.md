@@ -1134,9 +1134,9 @@ For users migrating from the original component in the Next.js app:
 
 ### Migration Steps
 
-1. Install the library: `pnpm add @sympro/react-html-content-editor`
+1. Install the library: `pnpm add react-html-content-editor`
 2. Install peer dependencies: `pnpm add @monaco-editor/react lucide-react`
-3. Update imports: `import { ContentEditor } from '@sympro/react-html-content-editor'`
+3. Update imports: `import { ContentEditor } from 'react-html-content-editor'`
 4. Update props to use ContentValue object
 5. Add CSS editing if needed
 6. Test thoroughly

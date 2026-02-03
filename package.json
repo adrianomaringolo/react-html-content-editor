@@ -5,7 +5,7 @@
   "description": "Monorepo for React HTML Content Editor library and demo app",
   "scripts": {
     "dev": "pnpm --filter demo dev",
-    "build": "pnpm --filter @sympro/react-html-content-editor build",
+    "build": "pnpm --filter react-html-content-editor build",
     "build:all": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",

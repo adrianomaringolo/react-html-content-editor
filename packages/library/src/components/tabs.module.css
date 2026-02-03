@@ -99,3 +99,30 @@
 [data-theme="dark"] .tabsTriggerActive:hover:not(:disabled) {
   background-color: var(--bg-primary, #111827);
 }
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .tabsList {
+    border: 2px solid var(--text-primary, #000000);
+  }
+
+  .tabsTrigger {
+    border: 1px solid transparent;
+  }
+
+  .tabsTrigger:focus-visible {
+    outline-width: 3px;
+    outline-offset: 3px;
+  }
+
+  .tabsTriggerActive {
+    border-color: var(--text-primary, #000000);
+    background-color: var(--bg-primary, #ffffff);
+    color: var(--text-primary, #000000);
+  }
+
+  .tabsContent:focus-visible {
+    outline-width: 3px;
+    outline-offset: 3px;
+  }
+}

@@ -27,3 +27,5 @@ export type {
   DialogDescriptionProps,
   DialogFooterProps,
 } from "./Dialog";
+
+export { ContentEditor } from "./ContentEditor";

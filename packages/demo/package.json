@@ -11,7 +11,7 @@
     "lint": "eslint src --ext ts,tsx"
   },
   "dependencies": {
-    "@sympro/react-html-content-editor": "workspace:*",
+    "react-html-content-editor": "workspace:*",
     "@monaco-editor/react": "^4.6.0",
     "lucide-react": "^0.263.0",
     "monaco-editor": "^0.44.0",
