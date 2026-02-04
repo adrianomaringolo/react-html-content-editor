@@ -107,37 +107,6 @@ importers:
         specifier: ^1.1.0
         version: 1.6.1(jsdom@23.2.0)(terser@5.46.0)
 
-  test-install:
-    dependencies:
-      '@monaco-editor/react':
-        specifier: ^4.7.0
-        version: 4.7.0(monaco-editor@0.44.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      lucide-react:
-        specifier: ^0.263.1
-        version: 0.263.1(react@18.3.1)
-      monaco-editor:
-        specifier: ^0.44.0
-        version: 0.44.0
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-      react-html-content-editor:
-        specifier: file:../packages/library/react-html-content-editor-1.0.0.tgz
-        version: file:packages/library/react-html-content-editor-1.0.0.tgz(@monaco-editor/react@4.7.0(monaco-editor@0.44.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(lucide-react@0.263.1(react@18.3.1))(monaco-editor@0.44.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-    devDependencies:
-      '@types/react':
-        specifier: ^18.3.27
-        version: 18.3.27
-      '@types/react-dom':
-        specifier: ^18.3.7
-        version: 18.3.7(@types/react@18.3.27)
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-
 packages:
 
   '@adobe/css-tools@4.4.4':
@@ -1662,16 +1631,6 @@ packages:
     resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
     peerDependencies:
       react: ^18.3.1
-
-  react-html-content-editor@file:packages/library/react-html-content-editor-1.0.0.tgz:
-    resolution: {integrity: sha512-DDfYIMZZeVJfAX8ijtYdzb5KGb2dz6jXKbOvDf+k0gCvEvn61GUiKoELFI17Bac0FbRPtQ9bg0TfQ/RGTbbpXQ==, tarball: file:packages/library/react-html-content-editor-1.0.0.tgz}
-    version: 1.0.0
-    peerDependencies:
-      '@monaco-editor/react': ^4.6.0
-      lucide-react: ^0.263.0
-      monaco-editor: ^0.44.0
-      react: ^18.0.0
-      react-dom: ^18.0.0
 
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
@@ -3718,14 +3677,6 @@ snapshots:
       loose-envify: 1.4.0
       react: 18.3.1
       scheduler: 0.23.2
-
-  react-html-content-editor@file:packages/library/react-html-content-editor-1.0.0.tgz(@monaco-editor/react@4.7.0(monaco-editor@0.44.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(lucide-react@0.263.1(react@18.3.1))(monaco-editor@0.44.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      '@monaco-editor/react': 4.7.0(monaco-editor@0.44.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      lucide-react: 0.263.1(react@18.3.1)
-      monaco-editor: 0.44.0
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
 
   react-is@17.0.2: {}
 
