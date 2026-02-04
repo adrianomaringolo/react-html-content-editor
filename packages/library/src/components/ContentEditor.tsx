@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import type { editor } from "monaco-editor";
 import { OnMount } from "@monaco-editor/react";
 import { AlertCircle } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 import { Button } from "./Button";
 import {
   Dialog,
@@ -76,7 +75,8 @@ export function ContentEditor({
   });
 
   // View state
-  const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
+  const [showEdit, setShowEdit] = useState(true);
+  const [showPreview, setShowPreview] = useState(false);
   const [activeEditor, setActiveEditor] = useState<EditorType>(defaultTab);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenMode, setFullscreenMode] = useState<
@@ -204,6 +204,41 @@ export function ContentEditor({
     onChangeRef.current({ ...currentValue, css: newCss ?? "" });
   };
 
+  // View mode toggle handlers
+  const handleToggleEdit = () => {
+    if (showEdit && !showPreview) {
+      // If only edit is shown, turn it off and show preview
+      setShowEdit(false);
+      setShowPreview(true);
+    } else {
+      // Toggle edit mode
+      setShowEdit(!showEdit);
+    }
+  };
+
+  const handleTogglePreview = () => {
+    if (showPreview && !showEdit) {
+      // If only preview is shown, turn it off and show edit
+      setShowPreview(false);
+      setShowEdit(true);
+    } else {
+      // Toggle preview mode
+      setShowPreview(!showPreview);
+    }
+  };
+
+  const handleToggleHtml = () => {
+    setActiveEditor("html");
+  };
+
+  const handleToggleCss = () => {
+    setActiveEditor("css");
+  };
+
+  // Determine current view mode based on toggles
+  const currentViewMode: "edit" | "preview" | "split" =
+    showEdit && showPreview ? "split" : showEdit ? "edit" : "preview";
+
   // Format handlers
   const handleFormatHtml = () => {
     const ref = isFullscreen ? fullscreenHtmlEditorRef : htmlEditorRef;
@@ -262,6 +297,65 @@ export function ContentEditor({
     }
   }, [fullscreenMode, activeEditor, isFullscreen]);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+      const ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
+
+      // Ctrl/Cmd + S: Save
+      if (ctrlOrCmd && e.key === "s") {
+        e.preventDefault();
+        if (onSave && hasUnsavedChanges && !isSaving) {
+          handleSave();
+        }
+      }
+
+      // Ctrl/Cmd + Shift + F: Format
+      if (ctrlOrCmd && e.shiftKey && e.key === "F") {
+        e.preventDefault();
+        if (showEdit) {
+          if (activeEditor === "html") {
+            handleFormatHtml();
+          } else {
+            handleFormatCss();
+          }
+        }
+      }
+
+      // Ctrl/Cmd + Shift + M: Toggle fullscreen
+      if (ctrlOrCmd && e.shiftKey && e.key === "M") {
+        e.preventDefault();
+        if (isFullscreen) {
+          handleCloseFullscreen();
+        } else {
+          handleOpenFullscreen();
+        }
+      }
+
+      // Escape: Close fullscreen
+      if (e.key === "Escape" && isFullscreen) {
+        e.preventDefault();
+        handleCloseFullscreen();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    onSave,
+    hasUnsavedChanges,
+    isSaving,
+    handleSave,
+    showEdit,
+    activeEditor,
+    handleFormatHtml,
+    handleFormatCss,
+    isFullscreen,
+    handleOpenFullscreen,
+    handleCloseFullscreen,
+  ]);
+
   // Default Monaco options
   const defaultEditorOptions: any = {
     minimap: { enabled: false },
@@ -300,40 +394,82 @@ export function ContentEditor({
       >
         {/* Toolbar with save status and actions */}
         <EditorToolbar
-          activeTab={activeTab}
+          showEdit={showEdit}
+          showPreview={showPreview}
           activeEditor={activeEditor}
           saveStatus={onSave ? saveStatus : undefined}
           hasUnsavedChanges={hasUnsavedChanges}
           isSaving={isSaving}
           onSave={onSave ? handleSave : undefined}
+          onToggleEdit={handleToggleEdit}
+          onTogglePreview={handleTogglePreview}
+          onToggleHtml={handleToggleHtml}
+          onToggleCss={handleToggleCss}
           onFormatHtml={handleFormatHtml}
           onFormatCss={handleFormatCss}
           onOpenFullscreen={handleOpenFullscreen}
           fullscreenButtonRef={fullscreenButtonRef}
         />
 
-        {/* Main tabs for edit/preview mode */}
-        <Tabs
-          value={activeTab}
-          onValueChange={(val) => setActiveTab(val as "edit" | "preview")}
-        >
-          <TabsList>
-            <TabsTrigger value='edit'>Edit</TabsTrigger>
-            <TabsTrigger value='preview'>Preview</TabsTrigger>
-          </TabsList>
+        {/* Content area based on view mode */}
+        <div className={styles.editorContent}>
+          {currentViewMode === "split" && (
+            <div className={styles.splitView}>
+              <div className={styles.splitPane}>
+                <div className={styles.editorWrapper}>
+                  <div
+                    className={styles.monacoWrapper}
+                    style={{
+                      display: activeEditor === "html" ? "flex" : "none",
+                    }}
+                  >
+                    <MonacoEditorWrapper
+                      editorKey='normal-html'
+                      defaultValue={normalizedValue.html}
+                      language='html'
+                      theme={theme}
+                      options={htmlEditorOptions}
+                      onChange={handleHtmlChange}
+                      onMount={handleHtmlEditorMount}
+                    />
+                  </div>
 
-          <TabsContent value='edit'>
-            {/* Editor tabs for HTML/CSS */}
-            <Tabs
-              value={activeEditor}
-              onValueChange={(val) => setActiveEditor(val as EditorType)}
-            >
-              <TabsList>
-                <TabsTrigger value='html'>{htmlLabel}</TabsTrigger>
-                <TabsTrigger value='css'>{cssLabel}</TabsTrigger>
-              </TabsList>
+                  <div
+                    className={styles.monacoWrapper}
+                    style={{
+                      display: activeEditor === "css" ? "flex" : "none",
+                    }}
+                  >
+                    <MonacoEditorWrapper
+                      editorKey='normal-css'
+                      defaultValue={normalizedValue.css}
+                      language='css'
+                      theme={theme}
+                      options={cssEditorOptions}
+                      onChange={handleCssChange}
+                      onMount={handleCssEditorMount}
+                    />
+                  </div>
+                </div>
+              </div>
 
-              <TabsContent value='html'>
+              <div className={styles.splitPane}>
+                <PreviewPane
+                  html={normalizedValue.html}
+                  css={normalizedValue.css}
+                />
+              </div>
+            </div>
+          )}
+
+          {currentViewMode === "edit" && (
+            <div className={styles.editorWrapper}>
+              <div
+                className={styles.monacoWrapper}
+                style={{
+                  display: activeEditor === "html" ? "flex" : "none",
+                }}
+              >
                 <MonacoEditorWrapper
                   editorKey='normal-html'
                   defaultValue={normalizedValue.html}
@@ -343,9 +479,14 @@ export function ContentEditor({
                   onChange={handleHtmlChange}
                   onMount={handleHtmlEditorMount}
                 />
-              </TabsContent>
+              </div>
 
-              <TabsContent value='css'>
+              <div
+                className={styles.monacoWrapper}
+                style={{
+                  display: activeEditor === "css" ? "flex" : "none",
+                }}
+              >
                 <MonacoEditorWrapper
                   editorKey='normal-css'
                   defaultValue={normalizedValue.css}
@@ -355,18 +496,17 @@ export function ContentEditor({
                   onChange={handleCssChange}
                   onMount={handleCssEditorMount}
                 />
-              </TabsContent>
-            </Tabs>
-          </TabsContent>
+              </div>
+            </div>
+          )}
 
-          <TabsContent value='preview'>
+          {currentViewMode === "preview" && (
             <PreviewPane
               html={normalizedValue.html}
               css={normalizedValue.css}
             />
-          </TabsContent>
-        </Tabs>
-
+          )}
+        </div>
         {error && (
           <div className={styles.errorMessage} role='alert'>
             <AlertCircle

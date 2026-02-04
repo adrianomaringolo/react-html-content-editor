@@ -7,10 +7,11 @@ A sophisticated HTML and CSS content editor built with Monaco Editor (the same e
 - **Dual Editor Support**: Separate Monaco Editor instances for HTML and CSS
 - **Multiple View Modes**: Edit, preview, and split view options
 - **Fullscreen Mode**: Distraction-free editing experience
-- **Scroll Synchronization**: Synchronized scrolling between editor and preview
+- **Scroll Synchronization**: Synchronized scrolling between HTML editor and preview
 - **Auto-Save**: Automatic change detection with save status indicators
-- **Keyboard Shortcuts**: Ctrl+S for save, Monaco's built-in shortcuts
+- **Keyboard Shortcuts**: Comprehensive shortcuts for common actions (see [KEYBOARD_SHORTCUTS.md](./KEYBOARD_SHORTCUTS.md))
 - **Format on Demand**: One-click code formatting for both HTML and CSS
+- **Compact Toolbar**: Icon-based toolbar with tooltips showing keyboard shortcuts
 - **TypeScript First**: Full type safety with exported type definitions
 - **Theme Support**: Dark and light themes via CSS variables
 - **Accessibility**: ARIA labels, keyboard navigation, screen reader support

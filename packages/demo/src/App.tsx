@@ -1,16 +1,25 @@
 import { useState } from "react";
 import { version } from "react-html-content-editor";
+import { QuickStartExample } from "./examples/QuickStartExample";
 import BasicExample from "./examples/BasicExample";
 import FullscreenExample from "./examples/FullscreenExample";
 import AutoSaveExample from "./examples/AutoSaveExample";
 import ThemeExample from "./examples/ThemeExample";
 import ErrorHandlingExample from "./examples/ErrorHandlingExample";
+import { WysiwygExample } from "./examples/WysiwygExample";
 import "./App.css";
 
-type ExampleTab = "basic" | "fullscreen" | "autosave" | "theme" | "error";
+type ExampleTab =
+  | "quickstart"
+  | "basic"
+  | "wysiwyg"
+  | "fullscreen"
+  | "autosave"
+  | "theme"
+  | "error";
 
 function App() {
-  const [activeTab, setActiveTab] = useState<ExampleTab>("basic");
+  const [activeTab, setActiveTab] = useState<ExampleTab>("quickstart");
 
   return (
     <div className='app'>
@@ -21,10 +30,22 @@ function App() {
 
       <nav className='app-nav'>
         <button
+          className={activeTab === "quickstart" ? "active" : ""}
+          onClick={() => setActiveTab("quickstart")}
+        >
+          🚀 Quick Start
+        </button>
+        <button
           className={activeTab === "basic" ? "active" : ""}
           onClick={() => setActiveTab("basic")}
         >
           Basic Usage
+        </button>
+        <button
+          className={activeTab === "wysiwyg" ? "active" : ""}
+          onClick={() => setActiveTab("wysiwyg")}
+        >
+          🚧 WYSIWYG (WIP)
         </button>
         <button
           className={activeTab === "fullscreen" ? "active" : ""}
@@ -53,7 +74,9 @@ function App() {
       </nav>
 
       <main className='app-main'>
+        {activeTab === "quickstart" && <QuickStartExample />}
         {activeTab === "basic" && <BasicExample />}
+        {activeTab === "wysiwyg" && <WysiwygExample />}
         {activeTab === "fullscreen" && <FullscreenExample />}
         {activeTab === "autosave" && <AutoSaveExample />}
         {activeTab === "theme" && <ThemeExample />}

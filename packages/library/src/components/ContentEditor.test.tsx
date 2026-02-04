@@ -663,7 +663,7 @@ describe("Property 3: Format Preserves Validity", () => {
               // Check for format button
               await waitFor(() => {
                 const formatButton =
-                  screen.queryByLabelText("Format HTML code");
+                  screen.queryByLabelText(/Format HTML/i);
                 expect(formatButton).toBeInTheDocument();
               });
             }
@@ -707,7 +707,7 @@ describe("Property 3: Format Preserves Validity", () => {
 
               // Check for format button
               await waitFor(() => {
-                const formatButton = screen.queryByLabelText("Format CSS code");
+                const formatButton = screen.queryByLabelText(/Format CSS/i);
                 expect(formatButton).toBeInTheDocument();
               });
             }
@@ -747,9 +747,9 @@ describe("Property 3: Format Preserves Validity", () => {
             // Format buttons should not be present
             await waitFor(() => {
               const htmlFormatButton =
-                screen.queryByLabelText("Format HTML code");
+                screen.queryByLabelText(/Format HTML/i);
               const cssFormatButton =
-                screen.queryByLabelText("Format CSS code");
+                screen.queryByLabelText(/Format CSS/i);
               expect(htmlFormatButton).not.toBeInTheDocument();
               expect(cssFormatButton).not.toBeInTheDocument();
             });
@@ -779,7 +779,7 @@ describe("Property 3: Format Preserves Validity", () => {
           );
 
           // Open fullscreen
-          const fullscreenButton = screen.getByLabelText("Open fullscreen");
+          const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
           await user.click(fullscreenButton);
 
           // Should be in edit mode by default
@@ -820,7 +820,7 @@ describe("Property 3: Format Preserves Validity", () => {
           );
 
           // Open fullscreen
-          const fullscreenButton = screen.getByLabelText("Open fullscreen");
+          const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
           await user.click(fullscreenButton);
 
           // Switch to split mode
@@ -862,7 +862,7 @@ describe("Fullscreen Mode", () => {
     );
 
     // Find and click the fullscreen button
-    const fullscreenButton = screen.getByLabelText("Open fullscreen");
+    const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
     expect(fullscreenButton).toBeInTheDocument();
 
     await user.click(fullscreenButton);
@@ -884,7 +884,7 @@ describe("Fullscreen Mode", () => {
     render(<ContentEditor value={value} onChange={onChange} />);
 
     // Open fullscreen
-    const fullscreenButton = screen.getByLabelText("Open fullscreen");
+    const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
     await user.click(fullscreenButton);
 
     // Check for mode switcher buttons
@@ -905,7 +905,7 @@ describe("Fullscreen Mode", () => {
     );
 
     // Open fullscreen
-    const fullscreenButton = screen.getByLabelText("Open fullscreen");
+    const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
     await user.click(fullscreenButton);
 
     // Initially in edit mode - check that edit button exists and is active
@@ -945,7 +945,7 @@ describe("Fullscreen Mode", () => {
     );
 
     // Open fullscreen
-    const fullscreenButton = screen.getByLabelText("Open fullscreen");
+    const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
     await user.click(fullscreenButton);
 
     // Switch to split mode
@@ -970,7 +970,7 @@ describe("Fullscreen Mode", () => {
     render(<ContentEditor value={value} onChange={onChange} />);
 
     // Open fullscreen
-    const fullscreenButton = screen.getByLabelText("Open fullscreen");
+    const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
     await user.click(fullscreenButton);
 
     // Switch to split mode
@@ -993,7 +993,7 @@ describe("Fullscreen Mode", () => {
     render(<ContentEditor value={value} onChange={onChange} />);
 
     // Open fullscreen
-    const fullscreenButton = screen.getByLabelText("Open fullscreen");
+    const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
     await user.click(fullscreenButton);
 
     // Switch to split mode
@@ -1032,7 +1032,7 @@ describe("Fullscreen Mode", () => {
     );
 
     // Open fullscreen
-    const fullscreenButton = screen.getByLabelText("Open fullscreen");
+    const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
     await user.click(fullscreenButton);
 
     // Verify fullscreen is open
@@ -1044,7 +1044,7 @@ describe("Fullscreen Mode", () => {
     });
 
     // Close fullscreen
-    const closeButton = screen.getByLabelText("Close fullscreen");
+    const closeButton = screen.getByLabelText(/Close fullscreen/i);
     await user.click(closeButton);
 
     // Fullscreen should close without showing dialog
@@ -1075,12 +1075,12 @@ describe("Fullscreen Mode", () => {
     );
 
     // Open fullscreen
-    const fullscreenButton = screen.getByLabelText("Open fullscreen");
+    const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
     await user.click(fullscreenButton);
 
     // Verify fullscreen is open
     await waitFor(() => {
-      expect(screen.getByLabelText("Close fullscreen")).toBeInTheDocument();
+      expect(screen.getByLabelText(/Close fullscreen/i)).toBeInTheDocument();
     });
 
     // Simulate a change by rerendering with new value
@@ -1095,7 +1095,7 @@ describe("Fullscreen Mode", () => {
     );
 
     // Try to close fullscreen
-    const closeButton = screen.getByLabelText("Close fullscreen");
+    const closeButton = screen.getByLabelText(/Close fullscreen/i);
     await user.click(closeButton);
 
     // Dialog should appear
@@ -1121,7 +1121,7 @@ describe("Fullscreen Mode", () => {
     );
 
     // Open fullscreen
-    const fullscreenButton = screen.getByLabelText("Open fullscreen");
+    const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
     await user.click(fullscreenButton);
 
     // Simulate a change
@@ -1136,7 +1136,7 @@ describe("Fullscreen Mode", () => {
     );
 
     // Try to close fullscreen
-    const closeButton = screen.getByLabelText("Close fullscreen");
+    const closeButton = screen.getByLabelText(/Close fullscreen/i);
     await user.click(closeButton);
 
     // Wait for dialog
@@ -1176,7 +1176,7 @@ describe("Fullscreen Mode", () => {
     );
 
     // Open fullscreen
-    const fullscreenButton = screen.getByLabelText("Open fullscreen");
+    const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
     await user.click(fullscreenButton);
 
     // Simulate a change
@@ -1191,7 +1191,7 @@ describe("Fullscreen Mode", () => {
     );
 
     // Try to close fullscreen
-    const closeButton = screen.getByLabelText("Close fullscreen");
+    const closeButton = screen.getByLabelText(/Close fullscreen/i);
     await user.click(closeButton);
 
     // Wait for dialog
@@ -1269,7 +1269,7 @@ describe("Save Functionality", () => {
     );
 
     // Save button should be present
-    const saveButton = screen.getByLabelText("Save content");
+    const saveButton = screen.getByLabelText(/Save content/i);
     expect(saveButton).toBeInTheDocument();
   });
 
@@ -1332,7 +1332,7 @@ describe("Save Functionality", () => {
     );
 
     // Save button should be disabled when no unsaved changes
-    const saveButton = screen.getByLabelText("Save content");
+    const saveButton = screen.getByLabelText(/Save content/i);
     expect(saveButton).toBeDisabled();
   });
 
@@ -1363,7 +1363,7 @@ describe("Save Functionality", () => {
 
     // Save button should be enabled
     await waitFor(() => {
-      const saveButton = screen.getByLabelText("Save content");
+      const saveButton = screen.getByLabelText(/Save content/i);
       expect(saveButton).not.toBeDisabled();
     });
   });
@@ -1410,7 +1410,7 @@ describe("Save Functionality", () => {
 
     // Save button should be disabled while saving
     await waitFor(() => {
-      const saveButton = screen.getByLabelText("Save content");
+      const saveButton = screen.getByLabelText(/Save content/i);
       expect(saveButton).toBeDisabled();
     });
   });
@@ -1477,7 +1477,7 @@ describe("Save Functionality", () => {
     });
 
     // Click save button
-    const saveButton = screen.getByLabelText("Save content");
+    const saveButton = screen.getByLabelText(/Save content/i);
     await user.click(saveButton);
 
     // onSave should be called
@@ -1518,7 +1518,7 @@ describe("Save Functionality", () => {
     });
 
     // Click save button
-    const saveButton = screen.getByLabelText("Save content");
+    const saveButton = screen.getByLabelText(/Save content/i);
     await user.click(saveButton);
 
     // Wait for save to complete and status to update
@@ -1559,7 +1559,7 @@ describe("Save Functionality", () => {
     });
 
     // Click save button
-    const saveButton = screen.getByLabelText("Save content");
+    const saveButton = screen.getByLabelText(/Save content/i);
     await user.click(saveButton);
 
     // Wait for save to fail and status to remain unsaved
@@ -2289,9 +2289,9 @@ describe("Accessibility", () => {
       );
 
       // Check for aria-labels on buttons
-      expect(screen.getByLabelText("Save content")).toBeInTheDocument();
-      expect(screen.getByLabelText("Format HTML code")).toBeInTheDocument();
-      expect(screen.getByLabelText("Open fullscreen")).toBeInTheDocument();
+      expect(screen.getByLabelText(/Save content/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Format HTML/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Open fullscreen/i)).toBeInTheDocument();
     });
 
     it("should have aria-label on format buttons for both HTML and CSS", async () => {
@@ -2302,7 +2302,7 @@ describe("Accessibility", () => {
       render(<ContentEditor value={value} onChange={onChange} />);
 
       // Check HTML format button
-      expect(screen.getByLabelText("Format HTML code")).toBeInTheDocument();
+      expect(screen.getByLabelText(/Format HTML/i)).toBeInTheDocument();
 
       // Switch to CSS tab
       const tabs = screen.getAllByRole("tab");
@@ -2312,7 +2312,7 @@ describe("Accessibility", () => {
 
         // Check CSS format button
         await waitFor(() => {
-          expect(screen.getByLabelText("Format CSS code")).toBeInTheDocument();
+          expect(screen.getByLabelText(/Format CSS/i)).toBeInTheDocument();
         });
       }
     });
@@ -2325,7 +2325,7 @@ describe("Accessibility", () => {
       render(<ContentEditor value={value} onChange={onChange} />);
 
       // Open fullscreen
-      const fullscreenButton = screen.getByLabelText("Open fullscreen");
+      const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
       await user.click(fullscreenButton);
 
       // Check for mode button labels
@@ -2333,7 +2333,7 @@ describe("Accessibility", () => {
         expect(screen.getByLabelText("Edit mode")).toBeInTheDocument();
         expect(screen.getByLabelText("Preview mode")).toBeInTheDocument();
         expect(screen.getByLabelText("Split view mode")).toBeInTheDocument();
-        expect(screen.getByLabelText("Close fullscreen")).toBeInTheDocument();
+        expect(screen.getByLabelText(/Close fullscreen/i)).toBeInTheDocument();
       });
     });
 
@@ -2345,7 +2345,7 @@ describe("Accessibility", () => {
       render(<ContentEditor value={value} onChange={onChange} />);
 
       // Open fullscreen and switch to split mode
-      const fullscreenButton = screen.getByLabelText("Open fullscreen");
+      const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
       await user.click(fullscreenButton);
 
       const splitButton = screen.getByLabelText("Split view mode");
@@ -2498,7 +2498,7 @@ describe("Accessibility", () => {
       );
 
       // Open fullscreen
-      const fullscreenButton = screen.getByLabelText("Open fullscreen");
+      const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
       await user.click(fullscreenButton);
 
       // Simulate a change
@@ -2513,7 +2513,7 @@ describe("Accessibility", () => {
       );
 
       // Try to close fullscreen
-      const closeButton = screen.getByLabelText("Close fullscreen");
+      const closeButton = screen.getByLabelText(/Close fullscreen/i);
       await user.click(closeButton);
 
       // Wait for dialog
@@ -2540,16 +2540,16 @@ describe("Accessibility", () => {
       render(<ContentEditor value={value} onChange={onChange} />);
 
       // Open fullscreen
-      const fullscreenButton = screen.getByLabelText("Open fullscreen");
+      const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
       await user.click(fullscreenButton);
 
       // Verify fullscreen is open
       await waitFor(() => {
-        expect(screen.getByLabelText("Close fullscreen")).toBeInTheDocument();
+        expect(screen.getByLabelText(/Close fullscreen/i)).toBeInTheDocument();
       });
 
       // Close fullscreen
-      const closeButton = screen.getByLabelText("Close fullscreen");
+      const closeButton = screen.getByLabelText(/Close fullscreen/i);
       await user.click(closeButton);
 
       // Wait for fullscreen to close
@@ -2575,7 +2575,7 @@ describe("Accessibility", () => {
       );
 
       // Open fullscreen
-      const fullscreenButton = screen.getByLabelText("Open fullscreen");
+      const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
       await user.click(fullscreenButton);
 
       // Verify fullscreen is open
@@ -2624,7 +2624,7 @@ describe("Accessibility", () => {
       );
 
       // Open fullscreen
-      const fullscreenButton = screen.getByLabelText("Open fullscreen");
+      const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
       await user.click(fullscreenButton);
 
       // Simulate a change
@@ -2639,7 +2639,7 @@ describe("Accessibility", () => {
       );
 
       // Try to close fullscreen
-      const closeButton = screen.getByLabelText("Close fullscreen");
+      const closeButton = screen.getByLabelText(/Close fullscreen/i);
       await user.click(closeButton);
 
       // Wait for dialog
@@ -2790,7 +2790,7 @@ describe("Accessibility", () => {
       );
 
       // Open fullscreen
-      const fullscreenButton = screen.getByLabelText("Open fullscreen");
+      const fullscreenButton = screen.getByLabelText(/Open fullscreen/i);
       await user.click(fullscreenButton);
 
       // Simulate a change
@@ -2805,7 +2805,7 @@ describe("Accessibility", () => {
       );
 
       // Try to close fullscreen
-      const closeButton = screen.getByLabelText("Close fullscreen");
+      const closeButton = screen.getByLabelText(/Close fullscreen/i);
       await user.click(closeButton);
 
       // Wait for dialog
@@ -2851,8 +2851,8 @@ describe("Accessibility", () => {
 
       // Verify text elements are present and readable
       expect(screen.getByText("Saved")).toBeInTheDocument();
-      expect(screen.getByText("Edit")).toBeInTheDocument();
-      expect(screen.getByText("Preview")).toBeInTheDocument();
+      expect(screen.getByLabelText("Toggle edit mode")).toBeInTheDocument();
+      expect(screen.getByLabelText("Toggle preview mode")).toBeInTheDocument();
     });
   });
 });

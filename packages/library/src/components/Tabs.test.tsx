@@ -21,7 +21,9 @@ describe("Tabs", () => {
 
       // Initially, tab1 should be active
       expect(screen.getByText("Content 1")).toBeInTheDocument();
-      expect(screen.queryByText("Content 2")).not.toBeInTheDocument();
+      const content2 = screen.getByText("Content 2");
+      expect(content2).toBeInTheDocument();
+      expect(content2.parentElement).toHaveAttribute("aria-hidden", "true");
 
       // Click on tab2
       const tab2Trigger = screen.getByRole("tab", { name: /tab 2/i });
@@ -223,7 +225,9 @@ describe("Tabs", () => {
 
       // Tab1 content should still be visible
       expect(screen.getByText("Content 1")).toBeInTheDocument();
-      expect(screen.queryByText("Content 2")).not.toBeInTheDocument();
+      const content2 = screen.getByText("Content 2");
+      expect(content2).toBeInTheDocument();
+      expect(content2.parentElement).toHaveAttribute("aria-hidden", "true");
     });
   });
 
@@ -354,7 +358,9 @@ describe("Tabs", () => {
 
       // Should still show tab1 content
       expect(screen.getByText("Content 1")).toBeInTheDocument();
-      expect(screen.queryByText("Content 2")).not.toBeInTheDocument();
+      const content2 = screen.getByText("Content 2");
+      expect(content2).toBeInTheDocument();
+      expect(content2.parentElement).toHaveAttribute("aria-hidden", "true");
     });
 
     it("should have disabled attribute on disabled trigger", () => {

@@ -29,3 +29,8 @@ export type {
 } from "./Dialog";
 
 export { ContentEditor } from "./ContentEditor";
+export { SaveStatusIndicator } from "./SaveStatusIndicator";
+export { EditorToolbar } from "./EditorToolbar";
+export { MonacoEditorWrapper } from "./MonacoEditorWrapper";
+export { PreviewPane } from "./PreviewPane";
+export { FullscreenOverlay } from "./FullscreenOverlay";
