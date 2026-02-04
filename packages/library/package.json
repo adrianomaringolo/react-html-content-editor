@@ -1,6 +1,6 @@
 {
   "name": "react-html-content-editor",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A sophisticated HTML and CSS content editor with Monaco Editor integration, multiple view modes, and auto-save functionality",
   "type": "module",
   "main": "./dist/index.cjs",
