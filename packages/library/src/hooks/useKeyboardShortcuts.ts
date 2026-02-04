@@ -1,10 +1,32 @@
 import { useEffect } from "react";
 
+/**
+ * Props for the useKeyboardShortcuts hook.
+ */
 interface UseKeyboardShortcutsProps {
+  /** Callback fired when save shortcut is triggered */
   onSave?: () => void;
+  /** Whether save can be performed (typically false when there are unsaved changes) */
   canSave: boolean;
 }
 
+/**
+ * Custom hook for managing keyboard shortcuts in the editor.
+ *
+ * Listens for Ctrl+S / Cmd+S to trigger save and handles the beforeunload event
+ * to warn users about unsaved changes when leaving the page.
+ *
+ * @example
+ * ```tsx
+ * useKeyboardShortcuts({
+ *   onSave: handleSave,
+ *   canSave: !hasUnsavedChanges
+ * });
+ * ```
+ *
+ * @param {UseKeyboardShortcutsProps} props - Hook configuration
+ * @returns {void}
+ */
 export function useKeyboardShortcuts({
   onSave,
   canSave,

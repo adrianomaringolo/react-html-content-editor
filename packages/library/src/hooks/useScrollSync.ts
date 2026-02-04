@@ -1,17 +1,58 @@
 import { useCallback, useRef } from "react";
 import type { editor } from "monaco-editor";
 
+/**
+ * Props for the useScrollSync hook.
+ */
 interface UseScrollSyncProps {
+  /** Reference to the Monaco Editor instance */
   editorRef: React.RefObject<editor.IStandaloneCodeEditor | null>;
+  /** Reference to the preview container element */
   previewRef: React.RefObject<HTMLDivElement | null>;
+  /** Whether scroll synchronization is enabled */
   enabled: boolean;
 }
 
+/**
+ * Return value from the useScrollSync hook.
+ */
 interface UseScrollSyncReturn {
+  /** Handler for editor scroll events */
   handleEditorScroll: () => void;
+  /** Handler for preview scroll events */
   handlePreviewScroll: (e: React.UIEvent<HTMLDivElement>) => void;
 }
 
+/**
+ * Custom hook for managing scroll synchronization between editor and preview.
+ *
+ * Calculates scroll percentage in the source element and applies the same percentage
+ * to the target element. Uses a ref to prevent infinite scroll loops and debounces
+ * scroll events for performance.
+ *
+ * @example
+ * ```tsx
+ * const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+ * const previewRef = useRef<HTMLDivElement | null>(null);
+ *
+ * const { handleEditorScroll, handlePreviewScroll } = useScrollSync({
+ *   editorRef,
+ *   previewRef,
+ *   enabled: true
+ * });
+ *
+ * // Attach to editor
+ * useEffect(() => {
+ *   const disposable = editorRef.current?.onDidScrollChange(() => {
+ *     handleEditorScroll();
+ *   });
+ *   return () => disposable?.dispose();
+ * }, [handleEditorScroll]);
+ * ```
+ *
+ * @param {UseScrollSyncProps} props - Hook configuration
+ * @returns {UseScrollSyncReturn} Scroll event handlers
+ */
 export function useScrollSync({
   editorRef,
   previewRef,

@@ -134,17 +134,14 @@ export const TabsContent: React.FC<TabsContentProps> = ({
   const { value } = useTabsContext();
   const isActive = value === contentValue;
 
-  if (!isActive) {
-    return null;
-  }
-
   return (
     <div
       role='tabpanel'
       id={`tabpanel-${contentValue}`}
       aria-labelledby={`tab-${contentValue}`}
       tabIndex={0}
-      className={`${styles.tabsContent} ${className}`.trim()}
+      className={`${styles.tabsContent} ${isActive ? styles.tabsContentActive : styles.tabsContentHidden} ${className}`.trim()}
+      aria-hidden={!isActive}
     >
       {children}
     </div>

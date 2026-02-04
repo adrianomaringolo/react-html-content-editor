@@ -1,18 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { Editor, OnMount } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
-import {
-  Maximize2,
-  X,
-  Monitor,
-  Code,
-  Columns,
-  Wand2,
-  Check,
-  AlertCircle,
-  Loader2,
-  Save,
-} from "lucide-react";
+import { OnMount } from "@monaco-editor/react";
+import { AlertCircle } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 import { Button } from "./Button";
 import {
@@ -23,47 +12,42 @@ import {
   DialogDescription,
   DialogFooter,
 } from "./Dialog";
+import { EditorToolbar } from "./EditorToolbar";
+import { MonacoEditorWrapper } from "./MonacoEditorWrapper";
+import { PreviewPane } from "./PreviewPane";
+import { FullscreenOverlay } from "./FullscreenOverlay";
 import { useAutoSave } from "../hooks/useAutoSave";
-import { useScrollSync } from "../hooks/useScrollSync";
-import type { ContentEditorProps, EditorType } from "../types";
-import type { SaveStatus } from "../hooks/useAutoSave";
+import type { ContentEditorProps, EditorType, ContentValue } from "../types";
 import styles from "./content-editor.module.css";
-
-/**
- * SaveStatusIndicator component displays the current save status
- */
-function SaveStatusIndicator({ status }: { status: SaveStatus }) {
-  return (
-    <div
-      className={`${styles.saveStatus} ${styles[status]}`}
-      aria-live='polite'
-      aria-atomic='true'
-    >
-      {status === "saved" && (
-        <>
-          <Check size={16} aria-hidden='true' />
-          <span>Saved</span>
-        </>
-      )}
-      {status === "unsaved" && (
-        <>
-          <AlertCircle size={16} aria-hidden='true' />
-          <span>Unsaved changes</span>
-        </>
-      )}
-      {status === "saving" && (
-        <>
-          <Loader2 size={16} className={styles.spinner} aria-hidden='true' />
-          <span>Saving...</span>
-        </>
-      )}
-    </div>
-  );
-}
 
 /**
  * ContentEditor component provides a sophisticated HTML and CSS editor
  * with Monaco Editor integration, multiple view modes, and auto-save functionality.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { ContentEditor } from 'react-html-content-editor';
+ *
+ * function App() {
+ *   const [value, setValue] = useState({
+ *     html: '<h1>Hello World</h1>',
+ *     css: 'h1 { color: blue; }'
+ *   });
+ *
+ *   return (
+ *     <ContentEditor
+ *       value={value}
+ *       onChange={setValue}
+ *       onSave={async () => await saveToServer(value)}
+ *       theme="vs-dark"
+ *     />
+ *   );
+ * }
+ * ```
+ *
+ * @param {ContentEditorProps} props - Component props
+ * @returns {JSX.Element} The rendered ContentEditor component
  */
 export function ContentEditor({
   value,
@@ -84,6 +68,13 @@ export function ContentEditor({
     html: value?.html ?? "",
     css: value?.css ?? "",
   };
+
+  // Use ref to store current value to avoid recreating handlers
+  const valueRef = useRef(normalizedValue);
+  useEffect(() => {
+    valueRef.current = normalizedValue;
+  });
+
   // View state
   const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
   const [activeEditor, setActiveEditor] = useState<EditorType>(defaultTab);
@@ -98,43 +89,27 @@ export function ContentEditor({
   // Dialog state for unsaved changes confirmation
   const [showCloseDialog, setShowCloseDialog] = useState(false);
 
-  // Editor refs
+  // Editor refs - SEPARATE refs for normal and fullscreen editors
   const htmlEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const cssEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const fullscreenHtmlEditorRef = useRef<editor.IStandaloneCodeEditor | null>(
+    null,
+  );
+  const fullscreenCssEditorRef = useRef<editor.IStandaloneCodeEditor | null>(
+    null,
+  );
   const previewRef = useRef<HTMLDivElement | null>(null);
   const fullscreenButtonRef = useRef<HTMLButtonElement | null>(null);
+  const isScrollingSyncRef = useRef(false);
 
   // Use auto-save hook to track unsaved changes and save status
-  const { savedValue, saveStatus, hasUnsavedChanges, handleSave } = useAutoSave(
-    {
-      value: normalizedValue,
-      onSave,
-      isSaving,
-    },
-  );
-
-  // Use scroll sync hook for split view
-  const activeEditorRef =
-    activeEditor === "html" ? htmlEditorRef : cssEditorRef;
-  const { handleEditorScroll, handlePreviewScroll } = useScrollSync({
-    editorRef: activeEditorRef,
-    previewRef,
-    enabled: syncScroll && isFullscreen && fullscreenMode === "split",
+  const { saveStatus, hasUnsavedChanges, handleSave } = useAutoSave({
+    value: normalizedValue,
+    onSave,
+    isSaving,
   });
 
-  // Set up editor scroll listener
-  useEffect(() => {
-    if (!activeEditorRef.current || !syncScroll || fullscreenMode !== "split")
-      return;
-
-    const disposable = activeEditorRef.current.onDidScrollChange(() => {
-      handleEditorScroll();
-    });
-
-    return () => disposable.dispose();
-  }, [handleEditorScroll, syncScroll, fullscreenMode, activeEditorRef]);
-
-  // Monaco editor mount handlers
+  // Monaco editor mount handlers for normal view
   const handleHtmlEditorMount: OnMount = (editor) => {
     htmlEditorRef.current = editor;
   };
@@ -143,22 +118,101 @@ export function ContentEditor({
     cssEditorRef.current = editor;
   };
 
-  // Content change handlers
+  // Monaco editor mount handlers for fullscreen view
+  const handleFullscreenHtmlEditorMount: OnMount = (editor) => {
+    fullscreenHtmlEditorRef.current = editor;
+
+    // Setup scroll sync for HTML editor only
+    editor.onDidScrollChange(() => {
+      if (
+        !syncScroll ||
+        isScrollingSyncRef.current ||
+        !previewRef.current ||
+        fullscreenMode !== "split" ||
+        activeEditor !== "html" // Only sync when HTML editor is active
+      )
+        return;
+
+      const scrollTop = editor.getScrollTop();
+      const scrollHeight = editor.getScrollHeight();
+      const clientHeight = editor.getLayoutInfo().height;
+      const maxScroll = scrollHeight - clientHeight;
+
+      if (maxScroll <= 0) return;
+
+      const scrollPercent = scrollTop / maxScroll;
+      const previewMaxScroll =
+        previewRef.current.scrollHeight - previewRef.current.clientHeight;
+
+      isScrollingSyncRef.current = true;
+      previewRef.current.scrollTop = scrollPercent * previewMaxScroll;
+      requestAnimationFrame(() => {
+        isScrollingSyncRef.current = false;
+      });
+    });
+  };
+
+  const handleFullscreenCssEditorMount: OnMount = (editor) => {
+    fullscreenCssEditorRef.current = editor;
+    // No scroll sync for CSS editor
+  };
+
+  // Preview scroll handler - only sync with HTML editor
+  const handlePreviewScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (
+      !syncScroll ||
+      isScrollingSyncRef.current ||
+      fullscreenMode !== "split" ||
+      activeEditor !== "html" // Only sync when HTML editor is active
+    )
+      return;
+
+    const activeRef = fullscreenHtmlEditorRef;
+    if (!activeRef.current) return;
+
+    const target = e.currentTarget;
+    const scrollTop = target.scrollTop;
+    const maxScroll = target.scrollHeight - target.clientHeight;
+
+    if (maxScroll <= 0) return;
+
+    const scrollPercent = scrollTop / maxScroll;
+    const editorMaxScroll =
+      activeRef.current.getScrollHeight() -
+      activeRef.current.getLayoutInfo().height;
+
+    isScrollingSyncRef.current = true;
+    activeRef.current.setScrollTop(scrollPercent * editorMaxScroll);
+    requestAnimationFrame(() => {
+      isScrollingSyncRef.current = false;
+    });
+  };
+
+  // Content change handlers - use refs to avoid recreating on every change
+  const onChangeRef = useRef(onChange);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
   const handleHtmlChange = (newHtml: string | undefined) => {
-    onChange({ ...normalizedValue, html: newHtml ?? "" });
+    const currentValue = valueRef.current;
+    onChangeRef.current({ ...currentValue, html: newHtml ?? "" });
   };
 
   const handleCssChange = (newCss: string | undefined) => {
-    onChange({ ...normalizedValue, css: newCss ?? "" });
+    const currentValue = valueRef.current;
+    onChangeRef.current({ ...currentValue, css: newCss ?? "" });
   };
 
   // Format handlers
   const handleFormatHtml = () => {
-    htmlEditorRef.current?.getAction("editor.action.formatDocument")?.run();
+    const ref = isFullscreen ? fullscreenHtmlEditorRef : htmlEditorRef;
+    ref.current?.getAction("editor.action.formatDocument")?.run();
   };
 
   const handleFormatCss = () => {
-    cssEditorRef.current?.getAction("editor.action.formatDocument")?.run();
+    const ref = isFullscreen ? fullscreenCssEditorRef : cssEditorRef;
+    ref.current?.getAction("editor.action.formatDocument")?.run();
   };
 
   // Fullscreen handlers
@@ -200,7 +254,10 @@ export function ContentEditor({
 
     // Focus the active editor when switching to edit mode
     if (fullscreenMode === "edit" || fullscreenMode === "split") {
-      const activeRef = activeEditor === "html" ? htmlEditorRef : cssEditorRef;
+      const activeRef =
+        activeEditor === "html"
+          ? fullscreenHtmlEditorRef
+          : fullscreenCssEditorRef;
       activeRef.current?.focus();
     }
   }, [fullscreenMode, activeEditor, isFullscreen]);
@@ -235,233 +292,6 @@ export function ContentEditor({
     height: typeof height === "number" ? `${height}px` : height,
   };
 
-  // Preview pane component
-  const PreviewPane = () => {
-    const hasContent =
-      normalizedValue.html.trim() || normalizedValue.css.trim();
-
-    if (!hasContent) {
-      return (
-        <div
-          ref={previewRef}
-          className={styles.previewContainer}
-          onScroll={handlePreviewScroll}
-        >
-          <div className={styles.previewPlaceholder}>
-            No content to preview. Start editing HTML or CSS to see the preview.
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div
-        ref={previewRef}
-        className={styles.previewContainer}
-        onScroll={handlePreviewScroll}
-      >
-        {normalizedValue.css && <style>{normalizedValue.css}</style>}
-        <div
-          className='content-preview'
-          dangerouslySetInnerHTML={{ __html: normalizedValue.html }}
-        />
-      </div>
-    );
-  };
-
-  // Fullscreen overlay component
-  const FullscreenOverlay = () => {
-    return (
-      <div className={styles.fullscreenOverlay}>
-        <div className={styles.fullscreenHeader}>
-          <div className={styles.fullscreenModeButtons}>
-            <Button
-              variant={fullscreenMode === "edit" ? "default" : "ghost"}
-              size='sm'
-              onClick={() => setFullscreenMode("edit")}
-              aria-label='Edit mode'
-            >
-              <Code size={16} />
-              <span>Edit</span>
-            </Button>
-            <Button
-              variant={fullscreenMode === "preview" ? "default" : "ghost"}
-              size='sm'
-              onClick={() => setFullscreenMode("preview")}
-              aria-label='Preview mode'
-            >
-              <Monitor size={16} />
-              <span>Preview</span>
-            </Button>
-            <Button
-              variant={fullscreenMode === "split" ? "default" : "ghost"}
-              size='sm'
-              onClick={() => setFullscreenMode("split")}
-              aria-label='Split view mode'
-            >
-              <Columns size={16} />
-              <span>Split</span>
-            </Button>
-          </div>
-
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={handleCloseFullscreen}
-            aria-label='Close fullscreen'
-          >
-            <X size={20} />
-          </Button>
-        </div>
-
-        <div className={styles.fullscreenContent}>
-          {fullscreenMode === "edit" && (
-            <Tabs
-              value={activeEditor}
-              onValueChange={(val) => setActiveEditor(val as EditorType)}
-            >
-              <div className={styles.fullscreenEditHeader}>
-                <TabsList>
-                  <TabsTrigger value='html'>{htmlLabel}</TabsTrigger>
-                  <TabsTrigger value='css'>{cssLabel}</TabsTrigger>
-                </TabsList>
-                <div className={styles.editorActions}>
-                  {activeEditor === "html" && (
-                    <Button
-                      variant='ghost'
-                      size='sm'
-                      onClick={handleFormatHtml}
-                      aria-label='Format HTML code'
-                    >
-                      <Wand2 size={16} />
-                      <span>Format</span>
-                    </Button>
-                  )}
-                  {activeEditor === "css" && (
-                    <Button
-                      variant='ghost'
-                      size='sm'
-                      onClick={handleFormatCss}
-                      aria-label='Format CSS code'
-                    >
-                      <Wand2 size={16} />
-                      <span>Format</span>
-                    </Button>
-                  )}
-                </div>
-              </div>
-
-              <TabsContent value='html'>
-                <Editor
-                  value={normalizedValue.html}
-                  onChange={handleHtmlChange}
-                  onMount={handleHtmlEditorMount}
-                  options={htmlEditorOptions}
-                  theme={theme}
-                  language='html'
-                />
-              </TabsContent>
-
-              <TabsContent value='css'>
-                <Editor
-                  value={normalizedValue.css}
-                  onChange={handleCssChange}
-                  onMount={handleCssEditorMount}
-                  options={cssEditorOptions}
-                  theme={theme}
-                  language='css'
-                />
-              </TabsContent>
-            </Tabs>
-          )}
-
-          {fullscreenMode === "preview" && <PreviewPane />}
-
-          {fullscreenMode === "split" && (
-            <div className={styles.splitView}>
-              <div className={styles.splitPane}>
-                <Tabs
-                  value={activeEditor}
-                  onValueChange={(val) => setActiveEditor(val as EditorType)}
-                >
-                  <div className={styles.splitPaneHeader}>
-                    <TabsList>
-                      <TabsTrigger value='html'>{htmlLabel}</TabsTrigger>
-                      <TabsTrigger value='css'>{cssLabel}</TabsTrigger>
-                    </TabsList>
-                    <div className={styles.editorActions}>
-                      {activeEditor === "html" && (
-                        <Button
-                          variant='ghost'
-                          size='sm'
-                          onClick={handleFormatHtml}
-                          aria-label='Format HTML code'
-                        >
-                          <Wand2 size={16} />
-                          <span>Format</span>
-                        </Button>
-                      )}
-                      {activeEditor === "css" && (
-                        <Button
-                          variant='ghost'
-                          size='sm'
-                          onClick={handleFormatCss}
-                          aria-label='Format CSS code'
-                        >
-                          <Wand2 size={16} />
-                          <span>Format</span>
-                        </Button>
-                      )}
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        onClick={() => setSyncScroll(!syncScroll)}
-                        aria-label={
-                          syncScroll
-                            ? "Disable scroll sync"
-                            : "Enable scroll sync"
-                        }
-                        aria-pressed={syncScroll}
-                      >
-                        {syncScroll ? "Sync: On" : "Sync: Off"}
-                      </Button>
-                    </div>
-                  </div>
-
-                  <TabsContent value='html'>
-                    <Editor
-                      value={normalizedValue.html}
-                      onChange={handleHtmlChange}
-                      onMount={handleHtmlEditorMount}
-                      options={htmlEditorOptions}
-                      theme={theme}
-                      language='html'
-                    />
-                  </TabsContent>
-
-                  <TabsContent value='css'>
-                    <Editor
-                      value={normalizedValue.css}
-                      onChange={handleCssChange}
-                      onMount={handleCssEditorMount}
-                      options={cssEditorOptions}
-                      theme={theme}
-                      language='css'
-                    />
-                  </TabsContent>
-                </Tabs>
-              </div>
-
-              <div className={styles.splitPane}>
-                <PreviewPane />
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
-
   return (
     <>
       <div
@@ -469,53 +299,18 @@ export function ContentEditor({
         style={containerStyle}
       >
         {/* Toolbar with save status and actions */}
-        <div className={styles.editorToolbar}>
-          {onSave && <SaveStatusIndicator status={saveStatus} />}
-          {onSave && (
-            <Button
-              variant='default'
-              size='sm'
-              onClick={handleSave}
-              disabled={!hasUnsavedChanges || isSaving}
-              aria-label='Save content'
-            >
-              <Save size={16} />
-              <span>Save</span>
-            </Button>
-          )}
-          {activeTab === "edit" && activeEditor === "html" && (
-            <Button
-              variant='ghost'
-              size='sm'
-              onClick={handleFormatHtml}
-              aria-label='Format HTML code'
-            >
-              <Wand2 size={16} />
-              <span>Format HTML</span>
-            </Button>
-          )}
-          {activeTab === "edit" && activeEditor === "css" && (
-            <Button
-              variant='ghost'
-              size='sm'
-              onClick={handleFormatCss}
-              aria-label='Format CSS code'
-            >
-              <Wand2 size={16} />
-              <span>Format CSS</span>
-            </Button>
-          )}
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={handleOpenFullscreen}
-            aria-label='Open fullscreen'
-            ref={fullscreenButtonRef}
-          >
-            <Maximize2 size={16} />
-            <span>Fullscreen</span>
-          </Button>
-        </div>
+        <EditorToolbar
+          activeTab={activeTab}
+          activeEditor={activeEditor}
+          saveStatus={onSave ? saveStatus : undefined}
+          hasUnsavedChanges={hasUnsavedChanges}
+          isSaving={isSaving}
+          onSave={onSave ? handleSave : undefined}
+          onFormatHtml={handleFormatHtml}
+          onFormatCss={handleFormatCss}
+          onOpenFullscreen={handleOpenFullscreen}
+          fullscreenButtonRef={fullscreenButtonRef}
+        />
 
         {/* Main tabs for edit/preview mode */}
         <Tabs
@@ -539,31 +334,36 @@ export function ContentEditor({
               </TabsList>
 
               <TabsContent value='html'>
-                <Editor
-                  value={normalizedValue.html}
+                <MonacoEditorWrapper
+                  editorKey='normal-html'
+                  defaultValue={normalizedValue.html}
+                  language='html'
+                  theme={theme}
+                  options={htmlEditorOptions}
                   onChange={handleHtmlChange}
                   onMount={handleHtmlEditorMount}
-                  options={htmlEditorOptions}
-                  theme={theme}
-                  language='html'
                 />
               </TabsContent>
 
               <TabsContent value='css'>
-                <Editor
-                  value={normalizedValue.css}
+                <MonacoEditorWrapper
+                  editorKey='normal-css'
+                  defaultValue={normalizedValue.css}
+                  language='css'
+                  theme={theme}
+                  options={cssEditorOptions}
                   onChange={handleCssChange}
                   onMount={handleCssEditorMount}
-                  options={cssEditorOptions}
-                  theme={theme}
-                  language='css'
                 />
               </TabsContent>
             </Tabs>
           </TabsContent>
 
           <TabsContent value='preview'>
-            <PreviewPane />
+            <PreviewPane
+              html={normalizedValue.html}
+              css={normalizedValue.css}
+            />
           </TabsContent>
         </Tabs>
 
@@ -580,7 +380,35 @@ export function ContentEditor({
       </div>
 
       {/* Fullscreen overlay */}
-      {isFullscreen && <FullscreenOverlay />}
+      {isFullscreen && (
+        <FullscreenOverlay
+          fullscreenMode={fullscreenMode}
+          activeEditor={activeEditor}
+          normalizedValue={normalizedValue}
+          htmlLabel={htmlLabel}
+          cssLabel={cssLabel}
+          theme={theme}
+          htmlEditorOptions={htmlEditorOptions}
+          cssEditorOptions={cssEditorOptions}
+          syncScroll={syncScroll}
+          saveStatus={onSave ? saveStatus : undefined}
+          hasUnsavedChanges={hasUnsavedChanges}
+          isSaving={isSaving}
+          previewRef={previewRef}
+          onSave={onSave ? handleSave : undefined}
+          onSetFullscreenMode={setFullscreenMode}
+          onSetActiveEditor={setActiveEditor}
+          onSetSyncScroll={setSyncScroll}
+          onCloseFullscreen={handleCloseFullscreen}
+          onFormatHtml={handleFormatHtml}
+          onFormatCss={handleFormatCss}
+          onHtmlChange={handleHtmlChange}
+          onCssChange={handleCssChange}
+          onFullscreenHtmlEditorMount={handleFullscreenHtmlEditorMount}
+          onFullscreenCssEditorMount={handleFullscreenCssEditorMount}
+          onPreviewScroll={handlePreviewScroll}
+        />
+      )}
 
       {/* Unsaved changes confirmation dialog */}
       <Dialog open={showCloseDialog} onOpenChange={setShowCloseDialog}>
