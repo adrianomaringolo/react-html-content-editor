@@ -1,0 +1,273 @@
+# react-html-content-editor
+
+> A React HTML + CSS content editor built on Monaco (the VS Code editor), with a
+> live preview, an integrated rich-text WYSIWYG mode, auto-save, fullscreen, and
+> a composition API. Everything ships from a single package: `react-html-content-editor`.
+> This file is optimized for AI coding agents: it is self-contained — you can use
+> the library correctly from this file alone, without fetching anything else.
+
+- Package: `react-html-content-editor` (npm), version 1.2.0+
+- Peer deps: `react` >=18, `react-dom` >=18, `@monaco-editor/react` ^4.6, `monaco-editor` >=0.44, `lucide-react`
+- License: MIT. Repo: https://github.com/adrianomaringolo/react-html-content-editor
+- Module formats: ESM (`index.mjs`) + CJS (`index.cjs`), types included. Tree-shakeable (~9 KB gzip JS).
+
+## Setup (required)
+
+```bash
+npm install react-html-content-editor
+# peer deps, if not already present:
+npm install react react-dom @monaco-editor/react monaco-editor lucide-react
+```
+
+You MUST import the stylesheet once in your app, or the editor renders unstyled:
+
+```tsx
+import "react-html-content-editor/dist/style.css";
+```
+
+The edited value is always this shape:
+
+```ts
+interface ContentValue { html: string; css: string }
+```
+
+`ContentEditor` is controlled: pass `value` and `onChange`. It is NOT sanitized —
+see "Security" below.
+
+## Quick start (default layout)
+
+Batteries-included editor: toolbar, Monaco HTML/CSS editors, live preview,
+fullscreen, keyboard shortcuts. Just pass `value`/`onChange`.
+
+```tsx
+import { useState } from "react";
+import { ContentEditor } from "react-html-content-editor";
+import "react-html-content-editor/dist/style.css";
+
+export function App() {
+  const [value, setValue] = useState({
+    html: "<h1>Hello</h1>",
+    css: "h1 { color: teal; }",
+  });
+  return <ContentEditor value={value} onChange={setValue} height="500px" />;
+}
+```
+
+### ContentEditor props
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `value` | `ContentValue` | — | Required. `{ html, css }`. |
+| `onChange` | `(value: ContentValue) => void` | — | Required. Fires on any edit. |
+| `onSave` | `() => Promise<void>` | — | Enables the save button + Ctrl/Cmd+S. |
+| `isSaving` | `boolean` | `false` | External saving state. |
+| `htmlLabel` / `cssLabel` | `string` | `"HTML"` / `"CSS"` | Tab/button labels. |
+| `className` | `string` | `""` | Applied to the container. |
+| `height` | `string \| number` | `"400px"` | Number ⇒ px. |
+| `defaultTab` | `"html" \| "css"` | `"html"` | Initial code tab. |
+| `editorOptions` | `Record<string, unknown>` | `{}` | Merged into Monaco options. |
+| `theme` | `"vs-dark" \| "vs-light"` | `"vs-dark"` | Monaco theme. |
+| `error` | `string` | — | Error message shown below the editor. |
+| `children` | `ReactNode` | — | Opt into composition mode (see below). |
+| `defaultMode` | `"code" \| "wysiwyg"` | `"code"` | Initial mode (composition). |
+
+Keyboard: Ctrl/Cmd+S = save, Ctrl/Cmd+Shift+F = format, Ctrl/Cmd+Shift+M = fullscreen, Esc = close fullscreen.
+
+## Composition API (assemble the editor from parts)
+
+Pass children to `ContentEditor` to switch to composition mode. Without children
+the default layout above renders unchanged (fully backwards compatible). Each pane
+reads shared state from context and decides its own visibility, so order is free.
+
+```tsx
+import {
+  ContentEditor,
+  ContentEditorToolbar,
+  ContentEditorBody,
+  ContentEditorCode,
+  ContentEditorPreview,
+  ContentEditorWysiwyg,
+} from "react-html-content-editor";
+
+<ContentEditor value={value} onChange={setValue} height="520px">
+  <ContentEditorToolbar />
+  <ContentEditorBody>
+    <ContentEditorCode />
+    <ContentEditorPreview />
+    <ContentEditorWysiwyg />
+  </ContentEditorBody>
+</ContentEditor>
+```
+
+Parts:
+- `ContentEditorToolbar` — mode switch (Code/Visual, shown only when a `ContentEditorWysiwyg` is present), view toggles, HTML/CSS tabs, format & save. Props: `className?`, `children?` (children replace the left group; built-in right-side actions are hidden).
+- `ContentEditorBody` — responsive split/stacked layout container. Props: `className?`, `children`.
+- `ContentEditorCode` — Monaco HTML/CSS editors. Visible in `code` mode. Props: `className?`.
+- `ContentEditorPreview` — live HTML+CSS preview. Visible in `code` mode. Props: `className?`.
+- `ContentEditorWysiwyg` — rich-text surface bound to the HTML value; adding it makes the toolbar show the Code/Visual switch. The `css` value is applied to the surface via a `<style>` tag. Props: `placeholder?`, `minHeight?` (`string|number`), `className?`, `children?` (compose your own `WysiwygToolbar`/`WysiwygContent`; default toolbar used if omitted).
+- `useContentEditorContext()` — hook exposing shared state to custom toolbar children: `{ value, onChange, onHtmlChange, onCssChange, onSave, saveStatus, hasUnsavedChanges, isSaving, mode, setMode, showEdit, showPreview, toggleEdit, togglePreview, activeEditor, setActiveEditor, formatHtml, formatCss, theme, htmlLabel, cssLabel, ... }`. Throws if used outside `<ContentEditor>`.
+
+Also exported (advanced/manual wiring): `ContentEditorProvider`, `ContentEditorShell`.
+
+`ContentEditorMode = "code" | "wysiwyg"`. `ViewMode = "edit" | "preview" | "split"`. `EditorType = "html" | "css"`.
+
+## Standalone WYSIWYG editor
+
+A self-contained rich-text editor over an HTML string (no Monaco/CSS panes).
+Compound components — include only the controls you need, in any order.
+
+```tsx
+import {
+  Wysiwyg, WysiwygToolbar, WysiwygContent, WysiwygSeparator,
+  WysiwygBold, WysiwygItalic, WysiwygUnderline, WysiwygStrikethrough,
+  WysiwygHeading, WysiwygParagraph, WysiwygBlockquote,
+  WysiwygUnorderedList, WysiwygOrderedList, WysiwygAlign,
+  WysiwygLink, WysiwygUnlink, WysiwygFontSize, WysiwygClearFormatting,
+} from "react-html-content-editor";
+
+const [html, setHtml] = useState("<p>Hi</p>");
+
+<Wysiwyg value={html} onChange={setHtml}>
+  <WysiwygToolbar>
+    <WysiwygHeading level={1} />
+    <WysiwygParagraph />
+    <WysiwygSeparator />
+    <WysiwygBold />
+    <WysiwygItalic />
+    <WysiwygFontSize />
+    <WysiwygUnorderedList />
+    <WysiwygOrderedList />
+    <WysiwygAlign value="left" />
+    <WysiwygLink />
+  </WysiwygToolbar>
+  <WysiwygContent placeholder="Start writing…" minHeight="320px" />
+</Wysiwyg>
+```
+
+- `Wysiwyg` props: `value?` (controlled) OR `defaultValue?` (uncontrolled), `onChange?(html)`, `disabled?`, `className?`, `children`.
+- `WysiwygContent` props: `placeholder?`, `minHeight?` (`string|number`, default `"240px"`), `className?`, `aria-label?`.
+- Named controls take `{ className?, title? }` (`NamedControlProps`). Parametrized ones:
+  - `WysiwygHeading` — `level: 1|2|3|4|5|6` (required).
+  - `WysiwygAlign` — `value: "left"|"center"|"right"|"justify"` (required).
+  - `WysiwygLink` — `getUrl?: () => string | null` (defaults to `window.prompt`).
+  - `WysiwygFontSize` — `options?: WysiwygFontSizeOption[]`.
+- Inline/block controls: `WysiwygBold`, `WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygUnorderedList`, `WysiwygOrderedList`, `WysiwygUnlink`, `WysiwygClearFormatting`. Layout: `WysiwygToolbar`, `WysiwygSeparator`.
+
+## Building custom WYSIWYG controls
+
+All controls are built on `WysiwygControl`. Use it for your own. Works inside a
+standalone `Wysiwyg` or a `ContentEditorWysiwyg`.
+
+`WysiwygControlProps`: `command: string`, `value?: string`, `useCss?: boolean`,
+`title: string`, `isActive?: (ctx) => boolean`, `onActivate?: () => void`,
+`children`, `className?`, `disabled?`.
+
+```tsx
+import { WysiwygControl, useWysiwygContext } from "react-html-content-editor";
+import { Highlighter, CalendarPlus } from "lucide-react";
+
+// 1) Declarative — wrap any execCommand, define your own active state:
+function WysiwygHighlight() {
+  return (
+    <WysiwygControl
+      command="hiliteColor" value="#fde047" useCss title="Highlight"
+      isActive={({ queryValue }) => {
+        const c = queryValue("hiliteColor") || queryValue("backColor");
+        return !!c && c !== "transparent" && c !== "rgba(0, 0, 0, 0)";
+      }}
+    >
+      <Highlighter size={16} aria-hidden="true" />
+    </WysiwygControl>
+  );
+}
+
+// 2) Bespoke behaviour — read context, run your own action:
+function WysiwygInsertDate() {
+  const { exec } = useWysiwygContext();
+  return (
+    <WysiwygControl command="insertText" title="Insert date"
+      onActivate={() => exec("insertText", new Date().toLocaleDateString())}>
+      <CalendarPlus size={16} aria-hidden="true" />
+    </WysiwygControl>
+  );
+}
+```
+
+`useWysiwygContext()` exposes: `exec(command, value?, useCss?)`, `commit(html)`,
+`isActive(command)`, `queryValue(command)`, `value`, `disabled`, `editorRef`.
+Common `execCommand` ids: `bold`, `italic`, `underline`, `strikethrough`,
+`insertUnorderedList`, `insertOrderedList`, `formatBlock` (value `<h1>`…`<h6>`,
+`<p>`, `<blockquote>`), `justifyLeft|Center|Right|Full`, `createLink`, `unlink`,
+`fontSize`, `foreColor`, `hiliteColor`, `removeFormat`, `insertText`.
+
+GOTCHA (important): in any custom control, call `e.preventDefault()` on
+`onMouseDown` so clicking the button does not collapse the editor's text
+selection before your command runs. `WysiwygControl` already does this.
+
+## Recipes
+
+Auto-save:
+```tsx
+<ContentEditor value={value} onChange={setValue} onSave={async () => { await save(value); }} isSaving={saving} />
+```
+
+Start composition in visual mode:
+```tsx
+<ContentEditor value={value} onChange={setValue} defaultMode="wysiwyg"> … </ContentEditor>
+```
+
+Style the toolbar (buttons are real `<button>`s; active toggles expose `aria-pressed="true"`):
+```tsx
+<ContentEditorToolbar className="my-toolbar" />
+```
+```css
+.my-toolbar button[aria-pressed="true"] { background: #7c3aed; color: #fff; }
+```
+
+Replace the toolbar's left group with your own controls (built-in actions hidden):
+```tsx
+function ModeSwitch() {
+  const { mode, setMode } = useContentEditorContext();
+  return (<><button onClick={() => setMode("code")}>Code</button>
+           <button onClick={() => setMode("wysiwyg")}>Visual</button></>);
+}
+<ContentEditorToolbar><ModeSwitch /></ContentEditorToolbar>
+```
+
+## Security
+
+The preview and the WYSIWYG surface render HTML with `dangerouslySetInnerHTML`.
+Sanitize untrusted HTML before passing it in (e.g. DOMPurify):
+```tsx
+import DOMPurify from "dompurify";
+<ContentEditor value={{ html: DOMPurify.sanitize(value.html), css: value.css }} onChange={setValue} />
+```
+
+## Full export list
+
+Values: `ContentEditor`, `ContentEditorProvider`, `ContentEditorShell`,
+`ContentEditorToolbar`, `ContentEditorBody`, `ContentEditorCode`,
+`ContentEditorPreview`, `ContentEditorWysiwyg`, `useContentEditorContext`,
+`Wysiwyg`, `WysiwygToolbar`, `WysiwygSeparator`, `WysiwygControl`, `WysiwygBold`,
+`WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygHeading`,
+`WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygUnorderedList`,
+`WysiwygOrderedList`, `WysiwygAlign`, `WysiwygLink`, `WysiwygUnlink`,
+`WysiwygFontSize`, `WysiwygClearFormatting`, `WysiwygContent`,
+`useWysiwygContext`, `Button`, `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`,
+`Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`,
+`DialogDescription`, `DialogFooter`, `useScrollSync`, `useAutoSave`,
+`useKeyboardShortcuts`, `version`.
+
+Types: `ContentValue`, `ContentEditorProps`, `SaveStatus`, `ViewMode`,
+`EditorType`, `ContentEditorMode`, `ContentEditorContextValue`,
+`ContentEditor*Props` (Provider/Shell/Toolbar/Body/Code/Preview/Wysiwyg),
+`WysiwygProps`, `WysiwygControlProps`, `WysiwygHeadingProps`, `WysiwygAlignProps`,
+`WysiwygLinkProps`, `WysiwygFontSizeProps`, `WysiwygFontSizeOption`,
+`WysiwygContentProps`, `WysiwygContextValue`, `NamedControlProps`,
+`WysiwygToolbarProps`, plus `Button`/`Tabs`/`Dialog` prop types.
+
+## More
+
+- README (full prose docs): https://github.com/adrianomaringolo/react-html-content-editor/blob/main/packages/library/README.md
+- Live demo with runnable examples: https://adrianomaringolo.github.io/react-html-content-editor/
+- Keyboard shortcuts: https://github.com/adrianomaringolo/react-html-content-editor/blob/main/packages/library/KEYBOARD_SHORTCUTS.md

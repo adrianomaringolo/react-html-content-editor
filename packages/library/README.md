@@ -1,6 +1,15 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/adrianomaringolo/react-html-content-editor/main/assets/cover.png" alt="React HTML Content Editor — Monaco-powered HTML/CSS editor with an integrated WYSIWYG mode" width="100%" />
+</p>
+
 # React HTML Content Editor
 
 A sophisticated HTML and CSS content editor built with Monaco Editor (the same editor that powers VS Code). Features multiple view modes, real-time preview, scroll synchronization, and auto-save functionality.
+
+> **Using an AI coding agent?** A self-contained, LLM-optimized reference lives at
+> [`llms.txt`](https://github.com/adrianomaringolo/react-html-content-editor/blob/main/llms.txt)
+> (also served at `/llms.txt` on the docs site). It covers the full API, imports,
+> composition, custom WYSIWYG controls, and common gotchas in one file.
 
 ## Features
 

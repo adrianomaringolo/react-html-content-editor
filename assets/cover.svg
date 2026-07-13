@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-label="React HTML Content Editor — Monaco-powered HTML/CSS editor with an integrated WYSIWYG mode">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2e1065"/>
+      <stop offset="0.55" stop-color="#4c1d95"/>
+      <stop offset="1" stop-color="#5b21b6"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.82" cy="0.15" r="0.6">
+      <stop offset="0" stop-color="#a78bfa" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#6d28d9"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="400" fill="url(#bg)"/>
+  <rect width="1280" height="400" fill="url(#glow)"/>
+
+  <!-- oversized watermark mark -->
+  <g fill="none" stroke="#ffffff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" opacity="0.06">
+    <path d="M1040 90 950 200l90 110"/>
+    <path d="M1150 90 1240 200 1150 310"/>
+  </g>
+
+  <!-- logo tile (geometry centered on the tile's 80,80 midpoint) -->
+  <g transform="translate(96,120)">
+    <rect x="0" y="0" width="160" height="160" rx="36" fill="url(#tile)"/>
+    <g fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M60 50 35 80l25 30"/>
+      <path d="M100 50 125 80 100 110"/>
+    </g>
+    <rect x="76.25" y="57.5" width="7.5" height="45" rx="3.75" fill="#ffffff" opacity="0.9"/>
+  </g>
+
+  <!-- wordmark -->
+  <g font-family="Manrope, 'DejaVu Sans', sans-serif" fill="#ffffff">
+    <text x="312" y="170" font-size="66" font-weight="700" letter-spacing="-1">React HTML</text>
+    <text x="312" y="242" font-size="66" font-weight="700" letter-spacing="-1">Content Editor</text>
+    <text x="314" y="292" font-size="26" font-weight="500" fill="#ddd6fe">Monaco-powered HTML/CSS editor with an integrated WYSIWYG mode.</text>
+  </g>
+
+  <!-- feature chips -->
+  <g font-family="Manrope, 'DejaVu Sans', sans-serif" font-size="20" font-weight="600" fill="#ede9fe">
+    <g>
+      <rect x="314" y="322" width="150" height="40" rx="20" fill="#ffffff" opacity="0.12"/>
+      <text x="389" y="349" text-anchor="middle">Monaco</text>
+    </g>
+    <g>
+      <rect x="476" y="322" width="164" height="40" rx="20" fill="#ffffff" opacity="0.12"/>
+      <text x="558" y="349" text-anchor="middle">WYSIWYG</text>
+    </g>
+    <g>
+      <rect x="652" y="322" width="176" height="40" rx="20" fill="#ffffff" opacity="0.12"/>
+      <text x="740" y="349" text-anchor="middle">Composable</text>
+    </g>
+    <g>
+      <rect x="840" y="322" width="156" height="40" rx="20" fill="#ffffff" opacity="0.12"/>
+      <text x="918" y="349" text-anchor="middle">Auto-save</text>
+    </g>
+  </g>
+</svg>

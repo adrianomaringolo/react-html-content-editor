@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/cover.png" alt="React HTML Content Editor — Monaco-powered HTML/CSS editor with an integrated WYSIWYG mode" width="100%" />
+</p>
+
 # React HTML Content Editor
 
 [![npm version](https://badge.fury.io/js/react-html-content-editor.svg)](https://www.npmjs.com/package/react-html-content-editor)

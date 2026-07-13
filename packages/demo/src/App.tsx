@@ -76,10 +76,26 @@ function App() {
           <span className='brand-mark' aria-hidden='true'>
             <svg viewBox='0 0 24 24' fill='none' stroke='currentColor'>
               <path
-                d='M8 6 3 12l5 6M16 6l5 6-5 6'
+                d='M9 7.5 5.25 12 9 16.5'
                 strokeWidth='2'
                 strokeLinecap='round'
                 strokeLinejoin='round'
+              />
+              <path
+                d='M15 7.5 18.75 12 15 16.5'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              />
+              <rect
+                x='11.4'
+                y='8.6'
+                width='1.2'
+                height='6.8'
+                rx='0.6'
+                fill='currentColor'
+                stroke='none'
+                opacity='0.9'
               />
             </svg>
           </span>

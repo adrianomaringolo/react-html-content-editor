@@ -6,6 +6,7 @@
 
 body {
   font-family:
+    "Manrope",
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
@@ -20,6 +21,14 @@ body {
   background: var(--bg, #f7f7fa);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Form controls don't inherit font-family by default — make them use Manrope too. */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
 }
 
 #root {

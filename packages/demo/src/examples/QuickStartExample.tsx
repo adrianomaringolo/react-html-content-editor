@@ -277,6 +277,56 @@ function App() {
               boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
             }}
           >
+            <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>🧩</div>
+            <h3
+              style={{
+                fontSize: "1.125rem",
+                fontWeight: "600",
+                marginBottom: "0.5rem",
+              }}
+            >
+              Composition API
+            </h3>
+            <p style={{ color: "#6b7280", fontSize: "0.875rem", margin: 0 }}>
+              Assemble the editor from composable parts — toolbar, code, preview
+              and WYSIWYG panes — or use the batteries-included default
+            </p>
+          </div>
+
+          <div
+            style={{
+              background: "white",
+              border: "1px solid #e5e7eb",
+              borderRadius: "0.5rem",
+              padding: "1.5rem",
+              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>✍️</div>
+            <h3
+              style={{
+                fontSize: "1.125rem",
+                fontWeight: "600",
+                marginBottom: "0.5rem",
+              }}
+            >
+              Integrated WYSIWYG
+            </h3>
+            <p style={{ color: "#6b7280", fontSize: "0.875rem", margin: 0 }}>
+              Toggle between code (HTML/CSS + preview) and a rich-text visual
+              editor — both editing the same value
+            </p>
+          </div>
+
+          <div
+            style={{
+              background: "white",
+              border: "1px solid #e5e7eb",
+              borderRadius: "0.5rem",
+              padding: "1.5rem",
+              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+            }}
+          >
             <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>🎨</div>
             <h3
               style={{
@@ -462,7 +512,7 @@ function App() {
               Lightweight
             </h3>
             <p style={{ color: "#6b7280", fontSize: "0.875rem", margin: 0 }}>
-              Only 8.4 KB gzipped, with tree-shaking support for minimal bundle
+              ~9 KB gzipped, with tree-shaking support for a minimal bundle
               size
             </p>
           </div>
@@ -531,7 +581,7 @@ function App() {
               backdropFilter: "blur(10px)",
             }}
           >
-            <strong>🚧 WYSIWYG</strong>
+            <strong>🎨 WYSIWYG</strong>
             <p
               style={{
                 fontSize: "0.875rem",
@@ -539,7 +589,7 @@ function App() {
                 opacity: 0.9,
               }}
             >
-              Visual editor in development
+              Rich-text visual editor
             </p>
           </div>
           <div
