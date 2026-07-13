@@ -19,9 +19,28 @@ import {
   WysiwygAlign,
   WysiwygLink,
   WysiwygUnlink,
+  WysiwygImage,
+  WysiwygImageUpload,
   WysiwygClearFormatting,
   WysiwygContent,
 } from "react-html-content-editor";
+
+/**
+ * Stand-in for a real upload endpoint: pretend to POST the file to a server
+ * and resolve with the hosted URL. Here we just wait a beat and return a
+ * deterministic placeholder image so the demo actually shows something.
+ */
+function fakeUpload(file: File): Promise<string> {
+  return new Promise((resolve) => {
+    setTimeout(
+      () =>
+        resolve(
+          `https://picsum.photos/seed/${encodeURIComponent(file.name)}/640/360`,
+        ),
+      900,
+    );
+  });
+}
 
 /**
  * A custom toolbar control built on the generic `WysiwygControl`. It runs an
@@ -145,6 +164,8 @@ const SNIPPET = `<Wysiwyg value={html} onChange={setHtml}>
     <WysiwygUnorderedList />
     <WysiwygOrderedList />
     <WysiwygLink />
+    <WysiwygImage />                         {/* base64 or URL */}
+    <WysiwygImageUpload upload={uploadFile} /> {/* file → server → URL */}
   </WysiwygToolbar>
   <WysiwygContent placeholder="Start writing…" />
 </Wysiwyg>`;
@@ -247,6 +268,8 @@ export function WysiwygExample() {
           <WysiwygSeparator />
           <WysiwygLink />
           <WysiwygUnlink />
+          <WysiwygImage />
+          <WysiwygImageUpload upload={fakeUpload} />
           <WysiwygClearFormatting />
           <WysiwygSeparator />
           {/* Custom controls — see the "Custom control" panel below */}

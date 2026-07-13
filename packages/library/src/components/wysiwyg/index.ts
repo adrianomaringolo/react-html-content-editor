@@ -42,6 +42,12 @@ export type { WysiwygLinkProps } from "./WysiwygLink";
 export { WysiwygUnlink } from "./WysiwygUnlink";
 export { WysiwygClearFormatting } from "./WysiwygClearFormatting";
 
+// Images
+export { WysiwygImage } from "./WysiwygImage";
+export type { WysiwygImageProps } from "./WysiwygImage";
+export { WysiwygImageUpload } from "./WysiwygImageUpload";
+export type { WysiwygImageUploadProps } from "./WysiwygImageUpload";
+
 // Shared context (for building advanced custom controls)
 export { useWysiwygContext } from "./context";
 export type { WysiwygContextValue } from "./context";

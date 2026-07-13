@@ -312,6 +312,50 @@ Compose the WYSIWYG toolbar yourself, or omit children for a sensible default:
 </ContentEditorWysiwyg>
 ```
 
+### Image controls
+
+Two ready-made controls insert images. Both work inside a standalone `Wysiwyg`
+or a `ContentEditorWysiwyg`.
+
+**`WysiwygImage`** — no server required. By default it opens a file picker and
+embeds the chosen file as a **base64 data URI**. Pass `getSrc` to insert by
+**URL/link** instead (it may be async):
+
+```tsx
+import { WysiwygImage } from "react-html-content-editor";
+
+// base64 (default): pick a file, embed it inline
+<WysiwygImage />
+
+// link: resolve a URL yourself
+<WysiwygImage getSrc={() => window.prompt("Image URL")} />
+```
+
+Props: `getSrc?: () => string | null | Promise<string | null>`,
+`accept?` (default `"image/*"`), plus `className`/`title`.
+
+**`WysiwygImageUpload`** — pick a file, upload it via your handler, then insert
+the returned URL. The control disables itself and shows a spinner while
+uploading:
+
+```tsx
+import { WysiwygImageUpload } from "react-html-content-editor";
+
+<WysiwygImageUpload
+  upload={async (file) => {
+    const body = new FormData();
+    body.append("file", file);
+    const res = await fetch("/api/upload", { method: "POST", body });
+    const { url } = await res.json();
+    return url; // the URL to insert
+  }}
+  onError={(err) => console.error(err)}
+/>
+```
+
+Props: `upload: (file: File) => Promise<string>` (required),
+`accept?` (default `"image/*"`), `onError?`, plus `className`/`title`.
+
 ### Building custom WYSIWYG controls
 
 Every built-in control is composed from the generic `WysiwygControl` building
