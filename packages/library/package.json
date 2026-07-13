@@ -42,7 +42,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/adrianomaringolo/react-html-content-editor.git",
+    "directory": "packages/library"
+  },
+  "homepage": "https://github.com/adrianomaringolo/react-html-content-editor#readme",
+  "bugs": {
+    "url": "https://github.com/adrianomaringolo/react-html-content-editor/issues"
   },
   "peerDependencies": {
     "@monaco-editor/react": "^4.6.0",
