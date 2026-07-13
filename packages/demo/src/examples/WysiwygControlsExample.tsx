@@ -174,6 +174,9 @@ export function WysiwygControlsExample() {
           <WysiwygHeading level={1} />
           <WysiwygHeading level={2} />
           <WysiwygHeading level={3} />
+          <WysiwygHeading level={4} />
+          <WysiwygHeading level={5} />
+          <WysiwygHeading level={6} />
           <WysiwygParagraph />
           <WysiwygBlockquote />
           <WysiwygSeparator />
