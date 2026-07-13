@@ -357,9 +357,11 @@ Props: `upload: (file: File) => Promise<string>` (required),
 `accept?` (default `"image/*"`), `onError?`, plus `className`/`title`.
 
 **`WysiwygImageResizer`** — click an image in the editor to reveal a small
-floating bar with size presets. Selecting one sets the image's `width` (height
-stays `auto` to preserve aspect ratio); the reset button restores the natural
-size. It renders no toolbar button — place it anywhere inside the editor:
+floating bar with size presets and a **pixel-width input**. Selecting a preset
+or entering a width sets the image's `width` (height stays `auto` to preserve
+aspect ratio); the reset button restores the natural size. The bar is rendered
+in a portal and anchored to the image. It renders no toolbar button — place it
+anywhere inside the editor:
 
 ```tsx
 import { WysiwygImageResizer } from "react-html-content-editor";
@@ -381,7 +383,8 @@ import { WysiwygImageResizer } from "react-html-content-editor";
 ```
 
 Props: `options?: WysiwygImageSizeOption[]` (default S 25% / M 50% / L 100%),
-`showReset?` (default `true`), `resetTitle?`, `className?`.
+`showReset?` (default `true`), `showPixelInput?` (default `true`), `resetTitle?`,
+`className?`.
 
 ### Building custom WYSIWYG controls
 

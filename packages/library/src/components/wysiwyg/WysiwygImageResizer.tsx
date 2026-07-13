@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { RotateCcw } from "lucide-react";
+import { createPortal } from "react-dom";
+import { RotateCcw, Check } from "lucide-react";
 import { useWysiwygContext } from "./context";
 import styles from "./wysiwyg.module.css";
 
@@ -21,6 +22,8 @@ export interface WysiwygImageResizerProps {
   options?: WysiwygImageSizeOption[];
   /** Show the "reset to original size" button (default: `true`). */
   showReset?: boolean;
+  /** Show the pixel-width input (default: `true`). */
+  showPixelInput?: boolean;
   /** Tooltip for the reset button. */
   resetTitle?: string;
   className?: string;
@@ -33,10 +36,14 @@ const DEFAULT_OPTIONS: WysiwygImageSizeOption[] = [
 ];
 
 /**
- * Click an image inside the editor to reveal a floating bar with size presets.
- * Selecting a preset sets the image's `width` (height stays `auto` to preserve
- * the aspect ratio); the reset button clears the sizing to restore the natural
- * size. Changes are persisted into the editor value.
+ * Click an image inside the editor to reveal a floating bar with size presets
+ * and a pixel-width input. Presets set the image `width` (height stays `auto`
+ * to preserve the aspect ratio); the reset button clears the sizing to restore
+ * the natural size. Changes are persisted into the editor value.
+ *
+ * The bar is rendered in a portal on `document.body` and positioned in page
+ * coordinates, so it stays anchored to the image regardless of ancestor
+ * `transform`/`overflow`.
  *
  * Place it anywhere inside `<Wysiwyg>` (or `<ContentEditorWysiwyg>`):
  * ```tsx
@@ -50,18 +57,31 @@ const DEFAULT_OPTIONS: WysiwygImageSizeOption[] = [
 export const WysiwygImageResizer: React.FC<WysiwygImageResizerProps> = ({
   options = DEFAULT_OPTIONS,
   showReset = true,
+  showPixelInput = true,
   resetTitle = "Original size",
   className = "",
 }) => {
   const { editorRef, commit, disabled } = useWysiwygContext();
   const [active, setActive] = useState<HTMLImageElement | null>(null);
   const [rect, setRect] = useState<{ top: number; left: number } | null>(null);
+  const [pixels, setPixels] = useState("");
   const barRef = useRef<HTMLDivElement>(null);
 
+  // Position in *page* coordinates (viewport rect + scroll offset) so an
+  // absolutely-positioned, body-portaled bar tracks the image correctly.
   const reposition = useCallback((img: HTMLImageElement) => {
     const r = img.getBoundingClientRect();
-    setRect({ top: r.top, left: r.left });
+    setRect({ top: r.top + window.scrollY, left: r.left + window.scrollX });
   }, []);
+
+  const select = useCallback(
+    (img: HTMLImageElement) => {
+      setActive(img);
+      reposition(img);
+      setPixels(String(Math.round(img.getBoundingClientRect().width)));
+    },
+    [reposition],
+  );
 
   const clear = useCallback(() => {
     setActive(null);
@@ -72,19 +92,15 @@ export const WysiwygImageResizer: React.FC<WysiwygImageResizerProps> = ({
   useEffect(() => {
     const el = editorRef.current;
     if (!el || disabled) return;
-
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
       if (target && target.tagName === "IMG" && el.contains(target)) {
-        const img = target as HTMLImageElement;
-        setActive(img);
-        reposition(img);
+        select(target as HTMLImageElement);
       }
     };
-
     el.addEventListener("click", handleClick);
     return () => el.removeEventListener("click", handleClick);
-  }, [editorRef, disabled, reposition]);
+  }, [editorRef, disabled, select]);
 
   // While an image is selected: keep the bar positioned, and deselect on
   // outside clicks, Escape, or typing.
@@ -105,7 +121,7 @@ export const WysiwygImageResizer: React.FC<WysiwygImageResizerProps> = ({
       if (!target) return;
       if (barRef.current?.contains(target)) return; // clicking the bar
       if (target.tagName === "IMG" && editorRef.current?.contains(target))
-        return; // switching to another image (click handler will re-select)
+        return; // switching to another image (click handler re-selects)
       clear();
     };
 
@@ -113,18 +129,19 @@ export const WysiwygImageResizer: React.FC<WysiwygImageResizerProps> = ({
       if (e.key === "Escape") clear();
     };
 
+    const editorEl = editorRef.current;
     window.addEventListener("scroll", keepPositioned, true);
     window.addEventListener("resize", keepPositioned);
     document.addEventListener("mousedown", handlePointerDown);
     document.addEventListener("keydown", handleKey);
-    editorRef.current?.addEventListener("input", clear);
+    editorEl?.addEventListener("input", clear);
 
     return () => {
       window.removeEventListener("scroll", keepPositioned, true);
       window.removeEventListener("resize", keepPositioned);
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("keydown", handleKey);
-      editorRef.current?.removeEventListener("input", clear);
+      editorEl?.removeEventListener("input", clear);
     };
   }, [active, editorRef, reposition, clear]);
 
@@ -144,21 +161,27 @@ export const WysiwygImageResizer: React.FC<WysiwygImageResizerProps> = ({
     }
 
     commit(el.innerHTML);
-    // The image may have resized — re-anchor the bar after layout settles.
-    requestAnimationFrame(() => reposition(img));
+    // The image may have resized — re-anchor the bar and refresh the input.
+    requestAnimationFrame(() => {
+      reposition(img);
+      setPixels(String(Math.round(img.getBoundingClientRect().width)));
+    });
+  };
+
+  const applyPixels = () => {
+    const n = parseInt(pixels, 10);
+    if (Number.isFinite(n) && n > 0) applyWidth(`${n}px`);
   };
 
   if (!active || !rect || disabled) return null;
 
-  return (
+  const bar = (
     <div
       ref={barRef}
       className={`${styles.imageResizer} ${className}`.trim()}
       style={{ top: rect.top, left: rect.left }}
       role='toolbar'
       aria-label='Image size'
-      // Keep the image selection intact when interacting with the bar.
-      onMouseDown={(e) => e.preventDefault()}
     >
       {options.map((opt) => (
         <button
@@ -167,6 +190,7 @@ export const WysiwygImageResizer: React.FC<WysiwygImageResizerProps> = ({
           className={styles.imageResizerButton}
           title={opt.title ?? opt.label}
           aria-label={opt.title ?? `Set image width ${opt.width}`}
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => applyWidth(opt.width)}
         >
           {opt.label}
@@ -178,11 +202,47 @@ export const WysiwygImageResizer: React.FC<WysiwygImageResizerProps> = ({
           className={styles.imageResizerButton}
           title={resetTitle}
           aria-label={resetTitle}
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => applyWidth(null)}
         >
           <RotateCcw size={14} aria-hidden='true' />
         </button>
       )}
+      {showPixelInput && (
+        <>
+          <span className={styles.imageResizerDivider} aria-hidden='true' />
+          <input
+            type='number'
+            min={1}
+            className={styles.imageResizerInput}
+            value={pixels}
+            aria-label='Width in pixels'
+            title='Width in pixels'
+            onChange={(e) => setPixels(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                applyPixels();
+              }
+            }}
+          />
+          <span className={styles.imageResizerUnit} aria-hidden='true'>
+            px
+          </span>
+          <button
+            type='button'
+            className={styles.imageResizerButton}
+            title='Apply width'
+            aria-label='Apply pixel width'
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={applyPixels}
+          >
+            <Check size={14} aria-hidden='true' />
+          </button>
+        </>
+      )}
     </div>
   );
+
+  return createPortal(bar, document.body);
 };

@@ -47,6 +47,34 @@ describe("WysiwygImageResizer", () => {
     expect(lastHtml).toContain("width: 50%");
   });
 
+  it("applies a pixel width from the input (Enter and Apply button)", () => {
+    const { img } = setup();
+    fireEvent.click(img);
+
+    const input = screen.getByRole("spinbutton", { name: /width in pixels/i });
+    fireEvent.change(input, { target: { value: "300" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(img.style.width).toBe("300px");
+    expect(img.style.height).toBe("auto");
+
+    fireEvent.change(input, { target: { value: "180" } });
+    fireEvent.click(screen.getByRole("button", { name: /apply pixel width/i }));
+    expect(img.style.width).toBe("180px");
+  });
+
+  it("hides the pixel input when showPixelInput is false", () => {
+    render(
+      <Wysiwyg defaultValue='<p><img src="z.png" /></p>'>
+        <WysiwygContent />
+        <WysiwygImageResizer showPixelInput={false} />
+      </Wysiwyg>,
+    );
+    fireEvent.click(document.querySelector("img") as HTMLImageElement);
+    expect(
+      screen.queryByRole("spinbutton", { name: /width in pixels/i }),
+    ).not.toBeInTheDocument();
+  });
+
   it("reset restores the natural size (clears the sizing)", () => {
     const { img } = setup();
     fireEvent.click(img);

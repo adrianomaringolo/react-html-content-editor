@@ -11,7 +11,8 @@ Add WYSIWYG image controls:
   and insert the returned URL. Disables itself and shows a spinner while
   uploading; supports `onError`.
 - `WysiwygImageResizer` — click an image in the editor to reveal a floating bar
-  of size presets (S/M/L + reset) that set the image width; place it inside the
-  editor.
+  of size presets (S/M/L + reset) and a pixel-width input that set the image
+  width; place it inside the editor. The bar is rendered in a portal and
+  anchored to the image so it stays put regardless of ancestor transforms.
 
 All work inside a standalone `Wysiwyg` or a `ContentEditorWysiwyg`.
