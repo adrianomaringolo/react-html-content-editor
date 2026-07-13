@@ -231,12 +231,6 @@ export function WysiwygControlsExample() {
             ))}
           </div>
         </section>
-        <section className='wysiwyg-panel'>
-          <header className='wysiwyg-panel__header'>Generated HTML</header>
-          <pre className='wysiwyg-code'>
-            <code>{html}</code>
-          </pre>
-        </section>
       </div>
     </div>
   );
