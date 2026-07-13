@@ -25,6 +25,7 @@ import {
   WysiwygSuperscript,
   WysiwygInlineCode,
   WysiwygFontSize,
+  WysiwygFontSizeInput,
   WysiwygFontFamily,
   WysiwygTextColor,
   WysiwygHighlight,
@@ -64,6 +65,7 @@ import {
   Superscript,
   Code,
   ALargeSmall,
+  Ruler,
   Type,
   Baseline,
   Highlighter,
@@ -144,7 +146,8 @@ const CONTROL_REFERENCE: { group: string; items: ControlInfo[] }[] = [
       { icon: Subscript, name: "WysiwygSubscript", fn: "Toggle subscript" },
       { icon: Superscript, name: "WysiwygSuperscript", fn: "Toggle superscript" },
       { icon: Code, name: "WysiwygInlineCode", fn: "Wrap the selection in inline <code>" },
-      { icon: ALargeSmall, name: "WysiwygFontSize", fn: "Dropdown to set the font size" },
+      { icon: ALargeSmall, name: "WysiwygFontSize", fn: "Dropdown of preset font sizes" },
+      { icon: Ruler, name: "WysiwygFontSizeInput", fn: "Type an exact font size in px" },
       { icon: Type, name: "WysiwygFontFamily", fn: "Dropdown to set the font family" },
       { icon: Baseline, name: "WysiwygTextColor", fn: "Swatch picker for text color" },
       { icon: Highlighter, name: "WysiwygHighlight", fn: "Swatch picker for highlight color" },
@@ -229,6 +232,7 @@ export function WysiwygControlsExample() {
           <WysiwygInlineCode />
           <WysiwygSeparator />
           <WysiwygFontSize />
+          <WysiwygFontSizeInput />
           <WysiwygFontFamily />
           <WysiwygTextColor />
           <WysiwygHighlight />

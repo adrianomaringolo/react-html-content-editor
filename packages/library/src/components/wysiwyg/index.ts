@@ -28,6 +28,8 @@ export type {
   WysiwygFontSizeProps,
   WysiwygFontSizeOption,
 } from "./WysiwygFontSize";
+export { WysiwygFontSizeInput } from "./WysiwygFontSizeInput";
+export type { WysiwygFontSizeInputProps } from "./WysiwygFontSizeInput";
 export { WysiwygFontFamily } from "./WysiwygFontFamily";
 export type {
   WysiwygFontFamilyProps,

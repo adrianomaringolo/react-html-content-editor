@@ -11,4 +11,5 @@ Add a batch of WYSIWYG controls and a reusable dropdown primitive:
   `WysiwygOutdent`, and `WysiwygHeadingMenu` (H1–H6 + paragraph in one dropdown).
 - **Color / font:** `WysiwygTextColor`, `WysiwygHighlight` (swatch pickers),
   `WysiwygFontFamily` (dropdown).
+- **`WysiwygFontSizeInput`** — numeric input to type an exact font size in px.
 - **`WysiwygWordCount`** — read-only word/character counter.

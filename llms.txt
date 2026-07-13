@@ -152,7 +152,8 @@ const [html, setHtml] = useState("<p>Hi</p>");
   - `WysiwygAlignMenu` — single alignment control: the trigger shows the alignment applied to the selection and opens a picker (left/center/justify/right, composed from `WysiwygAlign`). Props: `className?`, `title?`.
   - `WysiwygLink` — `getUrl?: () => string | null` (defaults to `window.prompt`).
   - `WysiwygHeadingMenu` — H1–H6 + paragraph grouped in one dropdown; trigger shows the current level. Props: `levels?`, `className?`, `title?`.
-  - `WysiwygFontSize` — `options?: WysiwygFontSizeOption[]`.
+  - `WysiwygFontSize` — dropdown of preset sizes; `options?: WysiwygFontSizeOption[]`.
+  - `WysiwygFontSizeInput` — numeric input to type an exact size in px (applies `font-size: Npx` to the selection); `min?`, `max?`.
   - `WysiwygFontFamily` — dropdown; `options?: WysiwygFontFamilyOption[]` ({label,value}).
   - `WysiwygTextColor` — swatch picker (`foreColor`); `colors?: string[]`.
   - `WysiwygHighlight` — swatch picker (`hiliteColor`); `colors?: string[]` (include `"transparent"` to clear).
@@ -266,7 +267,7 @@ Values: `ContentEditor`, `ContentEditorProvider`, `ContentEditorShell`,
 `WysiwygOrderedList`, `WysiwygAlign`, `WysiwygAlignMenu`, `WysiwygUndo`,
 `WysiwygRedo`, `WysiwygLink`, `WysiwygUnlink`,
 `WysiwygImage`, `WysiwygImageUpload`, `WysiwygImageResizer`, `WysiwygFontSize`,
-`WysiwygFontFamily`, `WysiwygTextColor`, `WysiwygHighlight`, `WysiwygDropdown`,
+`WysiwygFontSizeInput`, `WysiwygFontFamily`, `WysiwygTextColor`, `WysiwygHighlight`, `WysiwygDropdown`,
 `WysiwygClearFormatting`, `WysiwygWordCount`, `WysiwygContent`,
 `useWysiwygContext`, `Button`, `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`,
 `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`,
@@ -282,7 +283,7 @@ Types: `ContentValue`, `ContentEditorProps`, `SaveStatus`, `ViewMode`,
 `WysiwygTextColorProps`, `WysiwygHighlightProps`, `WysiwygWordCountProps`,
 `WysiwygLinkProps`, `WysiwygImageProps`, `WysiwygImageUploadProps`,
 `WysiwygImageResizerProps`, `WysiwygImageSizeOption`,
-`WysiwygFontSizeProps`, `WysiwygFontSizeOption`,
+`WysiwygFontSizeProps`, `WysiwygFontSizeOption`, `WysiwygFontSizeInputProps`,
 `WysiwygContentProps`, `WysiwygContextValue`, `NamedControlProps`,
 `WysiwygToolbarProps`, plus `Button`/`Tabs`/`Dialog` prop types.
 
