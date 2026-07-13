@@ -356,6 +356,33 @@ import { WysiwygImageUpload } from "react-html-content-editor";
 Props: `upload: (file: File) => Promise<string>` (required),
 `accept?` (default `"image/*"`), `onError?`, plus `className`/`title`.
 
+**`WysiwygImageResizer`** — click an image in the editor to reveal a small
+floating bar with size presets. Selecting one sets the image's `width` (height
+stays `auto` to preserve aspect ratio); the reset button restores the natural
+size. It renders no toolbar button — place it anywhere inside the editor:
+
+```tsx
+import { WysiwygImageResizer } from "react-html-content-editor";
+
+<Wysiwyg value={html} onChange={setHtml}>
+  <WysiwygToolbar>{/* … */}</WysiwygToolbar>
+  <WysiwygContent />
+  <WysiwygImageResizer />
+</Wysiwyg>;
+
+// custom presets:
+<WysiwygImageResizer
+  options={[
+    { label: "S", width: "25%", title: "Small" },
+    { label: "M", width: "50%", title: "Medium" },
+    { label: "Full", width: "100%" },
+  ]}
+/>;
+```
+
+Props: `options?: WysiwygImageSizeOption[]` (default S 25% / M 50% / L 100%),
+`showReset?` (default `true`), `resetTitle?`, `className?`.
+
 ### Building custom WYSIWYG controls
 
 Every built-in control is composed from the generic `WysiwygControl` building

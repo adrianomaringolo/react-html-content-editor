@@ -153,6 +153,7 @@ const [html, setHtml] = useState("<p>Hi</p>");
   - `WysiwygFontSize` — `options?: WysiwygFontSizeOption[]`.
   - `WysiwygImage` — insert an image. Default: file picker → embed as base64 data URI (no server). Pass `getSrc?: () => string | null | Promise<string | null>` to insert by URL/link instead. `accept?` defaults to `"image/*"`.
   - `WysiwygImageUpload` — file picker → `upload(file)` → insert the returned URL. `upload: (file: File) => Promise<string>` (required); `accept?` (`"image/*"`), `onError?`. Disables itself + shows a spinner while uploading.
+  - `WysiwygImageResizer` — not a toolbar button; place it inside `<Wysiwyg>`/`<ContentEditorWysiwyg>`. Clicking an image shows a floating bar of size presets that set the image `width` (height auto). Props: `options?: WysiwygImageSizeOption[]` (default S 25% / M 50% / L 100%), `showReset?` (default true), `resetTitle?`, `className?`.
 - Inline/block controls: `WysiwygBold`, `WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygUnorderedList`, `WysiwygOrderedList`, `WysiwygUnlink`, `WysiwygClearFormatting`. Layout: `WysiwygToolbar`, `WysiwygSeparator`.
 
 ## Building custom WYSIWYG controls
@@ -254,7 +255,7 @@ Values: `ContentEditor`, `ContentEditorProvider`, `ContentEditorShell`,
 `WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygHeading`,
 `WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygUnorderedList`,
 `WysiwygOrderedList`, `WysiwygAlign`, `WysiwygLink`, `WysiwygUnlink`,
-`WysiwygImage`, `WysiwygImageUpload`, `WysiwygFontSize`,
+`WysiwygImage`, `WysiwygImageUpload`, `WysiwygImageResizer`, `WysiwygFontSize`,
 `WysiwygClearFormatting`, `WysiwygContent`,
 `useWysiwygContext`, `Button`, `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`,
 `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`,
@@ -266,6 +267,7 @@ Types: `ContentValue`, `ContentEditorProps`, `SaveStatus`, `ViewMode`,
 `ContentEditor*Props` (Provider/Shell/Toolbar/Body/Code/Preview/Wysiwyg),
 `WysiwygProps`, `WysiwygControlProps`, `WysiwygHeadingProps`, `WysiwygAlignProps`,
 `WysiwygLinkProps`, `WysiwygImageProps`, `WysiwygImageUploadProps`,
+`WysiwygImageResizerProps`, `WysiwygImageSizeOption`,
 `WysiwygFontSizeProps`, `WysiwygFontSizeOption`,
 `WysiwygContentProps`, `WysiwygContextValue`, `NamedControlProps`,
 `WysiwygToolbarProps`, plus `Button`/`Tabs`/`Dialog` prop types.

@@ -279,3 +279,51 @@
     animation-duration: 2s;
   }
 }
+
+/* ================================================================
+   Floating image resizer (WysiwygImageResizer)
+   ================================================================ */
+.imageResizer {
+  position: fixed;
+  z-index: 50;
+  transform: translateY(calc(-100% - 6px));
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.1875rem;
+  background-color: var(--bg-primary, #ffffff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 0.375rem);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.imageResizerButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.625rem;
+  height: 1.625rem;
+  padding: 0 0.375rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm, 0.25rem);
+  background-color: transparent;
+  color: var(--text-secondary, #6b7280);
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: inherit;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.imageResizerButton:hover {
+  background-color: var(--bg-secondary, #f3f4f6);
+  color: var(--text-primary, #111827);
+}
+
+.imageResizerButton:focus-visible {
+  outline: 2px solid var(--color-primary, #3b82f6);
+  outline-offset: 1px;
+}

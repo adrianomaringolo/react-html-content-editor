@@ -21,6 +21,7 @@ import {
   WysiwygUnlink,
   WysiwygImage,
   WysiwygImageUpload,
+  WysiwygImageResizer,
   WysiwygClearFormatting,
   WysiwygContent,
 } from "react-html-content-editor";
@@ -149,7 +150,9 @@ const INITIAL_HTML = `<h2>Compose your own editor</h2>
   <li>Toggle inline styles like bold and italic</li>
   <li>Apply block formats and font sizes</li>
   <li>Build custom controls with <code>WysiwygControl</code></li>
-</ul>`;
+</ul>
+<p><img src="https://picsum.photos/seed/editor/640/360" alt="Sample image — click it to resize" style="width: 50%; height: auto;" /></p>
+<p><em>Tip: click the image above to resize it (S / M / L / reset).</em></p>`;
 
 const SNIPPET = `<Wysiwyg value={html} onChange={setHtml}>
   <WysiwygToolbar>
@@ -278,6 +281,8 @@ export function WysiwygExample() {
           <WysiwygTextColor />
         </WysiwygToolbar>
         <WysiwygContent placeholder='Start writing…' minHeight='320px' />
+        {/* Click an inserted image to reveal size presets (S / M / L / reset) */}
+        <WysiwygImageResizer />
       </Wysiwyg>
 
       <div className='wysiwyg-panels'>

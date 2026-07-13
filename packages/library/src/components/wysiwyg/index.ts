@@ -47,6 +47,11 @@ export { WysiwygImage } from "./WysiwygImage";
 export type { WysiwygImageProps } from "./WysiwygImage";
 export { WysiwygImageUpload } from "./WysiwygImageUpload";
 export type { WysiwygImageUploadProps } from "./WysiwygImageUpload";
+export { WysiwygImageResizer } from "./WysiwygImageResizer";
+export type {
+  WysiwygImageResizerProps,
+  WysiwygImageSizeOption,
+} from "./WysiwygImageResizer";
 
 // Shared context (for building advanced custom controls)
 export { useWysiwygContext } from "./context";
