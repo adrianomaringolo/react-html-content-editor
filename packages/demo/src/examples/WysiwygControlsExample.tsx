@@ -33,6 +33,29 @@ import {
   // utilities
   WysiwygClearFormatting,
 } from "react-html-content-editor";
+import {
+  Undo2,
+  Redo2,
+  Heading1,
+  Pilcrow,
+  Quote,
+  Bold,
+  Italic,
+  Underline,
+  Strikethrough,
+  ALargeSmall,
+  List,
+  ListOrdered,
+  TextAlignStart,
+  TextAlignJustify,
+  Link,
+  Unlink,
+  Image as ImageIcon,
+  ImageUp,
+  Scaling,
+  RemoveFormatting,
+  type LucideIcon,
+} from "lucide-react";
 
 /**
  * WYSIWYG — every control the library ships, in one toolbar.
@@ -64,32 +87,69 @@ function fakeUpload(file: File): Promise<string> {
   });
 }
 
-const CONTROL_REFERENCE: { group: string; items: string[] }[] = [
-  { group: "Layout", items: ["WysiwygToolbar", "WysiwygSeparator", "WysiwygContent"] },
-  { group: "History", items: ["WysiwygUndo", "WysiwygRedo"] },
+type ControlInfo = { icon: LucideIcon; name: string; fn: string };
+
+const CONTROL_REFERENCE: { group: string; items: ControlInfo[] }[] = [
+  {
+    group: "History",
+    items: [
+      { icon: Undo2, name: "WysiwygUndo", fn: "Undo the last edit" },
+      { icon: Redo2, name: "WysiwygRedo", fn: "Redo the last undone edit" },
+    ],
+  },
   {
     group: "Block",
-    items: ["WysiwygHeading", "WysiwygParagraph", "WysiwygBlockquote"],
+    items: [
+      { icon: Heading1, name: "WysiwygHeading", fn: "Turn the block into a heading (level 1–6)" },
+      { icon: Pilcrow, name: "WysiwygParagraph", fn: "Reset the block to a paragraph" },
+      { icon: Quote, name: "WysiwygBlockquote", fn: "Format the block as a quote" },
+    ],
   },
   {
     group: "Inline",
     items: [
-      "WysiwygBold",
-      "WysiwygItalic",
-      "WysiwygUnderline",
-      "WysiwygStrikethrough",
-      "WysiwygFontSize",
+      { icon: Bold, name: "WysiwygBold", fn: "Toggle bold on the selection" },
+      { icon: Italic, name: "WysiwygItalic", fn: "Toggle italic on the selection" },
+      { icon: Underline, name: "WysiwygUnderline", fn: "Toggle underline on the selection" },
+      { icon: Strikethrough, name: "WysiwygStrikethrough", fn: "Toggle strikethrough on the selection" },
+      { icon: ALargeSmall, name: "WysiwygFontSize", fn: "Dropdown to set the font size" },
     ],
   },
-  { group: "Lists", items: ["WysiwygUnorderedList", "WysiwygOrderedList"] },
-  { group: "Alignment", items: ["WysiwygAlign", "WysiwygAlignMenu"] },
-  { group: "Links", items: ["WysiwygLink", "WysiwygUnlink"] },
+  {
+    group: "Lists",
+    items: [
+      { icon: List, name: "WysiwygUnorderedList", fn: "Toggle a bulleted list" },
+      { icon: ListOrdered, name: "WysiwygOrderedList", fn: "Toggle a numbered list" },
+    ],
+  },
+  {
+    group: "Alignment",
+    items: [
+      { icon: TextAlignStart, name: "WysiwygAlign", fn: "Align a block (left / center / right / justify) — one button per value" },
+      { icon: TextAlignJustify, name: "WysiwygAlignMenu", fn: "One button showing the current alignment; opens a picker" },
+    ],
+  },
+  {
+    group: "Links",
+    items: [
+      { icon: Link, name: "WysiwygLink", fn: "Wrap the selection in a link" },
+      { icon: Unlink, name: "WysiwygUnlink", fn: "Remove the link from the selection" },
+    ],
+  },
   {
     group: "Images",
-    items: ["WysiwygImage", "WysiwygImageUpload", "WysiwygImageResizer"],
+    items: [
+      { icon: ImageIcon, name: "WysiwygImage", fn: "Insert an image as base64 or by URL" },
+      { icon: ImageUp, name: "WysiwygImageUpload", fn: "Upload a file and insert the returned URL" },
+      { icon: Scaling, name: "WysiwygImageResizer", fn: "Click an image to resize it with presets" },
+    ],
   },
-  { group: "Utilities", items: ["WysiwygClearFormatting"] },
-  { group: "Building block", items: ["WysiwygControl", "useWysiwygContext"] },
+  {
+    group: "Utilities",
+    items: [
+      { icon: RemoveFormatting, name: "WysiwygClearFormatting", fn: "Strip inline formatting from the selection" },
+    ],
+  },
 ];
 
 export function WysiwygControlsExample() {
@@ -155,9 +215,15 @@ export function WysiwygControlsExample() {
               <div className='controls-reference__group' key={cat.group}>
                 <h4>{cat.group}</h4>
                 <ul>
-                  {cat.items.map((name) => (
-                    <li key={name}>
-                      <code>{name}</code>
+                  {cat.items.map(({ icon: Icon, name, fn }) => (
+                    <li className='control-ref' key={name}>
+                      <span className='control-ref__icon' aria-hidden='true'>
+                        <Icon size={16} />
+                      </span>
+                      <span className='control-ref__text'>
+                        <code className='control-ref__name'>{name}</code>
+                        <span className='control-ref__fn'>{fn}</span>
+                      </span>
                     </li>
                   ))}
                 </ul>

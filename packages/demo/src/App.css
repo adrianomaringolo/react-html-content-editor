@@ -701,17 +701,17 @@
    ============================================================ */
 .controls-reference {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem 1.5rem;
   padding: 1rem;
 }
 .controls-reference__group h4 {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 650;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-faint);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
 }
 .controls-reference__group ul {
   list-style: none;
@@ -719,9 +719,38 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.4rem;
 }
-.controls-reference__group code {
+.control-ref {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+.control-ref__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--ink);
+}
+.control-ref__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+}
+.control-ref__name {
   font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.control-ref__fn {
+  font-size: 0.75rem;
+  line-height: 1.35;
   color: var(--ink-muted);
 }
