@@ -22,12 +22,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
+
+      # OIDC Trusted Publishing needs npm CLI >= 11.5.1; the version bundled
+      # with Node is older, so upgrade it before `changeset publish` runs.
+      - name: Upgrade npm for OIDC
+        run: npm install -g npm@latest
 
       - name: Get pnpm store directory
         shell: bash
