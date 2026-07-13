@@ -8,6 +8,7 @@ import AutoSaveExample from "./examples/AutoSaveExample";
 import ThemeExample from "./examples/ThemeExample";
 import ErrorHandlingExample from "./examples/ErrorHandlingExample";
 import { WysiwygExample } from "./examples/WysiwygExample";
+import { WysiwygControlsExample } from "./examples/WysiwygControlsExample";
 import { CompositionExample } from "./examples/CompositionExample";
 import "./App.css";
 
@@ -15,6 +16,7 @@ type ExampleTab =
   | "quickstart"
   | "basic"
   | "wysiwyg"
+  | "wysiwyg-controls"
   | "composition"
   | "fullscreen"
   | "autosave"
@@ -43,6 +45,7 @@ const NAV: NavGroup[] = [
     items: [
       { id: "basic", label: "Basic Usage", icon: "📝" },
       { id: "wysiwyg", label: "WYSIWYG", icon: "🎨", tag: "NEW" },
+      { id: "wysiwyg-controls", label: "All Controls", icon: "🧰", tag: "NEW" },
       { id: "composition", label: "Composition", icon: "🧩", tag: "NEW" },
       { id: "fullscreen", label: "Fullscreen Mode", icon: "🖥️" },
       { id: "autosave", label: "Auto-Save", icon: "⚡" },
@@ -56,6 +59,7 @@ const PANELS: Record<ExampleTab, ReactElement> = {
   quickstart: <QuickStartExample />,
   basic: <BasicExample />,
   wysiwyg: <WysiwygExample />,
+  "wysiwyg-controls": <WysiwygControlsExample />,
   composition: <CompositionExample />,
   fullscreen: <FullscreenExample />,
   autosave: <AutoSaveExample />,
