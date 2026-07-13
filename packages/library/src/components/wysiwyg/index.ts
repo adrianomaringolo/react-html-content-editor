@@ -37,8 +37,13 @@ export type {
 } from "./WysiwygFontFamily";
 export { WysiwygTextColor } from "./WysiwygTextColor";
 export type { WysiwygTextColorProps } from "./WysiwygTextColor";
+export { WysiwygClearColor } from "./WysiwygClearColor";
 export { WysiwygHighlight } from "./WysiwygHighlight";
 export type { WysiwygHighlightProps } from "./WysiwygHighlight";
+export { WysiwygEmoji } from "./WysiwygEmoji";
+export type { WysiwygEmojiProps } from "./WysiwygEmoji";
+export { WysiwygSpecialChar } from "./WysiwygSpecialChar";
+export type { WysiwygSpecialCharProps } from "./WysiwygSpecialChar";
 
 // Block formatting
 export { WysiwygHeading } from "./WysiwygHeading";
@@ -68,7 +73,10 @@ export { WysiwygRedo } from "./WysiwygRedo";
 export { WysiwygLink } from "./WysiwygLink";
 export type { WysiwygLinkProps } from "./WysiwygLink";
 export { WysiwygUnlink } from "./WysiwygUnlink";
+export { WysiwygLinkEditor } from "./WysiwygLinkEditor";
+export type { WysiwygLinkEditorProps } from "./WysiwygLinkEditor";
 export { WysiwygClearFormatting } from "./WysiwygClearFormatting";
+export { WysiwygFullscreen } from "./WysiwygFullscreen";
 export { WysiwygWordCount } from "./WysiwygWordCount";
 export type { WysiwygWordCountProps } from "./WysiwygWordCount";
 

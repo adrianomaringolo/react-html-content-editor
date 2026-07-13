@@ -7,6 +7,8 @@ import type React from "react";
  * editable surface.
  */
 export interface WysiwygContextValue {
+  /** Ref to the editor's root element (used e.g. for fullscreen). */
+  rootRef: React.RefObject<HTMLDivElement | null>;
   /** Ref to the contentEditable surface. */
   editorRef: React.RefObject<HTMLDivElement | null>;
   /** Tracks the last HTML we emitted, to avoid caret-resetting re-renders. */

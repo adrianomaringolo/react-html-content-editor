@@ -28,7 +28,10 @@ import {
   WysiwygFontSizeInput,
   WysiwygFontFamily,
   WysiwygTextColor,
+  WysiwygClearColor,
   WysiwygHighlight,
+  WysiwygEmoji,
+  WysiwygSpecialChar,
   // lists
   WysiwygUnorderedList,
   WysiwygOrderedList,
@@ -38,12 +41,14 @@ import {
   // links
   WysiwygLink,
   WysiwygUnlink,
+  WysiwygLinkEditor,
   // images
   WysiwygImage,
   WysiwygImageUpload,
   WysiwygImageResizer,
   // utilities
   WysiwygClearFormatting,
+  WysiwygFullscreen,
   WysiwygWordCount,
 } from "react-html-content-editor";
 import {
@@ -68,7 +73,12 @@ import {
   Ruler,
   Type,
   Baseline,
+  DropletOff,
   Highlighter,
+  Smile,
+  Omega,
+  Maximize,
+  SquarePen,
   List,
   ListOrdered,
   TextAlignStart,
@@ -92,6 +102,7 @@ const INITIAL_HTML = `<h1>Every control, one toolbar</h1>
 try them all. Select some text and explore <em>inline styles</em>,
 <u>block formats</u>, lists, alignment, links and images.</p>
 <blockquote>Pick only the controls a given surface needs — they are all independent.</blockquote>
+<p>Try the <a href="https://github.com/adrianomaringolo/react-html-content-editor">project link</a> — click it to open, edit or remove it.</p>
 <ol>
   <li>Undo / redo history</li>
   <li>Headings, paragraph, blockquote, font size</li>
@@ -150,7 +161,10 @@ const CONTROL_REFERENCE: { group: string; items: ControlInfo[] }[] = [
       { icon: Ruler, name: "WysiwygFontSizeInput", fn: "Type an exact font size in px" },
       { icon: Type, name: "WysiwygFontFamily", fn: "Dropdown to set the font family" },
       { icon: Baseline, name: "WysiwygTextColor", fn: "Swatch picker for text color" },
+      { icon: DropletOff, name: "WysiwygClearColor", fn: "Reset the text color to default" },
       { icon: Highlighter, name: "WysiwygHighlight", fn: "Swatch picker for highlight color" },
+      { icon: Smile, name: "WysiwygEmoji", fn: "Insert an emoji from a picker" },
+      { icon: Omega, name: "WysiwygSpecialChar", fn: "Insert a special character" },
     ],
   },
   {
@@ -172,6 +186,7 @@ const CONTROL_REFERENCE: { group: string; items: ControlInfo[] }[] = [
     items: [
       { icon: Link, name: "WysiwygLink", fn: "Wrap the selection in a link" },
       { icon: Unlink, name: "WysiwygUnlink", fn: "Remove the link from the selection" },
+      { icon: SquarePen, name: "WysiwygLinkEditor", fn: "Click a link to open / edit / remove it" },
     ],
   },
   {
@@ -186,6 +201,7 @@ const CONTROL_REFERENCE: { group: string; items: ControlInfo[] }[] = [
     group: "Utilities",
     items: [
       { icon: RemoveFormatting, name: "WysiwygClearFormatting", fn: "Strip inline formatting from the selection" },
+      { icon: Maximize, name: "WysiwygFullscreen", fn: "Toggle fullscreen editing" },
       { icon: Hash, name: "WysiwygWordCount", fn: "Read-only word / character counter" },
     ],
   },
@@ -235,7 +251,10 @@ export function WysiwygControlsExample() {
           <WysiwygFontSizeInput />
           <WysiwygFontFamily />
           <WysiwygTextColor />
+          <WysiwygClearColor />
           <WysiwygHighlight />
+          <WysiwygEmoji />
+          <WysiwygSpecialChar />
           <WysiwygSeparator />
           <WysiwygUnorderedList />
           <WysiwygOrderedList />
@@ -258,11 +277,14 @@ export function WysiwygControlsExample() {
           <WysiwygImageUpload upload={fakeUpload} />
           <WysiwygSeparator />
           <WysiwygClearFormatting />
+          <WysiwygFullscreen />
           <WysiwygWordCount />
         </WysiwygToolbar>
         <WysiwygContent placeholder='Start writing…' minHeight='340px' />
         {/* Click any image to resize it (S / M / L / reset) */}
         <WysiwygImageResizer />
+        {/* Click a link to open / edit / remove it */}
+        <WysiwygLinkEditor />
       </Wysiwyg>
 
       <div className='wysiwyg-panels'>

@@ -55,6 +55,7 @@ export const Wysiwyg: React.FC<WysiwygProps> = ({
   children,
   className = "",
 }) => {
+  const rootRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
   // Starts empty so the initial value is always written into the DOM on mount;
   // thereafter it tracks the emitted HTML to avoid caret-resetting rewrites.
@@ -139,6 +140,7 @@ export const Wysiwyg: React.FC<WysiwygProps> = ({
   return (
     <WysiwygContext.Provider
       value={{
+        rootRef,
         editorRef,
         lastHtmlRef,
         value,
@@ -151,6 +153,7 @@ export const Wysiwyg: React.FC<WysiwygProps> = ({
       }}
     >
       <div
+        ref={rootRef}
         className={`${styles.wysiwyg} ${className}`.trim()}
         data-disabled={disabled || undefined}
       >

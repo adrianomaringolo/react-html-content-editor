@@ -156,7 +156,12 @@ const [html, setHtml] = useState("<p>Hi</p>");
   - `WysiwygFontSizeInput` — numeric input to type an exact size in px (applies `font-size: Npx` to the selection); `min?`, `max?`.
   - `WysiwygFontFamily` — dropdown; `options?: WysiwygFontFamilyOption[]` ({label,value}).
   - `WysiwygTextColor` — swatch picker (`foreColor`); `colors?: string[]`.
+  - `WysiwygClearColor` — reset text color to inherited default.
   - `WysiwygHighlight` — swatch picker (`hiliteColor`); `colors?: string[]` (include `"transparent"` to clear).
+  - `WysiwygEmoji` — emoji picker (inserts via `insertText`); `emojis?: string[]`.
+  - `WysiwygSpecialChar` — special-character picker; `characters?: string[]`.
+  - `WysiwygFullscreen` — toggle fullscreen for the editor (Fullscreen API on the root).
+  - `WysiwygLinkEditor` — not a toolbar button; place inside the editor. When the caret is in a link, a portaled bar appears to open / edit (change URL) / remove it. Props: `getUrl?: (current) => string | null`, `className?`.
   - `WysiwygDropdown` — reusable popover primitive the grouped controls are built on. Props: `title`, `trigger`, `triggerAriaLabel?`, `triggerData?`, `active?`, `closeOnSelect?`, `children`.
   - `WysiwygWordCount` — read-only counter (not a button); `render?: ({words,characters}) => ReactNode`.
   - `WysiwygImage` — insert an image. Default: file picker → embed as base64 data URI (no server). Pass `getSrc?: () => string | null | Promise<string | null>` to insert by URL/link instead. `accept?` defaults to `"image/*"`.
@@ -267,7 +272,9 @@ Values: `ContentEditor`, `ContentEditorProvider`, `ContentEditorShell`,
 `WysiwygOrderedList`, `WysiwygAlign`, `WysiwygAlignMenu`, `WysiwygUndo`,
 `WysiwygRedo`, `WysiwygLink`, `WysiwygUnlink`,
 `WysiwygImage`, `WysiwygImageUpload`, `WysiwygImageResizer`, `WysiwygFontSize`,
-`WysiwygFontSizeInput`, `WysiwygFontFamily`, `WysiwygTextColor`, `WysiwygHighlight`, `WysiwygDropdown`,
+`WysiwygFontSizeInput`, `WysiwygFontFamily`, `WysiwygTextColor`, `WysiwygClearColor`,
+`WysiwygHighlight`, `WysiwygEmoji`, `WysiwygSpecialChar`, `WysiwygLinkEditor`,
+`WysiwygFullscreen`, `WysiwygDropdown`,
 `WysiwygClearFormatting`, `WysiwygWordCount`, `WysiwygContent`,
 `useWysiwygContext`, `Button`, `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`,
 `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`,
@@ -280,7 +287,8 @@ Types: `ContentValue`, `ContentEditorProps`, `SaveStatus`, `ViewMode`,
 `WysiwygProps`, `WysiwygControlProps`, `WysiwygDropdownProps`, `WysiwygHeadingProps`,
 `WysiwygHeadingMenuProps`, `WysiwygAlignProps`,
 `WysiwygAlignMenuProps`, `WysiwygFontFamilyProps`, `WysiwygFontFamilyOption`,
-`WysiwygTextColorProps`, `WysiwygHighlightProps`, `WysiwygWordCountProps`,
+`WysiwygTextColorProps`, `WysiwygHighlightProps`, `WysiwygEmojiProps`,
+`WysiwygSpecialCharProps`, `WysiwygLinkEditorProps`, `WysiwygWordCountProps`,
 `WysiwygLinkProps`, `WysiwygImageProps`, `WysiwygImageUploadProps`,
 `WysiwygImageResizerProps`, `WysiwygImageSizeOption`,
 `WysiwygFontSizeProps`, `WysiwygFontSizeOption`, `WysiwygFontSizeInputProps`,
