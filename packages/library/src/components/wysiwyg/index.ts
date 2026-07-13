@@ -35,6 +35,12 @@ export { WysiwygUnorderedList } from "./WysiwygUnorderedList";
 export { WysiwygOrderedList } from "./WysiwygOrderedList";
 export { WysiwygAlign } from "./WysiwygAlign";
 export type { WysiwygAlignProps } from "./WysiwygAlign";
+export { WysiwygAlignMenu } from "./WysiwygAlignMenu";
+export type { WysiwygAlignMenuProps } from "./WysiwygAlignMenu";
+
+// History
+export { WysiwygUndo } from "./WysiwygUndo";
+export { WysiwygRedo } from "./WysiwygRedo";
 
 // Links & utilities
 export { WysiwygLink } from "./WysiwygLink";

@@ -149,12 +149,13 @@ const [html, setHtml] = useState("<p>Hi</p>");
 - Named controls take `{ className?, title? }` (`NamedControlProps`). Parametrized ones:
   - `WysiwygHeading` — `level: 1|2|3|4|5|6` (required).
   - `WysiwygAlign` — `value: "left"|"center"|"right"|"justify"` (required).
+  - `WysiwygAlignMenu` — single alignment control: the trigger shows the alignment applied to the selection and opens a picker (left/center/justify/right, composed from `WysiwygAlign`). Props: `className?`, `title?`.
   - `WysiwygLink` — `getUrl?: () => string | null` (defaults to `window.prompt`).
   - `WysiwygFontSize` — `options?: WysiwygFontSizeOption[]`.
   - `WysiwygImage` — insert an image. Default: file picker → embed as base64 data URI (no server). Pass `getSrc?: () => string | null | Promise<string | null>` to insert by URL/link instead. `accept?` defaults to `"image/*"`.
   - `WysiwygImageUpload` — file picker → `upload(file)` → insert the returned URL. `upload: (file: File) => Promise<string>` (required); `accept?` (`"image/*"`), `onError?`. Disables itself + shows a spinner while uploading.
   - `WysiwygImageResizer` — not a toolbar button; place it inside `<Wysiwyg>`/`<ContentEditorWysiwyg>`. Clicking an image shows a floating bar of size presets that set the image `width` (height auto). Props: `options?: WysiwygImageSizeOption[]` (default S 25% / M 50% / L 100%), `showReset?` (default true), `resetTitle?`, `className?`.
-- Inline/block controls: `WysiwygBold`, `WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygUnorderedList`, `WysiwygOrderedList`, `WysiwygUnlink`, `WysiwygClearFormatting`. Layout: `WysiwygToolbar`, `WysiwygSeparator`.
+- Inline/block controls: `WysiwygBold`, `WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygUnorderedList`, `WysiwygOrderedList`, `WysiwygUnlink`, `WysiwygClearFormatting`. History: `WysiwygUndo`, `WysiwygRedo`. Layout: `WysiwygToolbar`, `WysiwygSeparator`.
 
 ## Building custom WYSIWYG controls
 
@@ -254,7 +255,8 @@ Values: `ContentEditor`, `ContentEditorProvider`, `ContentEditorShell`,
 `Wysiwyg`, `WysiwygToolbar`, `WysiwygSeparator`, `WysiwygControl`, `WysiwygBold`,
 `WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygHeading`,
 `WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygUnorderedList`,
-`WysiwygOrderedList`, `WysiwygAlign`, `WysiwygLink`, `WysiwygUnlink`,
+`WysiwygOrderedList`, `WysiwygAlign`, `WysiwygAlignMenu`, `WysiwygUndo`,
+`WysiwygRedo`, `WysiwygLink`, `WysiwygUnlink`,
 `WysiwygImage`, `WysiwygImageUpload`, `WysiwygImageResizer`, `WysiwygFontSize`,
 `WysiwygClearFormatting`, `WysiwygContent`,
 `useWysiwygContext`, `Button`, `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`,
@@ -266,7 +268,7 @@ Types: `ContentValue`, `ContentEditorProps`, `SaveStatus`, `ViewMode`,
 `EditorType`, `ContentEditorMode`, `ContentEditorContextValue`,
 `ContentEditor*Props` (Provider/Shell/Toolbar/Body/Code/Preview/Wysiwyg),
 `WysiwygProps`, `WysiwygControlProps`, `WysiwygHeadingProps`, `WysiwygAlignProps`,
-`WysiwygLinkProps`, `WysiwygImageProps`, `WysiwygImageUploadProps`,
+`WysiwygAlignMenuProps`, `WysiwygLinkProps`, `WysiwygImageProps`, `WysiwygImageUploadProps`,
 `WysiwygImageResizerProps`, `WysiwygImageSizeOption`,
 `WysiwygFontSizeProps`, `WysiwygFontSizeOption`,
 `WysiwygContentProps`, `WysiwygContextValue`, `NamedControlProps`,

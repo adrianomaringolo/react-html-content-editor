@@ -16,7 +16,9 @@ import {
   WysiwygFontSize,
   WysiwygUnorderedList,
   WysiwygOrderedList,
-  WysiwygAlign,
+  WysiwygAlignMenu,
+  WysiwygUndo,
+  WysiwygRedo,
   WysiwygLink,
   WysiwygUnlink,
   WysiwygImage,
@@ -251,6 +253,9 @@ export function WysiwygExample() {
 
       <Wysiwyg value={html} onChange={setHtml}>
         <WysiwygToolbar>
+          <WysiwygUndo />
+          <WysiwygRedo />
+          <WysiwygSeparator />
           <WysiwygHeading level={1} />
           <WysiwygHeading level={2} />
           <WysiwygParagraph />
@@ -265,9 +270,7 @@ export function WysiwygExample() {
           <WysiwygOrderedList />
           <WysiwygBlockquote />
           <WysiwygSeparator />
-          <WysiwygAlign value='left' />
-          <WysiwygAlign value='center' />
-          <WysiwygAlign value='right' />
+          <WysiwygAlignMenu />
           <WysiwygSeparator />
           <WysiwygLink />
           <WysiwygUnlink />
