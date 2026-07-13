@@ -18,6 +18,9 @@ export default defineConfig({
       name: "ReactHTMLContentEditor",
       formats: ["es", "cjs"],
       fileName: (format) => `index.${format === "es" ? "mjs" : "cjs"}`,
+      // Keep the published CSS asset name stable (Vite 8 otherwise names it
+      // after the package): consumers import "…/dist/style.css".
+      cssFileName: "style",
     },
     rollupOptions: {
       external: [

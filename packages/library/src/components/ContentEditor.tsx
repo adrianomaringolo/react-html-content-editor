@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import type { editor } from "monaco-editor";
 import { OnMount } from "@monaco-editor/react";
-import { AlertCircle } from "lucide-react";
+import { CircleAlert } from "lucide-react";
 import { Button } from "./Button";
 import {
   Dialog,
@@ -17,6 +17,8 @@ import { PreviewPane } from "./PreviewPane";
 import { FullscreenOverlay } from "./FullscreenOverlay";
 import { useAutoSave } from "../hooks/useAutoSave";
 import type { ContentEditorProps, EditorType, ContentValue } from "../types";
+import { ContentEditorProvider } from "./content-editor/ContentEditorProvider";
+import { ContentEditorShell } from "./content-editor/ContentEditorShell";
 import styles from "./content-editor.module.css";
 
 /**
@@ -48,7 +50,58 @@ import styles from "./content-editor.module.css";
  * @param {ContentEditorProps} props - Component props
  * @returns {JSX.Element} The rendered ContentEditor component
  */
-export function ContentEditor({
+export function ContentEditor(props: ContentEditorProps) {
+  // Composition mode: render the provided children inside a shared context.
+  if (props.children) {
+    const {
+      value,
+      onChange,
+      onSave,
+      isSaving,
+      htmlLabel,
+      cssLabel,
+      defaultTab,
+      editorOptions,
+      theme,
+      defaultMode,
+      className,
+      height,
+      error,
+      children,
+    } = props;
+
+    return (
+      <ContentEditorProvider
+        value={value}
+        onChange={onChange}
+        onSave={onSave}
+        isSaving={isSaving}
+        htmlLabel={htmlLabel}
+        cssLabel={cssLabel}
+        defaultTab={defaultTab}
+        editorOptions={editorOptions}
+        theme={theme}
+        defaultMode={defaultMode}
+      >
+        <ContentEditorShell
+          className={className}
+          height={height}
+          error={error}
+        >
+          {children}
+        </ContentEditorShell>
+      </ContentEditorProvider>
+    );
+  }
+
+  return <DefaultContentEditor {...props} />;
+}
+
+/**
+ * The default, batteries-included ContentEditor layout (toolbar, Monaco
+ * editors, preview, fullscreen). Rendered when no children are provided.
+ */
+function DefaultContentEditor({
   value,
   onChange,
   onSave,
@@ -333,8 +386,8 @@ export function ContentEditor({
         }
       }
 
-      // Escape: Close fullscreen
-      if (e.key === "Escape" && isFullscreen) {
+      // Escape: Close fullscreen (only if no dialog is open)
+      if (e.key === "Escape" && isFullscreen && !showCloseDialog) {
         e.preventDefault();
         handleCloseFullscreen();
       }
@@ -354,6 +407,7 @@ export function ContentEditor({
     isFullscreen,
     handleOpenFullscreen,
     handleCloseFullscreen,
+    showCloseDialog,
   ]);
 
   // Default Monaco options
@@ -509,7 +563,7 @@ export function ContentEditor({
         </div>
         {error && (
           <div className={styles.errorMessage} role='alert'>
-            <AlertCircle
+            <CircleAlert
               size={16}
               className={styles.errorIcon}
               aria-hidden='true'

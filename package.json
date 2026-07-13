@@ -25,7 +25,8 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@changesets/cli": "^2.27.1"
+    "@changesets/cli": "^2.27.1",
+    "@typescript/typescript6": "^6.0.2"
   },
   "engines": {
     "node": ">=18.0.0",

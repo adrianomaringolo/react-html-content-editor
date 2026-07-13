@@ -40,15 +40,11 @@ describe("Property 1: Content Change Propagation", () => {
           // Component should render without errors
           expect(container).toBeInTheDocument();
 
-          // Should have tabs - now includes Edit/Preview tabs plus HTML/CSS tabs
-          const tabs = screen.getAllByRole("tab");
-          expect(tabs.length).toBeGreaterThanOrEqual(2);
-
-          // Should have Edit and Preview tabs
-          const editTab = tabs.find((tab) => tab.textContent === "Edit");
-          const previewTab = tabs.find((tab) => tab.textContent === "Preview");
-          expect(editTab).toBeTruthy();
-          expect(previewTab).toBeTruthy();
+          // Should have mode toggle buttons
+          const editButton = screen.getByLabelText(/toggle edit mode/i);
+          const previewButton = screen.getByLabelText(/toggle preview mode/i);
+          expect(editButton).toBeInTheDocument();
+          expect(previewButton).toBeInTheDocument();
 
           unmount();
         },
@@ -147,16 +143,17 @@ describe("Property 2: Tab Switching Preserves Content", () => {
             <ContentEditor value={value} onChange={onChange} />,
           );
 
-          // Get the tabs
-          const tabs = screen.getAllByRole("tab");
-          expect(tabs.length).toBeGreaterThanOrEqual(2);
+          // Edit mode is active by default (toggle-edit button pressed)
+          const editButton = screen.getByLabelText(/toggle edit mode/i);
+          expect(editButton).toHaveAttribute("aria-pressed", "true");
 
-          // Should have Edit tab (initially active by default)
-          const editTab = tabs.find((tab) => tab.textContent === "Edit");
-          expect(editTab).toBeTruthy();
-          expect(editTab).toHaveAttribute("aria-selected", "true");
+          // Both HTML and CSS editor selectors should be present
+          const htmlButton = screen.getByLabelText("HTML editor");
+          const cssButton = screen.getByLabelText("CSS editor");
+          expect(htmlButton).toBeInTheDocument();
+          expect(cssButton).toBeInTheDocument();
 
-          // Tab switching doesn't trigger onChange
+          // Rendering the selectors doesn't trigger onChange
           expect(onChange).not.toHaveBeenCalled();
 
           unmount();
@@ -185,33 +182,21 @@ describe("Property 2: Tab Switching Preserves Content", () => {
             />,
           );
 
-          // Get the tabs
-          const tabs = screen.getAllByRole("tab");
-          expect(tabs.length).toBeGreaterThanOrEqual(2);
+          // Edit mode is active by default (toggle-edit button pressed)
+          const editButton = screen.getByLabelText(/toggle edit mode/i);
+          expect(editButton).toHaveAttribute("aria-pressed", "true");
 
-          // Should have Edit tab active by default
-          const editTab = tabs.find((tab) => tab.textContent === "Edit");
-          expect(editTab).toBeTruthy();
-          expect(editTab).toHaveAttribute("aria-selected", "true");
-
-          // The defaultTab prop affects which editor tab is active within Edit mode
-          // We can verify the HTML or CSS tab is present
-          const htmlTab = tabs.find((tab) => tab.textContent === "HTML");
-          const cssTab = tabs.find((tab) => tab.textContent === "CSS");
+          // The defaultTab prop affects which editor selector is active
+          const htmlButton = screen.getByLabelText("HTML editor");
+          const cssButton = screen.getByLabelText("CSS editor");
 
           if (defaultTab === "html") {
-            expect(htmlTab).toBeTruthy();
-            if (htmlTab) {
-              expect(htmlTab).toHaveAttribute("aria-selected", "true");
-            }
+            expect(htmlButton).toHaveAttribute("aria-pressed", "true");
           } else {
-            expect(cssTab).toBeTruthy();
-            if (cssTab) {
-              expect(cssTab).toHaveAttribute("aria-selected", "true");
-            }
+            expect(cssButton).toHaveAttribute("aria-pressed", "true");
           }
 
-          // Tab initialization doesn't trigger onChange
+          // Editor initialization doesn't trigger onChange
           expect(onChange).not.toHaveBeenCalled();
 
           unmount();
@@ -279,15 +264,12 @@ describe("Property 5: CSS Injection in Preview", () => {
             <ContentEditor value={value} onChange={onChange} />,
           );
 
-          // Get all tabs (should now have Edit and Preview tabs)
-          const tabs = screen.getAllByRole("tab");
+          // Toggle preview mode on (splits into editor + preview pane)
+          const previewButton = screen.getByLabelText(/toggle preview mode/i);
 
-          // Find the Preview tab (should be the second tab in the main tabs)
-          const previewTab = tabs.find((tab) => tab.textContent === "Preview");
-
-          if (previewTab) {
-            // Click the Preview tab
-            await user.click(previewTab);
+          if (previewButton) {
+            // Click the preview toggle
+            await user.click(previewButton);
 
             // Component shows placeholder when there's NO content (neither HTML nor CSS)
             const hasContent = value.html.trim() || value.css.trim();
@@ -332,13 +314,12 @@ describe("Property 5: CSS Injection in Preview", () => {
             <ContentEditor value={initialValue} onChange={onChange} />,
           );
 
-          // Get all tabs
-          const tabs = screen.getAllByRole("tab");
-          const previewTab = tabs.find((tab) => tab.textContent === "Preview");
+          // Toggle preview mode on (splits into editor + preview pane)
+          const previewButton = screen.getByLabelText(/toggle preview mode/i);
 
-          if (previewTab) {
-            // Click the Preview tab
-            await user.click(previewTab);
+          if (previewButton) {
+            // Click the preview toggle
+            await user.click(previewButton);
 
             // Update the CSS value
             const updatedValue = { ...initialValue, css: newCss };
@@ -459,13 +440,12 @@ describe("Property 6: Preview Renders HTML with Styles", () => {
             <ContentEditor value={value} onChange={onChange} />,
           );
 
-          // Get all tabs
-          const tabs = screen.getAllByRole("tab");
-          const previewTab = tabs.find((tab) => tab.textContent === "Preview");
+          // Toggle preview mode on (splits into editor + preview pane)
+          const previewButton = screen.getByLabelText(/toggle preview mode/i);
 
-          if (previewTab) {
-            // Click the Preview tab
-            await user.click(previewTab);
+          if (previewButton) {
+            // Click the preview toggle
+            await user.click(previewButton);
 
             // Component shows placeholder when there's NO content (neither HTML nor CSS)
             const hasContent = value.html.trim() || value.css.trim();
@@ -521,13 +501,12 @@ describe("Property 6: Preview Renders HTML with Styles", () => {
             <ContentEditor value={value} onChange={onChange} />,
           );
 
-          // Get all tabs
-          const tabs = screen.getAllByRole("tab");
-          const previewTab = tabs.find((tab) => tab.textContent === "Preview");
+          // Toggle preview mode on (splits into editor + preview pane)
+          const previewButton = screen.getByLabelText(/toggle preview mode/i);
 
-          if (previewTab) {
-            // Click the Preview tab
-            await user.click(previewTab);
+          if (previewButton) {
+            // Click the preview toggle
+            await user.click(previewButton);
 
             if (value.html.trim() && value.css.trim()) {
               // Wait for both HTML and CSS to be rendered
@@ -647,27 +626,15 @@ describe("Property 3: Format Preserves Validity", () => {
             <ContentEditor value={value} onChange={onChange} />,
           );
 
-          // Get all tabs
-          const tabs = screen.getAllByRole("tab");
+          // Select the HTML editor (active by default in edit mode)
+          const htmlButton = screen.getByLabelText("HTML editor");
+          await user.click(htmlButton);
 
-          // Find and click the Edit tab (should be active by default)
-          const editTab = tabs.find((tab) => tab.textContent === "Edit");
-          if (editTab) {
-            await user.click(editTab);
-
-            // Find and click the HTML tab
-            const htmlTab = tabs.find((tab) => tab.textContent === "HTML");
-            if (htmlTab) {
-              await user.click(htmlTab);
-
-              // Check for format button
-              await waitFor(() => {
-                const formatButton =
-                  screen.queryByLabelText(/Format HTML/i);
-                expect(formatButton).toBeInTheDocument();
-              });
-            }
-          }
+          // Check for format button
+          await waitFor(() => {
+            const formatButton = screen.queryByLabelText(/Format HTML/i);
+            expect(formatButton).toBeInTheDocument();
+          });
 
           unmount();
         },
@@ -692,26 +659,15 @@ describe("Property 3: Format Preserves Validity", () => {
             <ContentEditor value={value} onChange={onChange} />,
           );
 
-          // Get all tabs
-          const tabs = screen.getAllByRole("tab");
+          // Select the CSS editor
+          const cssButton = screen.getByLabelText("CSS editor");
+          await user.click(cssButton);
 
-          // Find and click the Edit tab
-          const editTab = tabs.find((tab) => tab.textContent === "Edit");
-          if (editTab) {
-            await user.click(editTab);
-
-            // Find and click the CSS tab
-            const cssTab = tabs.find((tab) => tab.textContent === "CSS");
-            if (cssTab) {
-              await user.click(cssTab);
-
-              // Check for format button
-              await waitFor(() => {
-                const formatButton = screen.queryByLabelText(/Format CSS/i);
-                expect(formatButton).toBeInTheDocument();
-              });
-            }
-          }
+          // Check for format button
+          await waitFor(() => {
+            const formatButton = screen.queryByLabelText(/Format CSS/i);
+            expect(formatButton).toBeInTheDocument();
+          });
 
           unmount();
         },
@@ -736,24 +692,18 @@ describe("Property 3: Format Preserves Validity", () => {
             <ContentEditor value={value} onChange={onChange} />,
           );
 
-          // Get all tabs
-          const tabs = screen.getAllByRole("tab");
+          // Turn off edit mode so only the preview is shown.
+          // From the initial edit-only state, toggling edit off switches to preview-only.
+          const editToggle = screen.getByLabelText(/toggle edit mode/i);
+          await user.click(editToggle);
 
-          // Find and click the Preview tab
-          const previewTab = tabs.find((tab) => tab.textContent === "Preview");
-          if (previewTab) {
-            await user.click(previewTab);
-
-            // Format buttons should not be present
-            await waitFor(() => {
-              const htmlFormatButton =
-                screen.queryByLabelText(/Format HTML/i);
-              const cssFormatButton =
-                screen.queryByLabelText(/Format CSS/i);
-              expect(htmlFormatButton).not.toBeInTheDocument();
-              expect(cssFormatButton).not.toBeInTheDocument();
-            });
-          }
+          // Format buttons are only rendered in edit mode, so they must be absent
+          await waitFor(() => {
+            const htmlFormatButton = screen.queryByLabelText(/Format HTML/i);
+            const cssFormatButton = screen.queryByLabelText(/Format CSS/i);
+            expect(htmlFormatButton).not.toBeInTheDocument();
+            expect(cssFormatButton).not.toBeInTheDocument();
+          });
 
           unmount();
         },
@@ -1770,7 +1720,7 @@ describe("Styling and Theming", () => {
     );
 
     // Component should render without errors
-    expect(screen.getByRole("tab", { name: "Edit" })).toBeInTheDocument();
+    expect(screen.getByLabelText(/toggle edit mode/i)).toBeInTheDocument();
 
     // Test with vs-dark theme
     rerender(
@@ -1778,7 +1728,7 @@ describe("Styling and Theming", () => {
     );
 
     // Component should still render without errors
-    expect(screen.getByRole("tab", { name: "Edit" })).toBeInTheDocument();
+    expect(screen.getByLabelText(/toggle edit mode/i)).toBeInTheDocument();
   });
 
   it("should use default theme when not specified", () => {
@@ -1788,7 +1738,7 @@ describe("Styling and Theming", () => {
     render(<ContentEditor value={value} onChange={onChange} />);
 
     // Component should render without errors with default theme
-    expect(screen.getByRole("tab", { name: "Edit" })).toBeInTheDocument();
+    expect(screen.getByLabelText(/toggle edit mode/i)).toBeInTheDocument();
   });
 });
 
@@ -1906,10 +1856,14 @@ describe("Property 7: Customization Props Applied", () => {
             />,
           );
 
-          // Get all tabs
-          const tabs = screen.getAllByRole("tab");
+          // The custom labels are applied to the fullscreen editor tabs
+          const fullscreenButton = screen.getByLabelText(/open fullscreen/i);
+          await user.click(fullscreenButton);
 
-          // Find the HTML and CSS tabs
+          // In fullscreen edit mode the HTML/CSS editors are real tabs
+          const tabs = await screen.findAllByRole("tab");
+
+          // Find the HTML and CSS tabs by their custom labels
           const htmlTab = tabs.find((tab) => tab.textContent === htmlLabel);
           const cssTab = tabs.find((tab) => tab.textContent === cssLabel);
 
@@ -1975,18 +1929,14 @@ describe("Property 7: Customization Props Applied", () => {
             />,
           );
 
-          // Get all tabs
-          const tabs = screen.getAllByRole("tab");
+          // The editor selector matching defaultTab should be active (pressed)
+          const htmlButton = screen.getByLabelText("HTML editor");
+          const cssButton = screen.getByLabelText("CSS editor");
 
-          // Find the HTML and CSS tabs
-          const htmlTab = tabs.find((tab) => tab.textContent === "HTML");
-          const cssTab = tabs.find((tab) => tab.textContent === "CSS");
-
-          // The tab matching defaultTab should be selected
-          if (defaultTab === "html" && htmlTab) {
-            expect(htmlTab).toHaveAttribute("aria-selected", "true");
-          } else if (defaultTab === "css" && cssTab) {
-            expect(cssTab).toHaveAttribute("aria-selected", "true");
+          if (defaultTab === "html") {
+            expect(htmlButton).toHaveAttribute("aria-pressed", "true");
+          } else {
+            expect(cssButton).toHaveAttribute("aria-pressed", "true");
           }
 
           unmount();
@@ -2011,9 +1961,9 @@ describe("Property 7: Customization Props Applied", () => {
             <ContentEditor value={value} onChange={onChange} theme={theme} />,
           );
 
-          // Component should render without errors
-          const tabs = screen.getAllByRole("tab");
-          expect(tabs.length).toBeGreaterThanOrEqual(2);
+          // Component should render without errors (editor selectors present)
+          expect(screen.getByLabelText("HTML editor")).toBeInTheDocument();
+          expect(screen.getByLabelText("CSS editor")).toBeInTheDocument();
 
           unmount();
         },
@@ -2041,9 +1991,9 @@ describe("Property 7: Customization Props Applied", () => {
             />,
           );
 
-          // Component should render without errors
-          const tabs = screen.getAllByRole("tab");
-          expect(tabs.length).toBeGreaterThanOrEqual(2);
+          // Component should render without errors (editor selectors present)
+          expect(screen.getByLabelText("HTML editor")).toBeInTheDocument();
+          expect(screen.getByLabelText("CSS editor")).toBeInTheDocument();
 
           unmount();
         },
@@ -2052,9 +2002,11 @@ describe("Property 7: Customization Props Applied", () => {
     );
   });
 
-  it("should apply all customization props together without errors", () => {
-    fc.assert(
-      fc.property(
+  it("should apply all customization props together without errors", async () => {
+    const user = userEvent.setup();
+
+    await fc.assert(
+      fc.asyncProperty(
         fc.record({
           html: fc.string({ maxLength: 100 }),
           css: fc.string({ maxLength: 100 }),
@@ -2066,7 +2018,7 @@ describe("Property 7: Customization Props Applied", () => {
         defaultTabArbitrary,
         themeArbitrary,
         editorOptionsArbitrary,
-        (
+        async (
           value: ContentValue,
           className: string,
           htmlLabel: string,
@@ -2108,11 +2060,14 @@ describe("Property 7: Customization Props Applied", () => {
             typeof height === "number" ? `${height}px` : height;
           expect(editorContainer).toHaveStyle({ height: expectedHeight });
 
-          // Verify tabs are present
-          const tabs = screen.getAllByRole("tab");
-          expect(tabs.length).toBeGreaterThanOrEqual(2);
+          // Verify editor selectors are present
+          expect(screen.getByLabelText("HTML editor")).toBeInTheDocument();
+          expect(screen.getByLabelText("CSS editor")).toBeInTheDocument();
 
-          // Verify custom labels are used
+          // Verify custom labels are used on the fullscreen editor tabs
+          const fullscreenButton = screen.getByLabelText(/open fullscreen/i);
+          await user.click(fullscreenButton);
+          const tabs = await screen.findAllByRole("tab");
           const htmlTab = tabs.find((tab) => tab.textContent === htmlLabel);
           const cssTab = tabs.find((tab) => tab.textContent === cssLabel);
           expect(htmlTab).toBeTruthy();
@@ -2190,8 +2145,8 @@ describe("Error Handling", () => {
 
     // Component should render without crashing
     expect(container).toBeInTheDocument();
-    const tabs = screen.getAllByRole("tab");
-    expect(tabs.length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByLabelText("HTML editor")).toBeInTheDocument();
+    expect(screen.getByLabelText("CSS editor")).toBeInTheDocument();
   });
 
   it("should handle undefined html value by treating it as empty string", () => {
@@ -2204,8 +2159,8 @@ describe("Error Handling", () => {
 
     // Component should render without crashing
     expect(container).toBeInTheDocument();
-    const tabs = screen.getAllByRole("tab");
-    expect(tabs.length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByLabelText("HTML editor")).toBeInTheDocument();
+    expect(screen.getByLabelText("CSS editor")).toBeInTheDocument();
   });
 
   it("should handle null css value by treating it as empty string", () => {
@@ -2218,8 +2173,8 @@ describe("Error Handling", () => {
 
     // Component should render without crashing
     expect(container).toBeInTheDocument();
-    const tabs = screen.getAllByRole("tab");
-    expect(tabs.length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByLabelText("HTML editor")).toBeInTheDocument();
+    expect(screen.getByLabelText("CSS editor")).toBeInTheDocument();
   });
 
   it("should handle undefined css value by treating it as empty string", () => {
@@ -2232,8 +2187,8 @@ describe("Error Handling", () => {
 
     // Component should render without crashing
     expect(container).toBeInTheDocument();
-    const tabs = screen.getAllByRole("tab");
-    expect(tabs.length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByLabelText("HTML editor")).toBeInTheDocument();
+    expect(screen.getByLabelText("CSS editor")).toBeInTheDocument();
   });
 
   it("should handle null value object by treating both as empty strings", () => {
@@ -2246,8 +2201,8 @@ describe("Error Handling", () => {
 
     // Component should render without crashing
     expect(container).toBeInTheDocument();
-    const tabs = screen.getAllByRole("tab");
-    expect(tabs.length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByLabelText("HTML editor")).toBeInTheDocument();
+    expect(screen.getByLabelText("CSS editor")).toBeInTheDocument();
   });
 
   it("should handle undefined value object by treating both as empty strings", () => {
@@ -2260,8 +2215,8 @@ describe("Error Handling", () => {
 
     // Component should render without crashing
     expect(container).toBeInTheDocument();
-    const tabs = screen.getAllByRole("tab");
-    expect(tabs.length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByLabelText("HTML editor")).toBeInTheDocument();
+    expect(screen.getByLabelText("CSS editor")).toBeInTheDocument();
   });
 });
 
@@ -2304,17 +2259,14 @@ describe("Accessibility", () => {
       // Check HTML format button
       expect(screen.getByLabelText(/Format HTML/i)).toBeInTheDocument();
 
-      // Switch to CSS tab
-      const tabs = screen.getAllByRole("tab");
-      const cssTab = tabs.find((tab) => tab.textContent === "CSS");
-      if (cssTab) {
-        await user.click(cssTab);
+      // Switch to CSS editor
+      const cssButton = screen.getByLabelText("CSS editor");
+      await user.click(cssButton);
 
-        // Check CSS format button
-        await waitFor(() => {
-          expect(screen.getByLabelText(/Format CSS/i)).toBeInTheDocument();
-        });
-      }
+      // Check CSS format button
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Format CSS/i)).toBeInTheDocument();
+      });
     });
 
     it("should have aria-label on fullscreen mode buttons", async () => {
@@ -2368,14 +2320,19 @@ describe("Accessibility", () => {
       });
     });
 
-    it("should have role='tablist' on tab containers", () => {
+    it("should have role='tablist' on tab containers", async () => {
+      const user = userEvent.setup();
       const onChange = vi.fn();
       const value = { html: "<p>Test</p>", css: "p { color: red; }" };
 
       render(<ContentEditor value={value} onChange={onChange} />);
 
+      // The HTML/CSS editors become a real tablist in fullscreen edit mode
+      const fullscreenButton = screen.getByLabelText(/open fullscreen/i);
+      await user.click(fullscreenButton);
+
       // Check for tablists
-      const tablists = screen.getAllByRole("tablist");
+      const tablists = await screen.findAllByRole("tablist");
       expect(tablists.length).toBeGreaterThan(0);
     });
 
@@ -2385,9 +2342,17 @@ describe("Accessibility", () => {
 
       render(<ContentEditor value={value} onChange={onChange} />);
 
-      // Check for tabs
-      const tabs = screen.getAllByRole("tab");
-      expect(tabs.length).toBeGreaterThanOrEqual(4); // Edit, Preview, HTML, CSS
+      // Check for mode toggle buttons (Edit/Preview)
+      const editButton = screen.getByLabelText(/toggle edit mode/i);
+      const previewButton = screen.getByLabelText(/toggle preview mode/i);
+      expect(editButton).toBeInTheDocument();
+      expect(previewButton).toBeInTheDocument();
+
+      // Check for editor toggle buttons (HTML/CSS)
+      const htmlButton = screen.getByLabelText(/html editor/i);
+      const cssButton = screen.getByLabelText(/css editor/i);
+      expect(htmlButton).toBeInTheDocument();
+      expect(cssButton).toBeInTheDocument();
     });
 
     it("should have aria-selected on active tabs", () => {
@@ -2396,10 +2361,13 @@ describe("Accessibility", () => {
 
       render(<ContentEditor value={value} onChange={onChange} />);
 
-      // Check that Edit tab is selected by default
-      const tabs = screen.getAllByRole("tab");
-      const editTab = tabs.find((tab) => tab.textContent === "Edit");
-      expect(editTab).toHaveAttribute("aria-selected", "true");
+      // Check that Edit mode is active by default (aria-pressed="true")
+      const editButton = screen.getByLabelText(/toggle edit mode/i);
+      expect(editButton).toHaveAttribute("aria-pressed", "true");
+
+      // Check that HTML editor is active by default
+      const htmlButton = screen.getByLabelText(/html editor/i);
+      expect(htmlButton).toHaveAttribute("aria-pressed", "true");
     });
   });
 
@@ -2449,10 +2417,11 @@ describe("Accessibility", () => {
 
       render(<ContentEditor value={value} onChange={onChange} />);
 
-      // Tab to first button
-      await user.tab();
+      // Get first button and focus it
+      const editButton = screen.getByLabelText(/toggle edit mode/i);
+      editButton.focus();
 
-      // Check that focused element is a button or tab
+      // Check that focused element is a button
       const focusedElement = document.activeElement;
       expect(focusedElement?.tagName).toMatch(/BUTTON/i);
     });
@@ -2464,22 +2433,16 @@ describe("Accessibility", () => {
 
       render(<ContentEditor value={value} onChange={onChange} />);
 
-      // Get the Preview tab
-      const tabs = screen.getAllByRole("tab");
-      const previewTab = tabs.find((tab) => tab.textContent === "Preview");
+      // Get the Preview button
+      const previewButton = screen.getByLabelText(/toggle preview mode/i);
 
-      if (previewTab) {
-        // Focus the tab
-        previewTab.focus();
+      // Click the button
+      await user.click(previewButton);
 
-        // Press Enter
-        await user.keyboard("{Enter}");
-
-        // Tab should be activated
-        await waitFor(() => {
-          expect(previewTab).toHaveAttribute("aria-selected", "true");
-        });
-      }
+      // Button should be activated (aria-pressed="true")
+      await waitFor(() => {
+        expect(previewButton).toHaveAttribute("aria-pressed", "true");
+      });
     });
 
     it("should support Escape key to close dialog", async () => {

@@ -1,4 +1,4 @@
-import { Maximize2, Wand2, Save, Code, Eye } from "lucide-react";
+import { Maximize2, WandSparkles, Save, Code, Eye } from "lucide-react";
 import { Button } from "./Button";
 import { SaveStatusIndicator } from "./SaveStatusIndicator";
 import type { SaveStatus } from "../hooks/useAutoSave";
@@ -20,7 +20,7 @@ interface EditorToolbarProps {
   onFormatHtml: () => void;
   onFormatCss: () => void;
   onOpenFullscreen: () => void;
-  fullscreenButtonRef: React.RefObject<HTMLButtonElement>;
+  fullscreenButtonRef: React.RefObject<HTMLButtonElement | null>;
 }
 
 /**
@@ -123,7 +123,7 @@ export function EditorToolbar({
             aria-label={`Format HTML (${getFormatShortcut()})`}
             title={`Format HTML (${getFormatShortcut()})`}
           >
-            <Wand2 size={18} />
+            <WandSparkles size={18} />
           </Button>
         )}
         {showEdit && activeEditor === "css" && (
@@ -134,7 +134,7 @@ export function EditorToolbar({
             aria-label={`Format CSS (${getFormatShortcut()})`}
             title={`Format CSS (${getFormatShortcut()})`}
           >
-            <Wand2 size={18} />
+            <WandSparkles size={18} />
           </Button>
         )}
         {onSave && (

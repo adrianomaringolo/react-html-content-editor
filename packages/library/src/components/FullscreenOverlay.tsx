@@ -2,8 +2,8 @@ import {
   X,
   Monitor,
   Code,
-  Columns,
-  Wand2,
+  Columns2,
+  WandSparkles,
   Save,
   Link2,
   Link2Off,
@@ -31,7 +31,7 @@ interface FullscreenOverlayProps {
   saveStatus?: SaveStatus;
   hasUnsavedChanges: boolean;
   isSaving: boolean;
-  previewRef: React.RefObject<HTMLDivElement>;
+  previewRef: React.RefObject<HTMLDivElement | null>;
   onSave?: () => void;
   onSetFullscreenMode: (mode: "edit" | "preview" | "split") => void;
   onSetActiveEditor: (editor: EditorType) => void;
@@ -105,7 +105,7 @@ export function FullscreenOverlay({
             aria-label='Split view mode'
             title='Split view mode'
           >
-            <Columns size={18} />
+            <Columns2 size={18} />
           </Button>
         </div>
 
@@ -155,7 +155,7 @@ export function FullscreenOverlay({
                     aria-label='Format HTML code (Ctrl+Shift+F)'
                     title='Format HTML code (Ctrl+Shift+F)'
                   >
-                    <Wand2 size={18} />
+                    <WandSparkles size={18} />
                   </Button>
                 )}
                 {activeEditor === "css" && (
@@ -166,7 +166,7 @@ export function FullscreenOverlay({
                     aria-label='Format CSS code (Ctrl+Shift+F)'
                     title='Format CSS code (Ctrl+Shift+F)'
                   >
-                    <Wand2 size={18} />
+                    <WandSparkles size={18} />
                   </Button>
                 )}
               </div>
@@ -236,7 +236,7 @@ export function FullscreenOverlay({
                       aria-label='Format HTML code (Ctrl+Shift+F)'
                       title='Format HTML code (Ctrl+Shift+F)'
                     >
-                      <Wand2 size={18} />
+                      <WandSparkles size={18} />
                     </Button>
                   )}
                   {activeEditor === "css" && (
@@ -247,7 +247,7 @@ export function FullscreenOverlay({
                       aria-label='Format CSS code (Ctrl+Shift+F)'
                       title='Format CSS code (Ctrl+Shift+F)'
                     >
-                      <Wand2 size={18} />
+                      <WandSparkles size={18} />
                     </Button>
                   )}
                   <Button

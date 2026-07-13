@@ -12,12 +12,12 @@ export function QuickStartExample() {
       {/* Hero Section */}
       <div
         style={{
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          color: "white",
+          background: "var(--accent)",
+          color: "var(--accent-ink)",
           padding: "3rem 2rem",
           borderRadius: "1rem",
           marginBottom: "2rem",
-          boxShadow: "0 10px 25px rgba(102, 126, 234, 0.3)",
+          boxShadow: "var(--shadow-md)",
         }}
       >
         <h1
@@ -497,8 +497,8 @@ function App() {
       {/* Next Steps */}
       <div
         style={{
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          color: "white",
+          background: "var(--accent)",
+          color: "var(--accent-ink)",
           padding: "2rem",
           borderRadius: "1rem",
           marginBottom: "2rem",

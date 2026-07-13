@@ -649,3 +649,17 @@
   background: rgba(239, 68, 68, 0.1);
   border-color: var(--color-error, #ef4444);
 }
+
+/* WYSIWYG pane (composition mode) */
+.wysiwygPane {
+  flex: 1;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.wysiwygPane > :global(.wysiwyg) {
+  flex: 1;
+  min-height: 0;
+}

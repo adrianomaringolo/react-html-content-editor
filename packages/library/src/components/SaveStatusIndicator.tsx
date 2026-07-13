@@ -1,4 +1,4 @@
-import { Check, AlertCircle, Loader2 } from "lucide-react";
+import { Check, CircleAlert, LoaderCircle } from "lucide-react";
 import type { SaveStatus } from "../hooks/useAutoSave";
 import styles from "./content-editor.module.css";
 
@@ -24,13 +24,13 @@ export function SaveStatusIndicator({ status }: SaveStatusIndicatorProps) {
       )}
       {status === "unsaved" && (
         <>
-          <AlertCircle size={16} aria-hidden='true' />
+          <CircleAlert size={16} aria-hidden='true' />
           <span>Unsaved changes</span>
         </>
       )}
       {status === "saving" && (
         <>
-          <Loader2 size={16} className={styles.spinner} aria-hidden='true' />
+          <LoaderCircle size={16} className={styles.spinner} aria-hidden='true' />
           <span>Saving...</span>
         </>
       )}

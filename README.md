@@ -1,8 +1,8 @@
 # React HTML Content Editor
 
 [![npm version](https://badge.fury.io/js/react-html-content-editor.svg)](https://www.npmjs.com/package/react-html-content-editor)
-[![CI](https://github.com/yourusername/react-html-content-editor/workflows/CI/badge.svg)](https://github.com/yourusername/react-html-content-editor/actions)
-[![Deploy Demo](https://github.com/yourusername/react-html-content-editor/workflows/Deploy%20Demo%20to%20GitHub%20Pages/badge.svg)](https://github.com/yourusername/react-html-content-editor/actions)
+[![CI](https://github.com/adrianomaringolo/react-html-content-editor/workflows/CI/badge.svg)](https://github.com/adrianomaringolo/react-html-content-editor/actions)
+[![Deploy Demo](https://github.com/adrianomaringolo/react-html-content-editor/workflows/Deploy%20Demo%20to%20GitHub%20Pages/badge.svg)](https://github.com/adrianomaringolo/react-html-content-editor/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A sophisticated HTML and CSS content editor with Monaco Editor integration, multiple view modes, scroll synchronization, and auto-save functionality.
@@ -16,7 +16,7 @@ This is a pnpm workspace monorepo containing:
 
 ## 🌐 Live Demo
 
-Check out the live demo: [https://yourusername.github.io/react-html-content-editor/](https://yourusername.github.io/react-html-content-editor/)
+Check out the live demo and documentation: [https://adrianomaringolo.github.io/react-html-content-editor/](https://adrianomaringolo.github.io/react-html-content-editor/)
 
 The demo is automatically deployed to GitHub Pages on every push to `main`.
 
@@ -102,8 +102,9 @@ pnpm release
 
 ## 📚 Documentation
 
+- [Published Documentation](https://adrianomaringolo.github.io/react-html-content-editor/)
 - [Library Documentation](./packages/library/README.md)
-- [Live Demo](https://yourusername.github.io/react-html-content-editor/)
+- [Live Demo](https://adrianomaringolo.github.io/react-html-content-editor/)
 - [GitHub Pages Setup](./docs/GITHUB_PAGES_SETUP.md)
 - [Release Process](./RELEASE.md)
 - [Release Quick Guide](./docs/RELEASE_QUICK_GUIDE.md)

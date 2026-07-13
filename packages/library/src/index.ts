@@ -13,6 +13,7 @@ import "./components/button.module.css";
 import "./components/tabs.module.css";
 import "./components/dialog.module.css";
 import "./components/content-editor.module.css";
+import "./components/wysiwyg/wysiwyg.module.css";
 
 // Main library entry point
 export type {
@@ -38,9 +39,46 @@ export {
   DialogDescription,
   DialogFooter,
   ContentEditor,
+  ContentEditorProvider,
+  ContentEditorShell,
+  ContentEditorToolbar,
+  ContentEditorBody,
+  ContentEditorCode,
+  ContentEditorPreview,
+  ContentEditorWysiwyg,
+  useContentEditorContext,
+  Wysiwyg,
+  WysiwygToolbar,
+  WysiwygSeparator,
+  WysiwygControl,
+  WysiwygBold,
+  WysiwygItalic,
+  WysiwygUnderline,
+  WysiwygStrikethrough,
+  WysiwygHeading,
+  WysiwygParagraph,
+  WysiwygBlockquote,
+  WysiwygUnorderedList,
+  WysiwygOrderedList,
+  WysiwygAlign,
+  WysiwygLink,
+  WysiwygUnlink,
+  WysiwygFontSize,
+  WysiwygClearFormatting,
+  WysiwygContent,
+  useWysiwygContext,
 } from "./components";
 
 export type {
+  ContentEditorProviderProps,
+  ContentEditorShellProps,
+  ContentEditorToolbarProps,
+  ContentEditorBodyProps,
+  ContentEditorCodeProps,
+  ContentEditorPreviewProps,
+  ContentEditorWysiwygProps,
+  ContentEditorContextValue,
+  ContentEditorMode,
   ButtonProps,
   TabsProps,
   TabsListProps,
@@ -53,6 +91,17 @@ export type {
   DialogTitleProps,
   DialogDescriptionProps,
   DialogFooterProps,
+  WysiwygProps,
+  WysiwygToolbarProps,
+  WysiwygControlProps,
+  WysiwygHeadingProps,
+  WysiwygAlignProps,
+  WysiwygLinkProps,
+  WysiwygFontSizeProps,
+  WysiwygFontSizeOption,
+  WysiwygContentProps,
+  WysiwygContextValue,
+  NamedControlProps,
 } from "./components";
 
 // Export hooks for advanced usage

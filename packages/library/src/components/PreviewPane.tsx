@@ -3,7 +3,7 @@ import styles from "./content-editor.module.css";
 interface PreviewPaneProps {
   html: string;
   css: string;
-  previewRef?: React.RefObject<HTMLDivElement>;
+  previewRef?: React.RefObject<HTMLDivElement | null>;
   onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
 }
 

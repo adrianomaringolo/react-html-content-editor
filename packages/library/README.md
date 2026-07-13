@@ -5,6 +5,8 @@ A sophisticated HTML and CSS content editor built with Monaco Editor (the same e
 ## Features
 
 - **Dual Editor Support**: Separate Monaco Editor instances for HTML and CSS
+- **Composition API**: Assemble the editor from small parts (`ContentEditorToolbar`, `ContentEditorBody`, `ContentEditorCode`, `ContentEditorPreview`, `ContentEditorWysiwyg`) — or drop in the batteries-included default
+- **Integrated WYSIWYG**: Toggle between the code view (HTML/CSS + preview) and a rich-text visual editor, both editing the same value
 - **Multiple View Modes**: Edit, preview, and split view options
 - **Fullscreen Mode**: Distraction-free editing experience
 - **Scroll Synchronization**: Synchronized scrolling between HTML editor and preview
@@ -203,6 +205,218 @@ Error message to display below the editor.
 <ContentEditor error='Failed to save content. Please try again.' {...props} />
 ```
 
+#### `children` (optional)
+
+Type: `ReactNode`
+
+When provided, the editor renders in **composition mode**: the given children are
+rendered inside a shared context instead of the default layout. See
+[Composition API](#composition-api).
+
+```tsx
+<ContentEditor value={value} onChange={setValue}>
+  <ContentEditorToolbar />
+  <ContentEditorBody>
+    <ContentEditorCode />
+    <ContentEditorPreview />
+  </ContentEditorBody>
+</ContentEditor>
+```
+
+#### `defaultMode` (optional)
+
+Type: `"code" | "wysiwyg"` (default: `"code"`)
+
+Initial view mode in composition mode: `code` (Monaco HTML/CSS + preview) or
+`wysiwyg` (rich-text visual editor).
+
+## Composition API
+
+`ContentEditor` can be assembled from composable parts — the same pattern used by
+the standalone `Wysiwyg`. Pass children to opt in; without children the
+batteries-included default layout (toolbar, editors, preview, fullscreen) is
+rendered exactly as before, so this is fully backwards compatible.
+
+| Component               | Role                                                                 |
+| ----------------------- | -------------------------------------------------------------------- |
+| `ContentEditor`         | Root. Owns the shared value/state and provides context to children.  |
+| `ContentEditorToolbar`  | Default toolbar: mode switch, view toggles, tabs, format & save.     |
+| `ContentEditorBody`     | Lays visible panes out side-by-side (split) or stacked on mobile.    |
+| `ContentEditorCode`     | Monaco HTML/CSS editors. Visible in `code` mode.                     |
+| `ContentEditorPreview`  | Live HTML+CSS preview. Visible in `code` mode.                       |
+| `ContentEditorWysiwyg`  | Rich-text surface bound to the HTML value. Visible in `wysiwyg` mode.|
+
+Each pane decides its own visibility from the shared context, so you place them
+in any order and the current mode/toggles determine what shows.
+
+```tsx
+import {
+  ContentEditor,
+  ContentEditorToolbar,
+  ContentEditorBody,
+  ContentEditorCode,
+  ContentEditorPreview,
+  ContentEditorWysiwyg,
+} from "react-html-content-editor";
+import "react-html-content-editor/dist/style.css";
+
+function ComposedEditor() {
+  const [value, setValue] = useState({ html: "<h1>Hi</h1>", css: "h1 { color: teal; }" });
+
+  return (
+    <ContentEditor value={value} onChange={setValue} height='520px'>
+      <ContentEditorToolbar />
+      <ContentEditorBody>
+        <ContentEditorCode />
+        <ContentEditorPreview />
+        <ContentEditorWysiwyg />
+      </ContentEditorBody>
+    </ContentEditor>
+  );
+}
+```
+
+### Integrated WYSIWYG
+
+Adding a `ContentEditorWysiwyg` pane makes the toolbar show a **Code / Visual**
+switch. Both views edit the same `value.html`; the `value.css` is applied to the
+WYSIWYG surface as a `<style>` tag, so the rich-text view reflects your styles.
+Compose the WYSIWYG toolbar yourself, or omit children for a sensible default:
+
+```tsx
+<ContentEditorWysiwyg>
+  <WysiwygToolbar>
+    <WysiwygHeading level={1} />
+    <WysiwygBold />
+    <WysiwygItalic />
+    <WysiwygLink />
+  </WysiwygToolbar>
+  <WysiwygContent placeholder='Start writing…' />
+</ContentEditorWysiwyg>
+```
+
+### Building custom WYSIWYG controls
+
+Every built-in control is composed from the generic `WysiwygControl` building
+block, and you build your own the same way. Drop the result into any
+`WysiwygToolbar` (standalone `Wysiwyg` **or** inside `ContentEditorWysiwyg`).
+
+**1. Declarative — wrap any `execCommand`.** Pass a `command` (and optional
+`value` / `useCss`), plus an `isActive` predicate so the button reflects the
+current selection:
+
+```tsx
+import { WysiwygControl } from "react-html-content-editor";
+import { Highlighter } from "lucide-react";
+
+function WysiwygHighlight() {
+  return (
+    <WysiwygControl
+      command='hiliteColor'
+      value='#fde047'
+      useCss
+      title='Highlight'
+      isActive={({ queryValue }) => {
+        const color = queryValue("hiliteColor") || queryValue("backColor");
+        return !!color && color !== "transparent" && color !== "rgba(0, 0, 0, 0)";
+      }}
+    >
+      <Highlighter size={16} aria-hidden='true' />
+    </WysiwygControl>
+  );
+}
+```
+
+**2. Bespoke behaviour — `onActivate` + `useWysiwygContext`.** Read the editor
+context and run whatever you like, while inheriting the toolbar button styling:
+
+```tsx
+import { WysiwygControl, useWysiwygContext } from "react-html-content-editor";
+import { CalendarPlus } from "lucide-react";
+
+function WysiwygInsertDate() {
+  const { exec } = useWysiwygContext();
+  return (
+    <WysiwygControl
+      command='insertText'
+      title="Insert today's date"
+      onActivate={() => exec("insertText", new Date().toLocaleDateString())}
+    >
+      <CalendarPlus size={16} aria-hidden='true' />
+    </WysiwygControl>
+  );
+}
+
+// then: <WysiwygToolbar> … <WysiwygHighlight /> <WysiwygInsertDate /> </WysiwygToolbar>
+```
+
+**3. Own UI — not just a button.** A control can keep local state and render
+its own popover, menu or input. Here a text-colour picker applies `foreColor`:
+
+```tsx
+import { useWysiwygContext } from "react-html-content-editor";
+import { Palette } from "lucide-react";
+import { useState } from "react";
+
+function WysiwygTextColor() {
+  const { exec } = useWysiwygContext();
+  const [open, setOpen] = useState(false);
+  return (
+    <span style={{ position: "relative", display: "inline-flex" }}>
+      <button
+        type='button'
+        aria-label='Text color'
+        aria-expanded={open}
+        onMouseDown={(e) => e.preventDefault()} // keep the selection
+        onClick={() => setOpen((o) => !o)}
+      >
+        <Palette size={16} aria-hidden='true' />
+      </button>
+      {open && (
+        <div role='menu' style={{ position: "absolute", top: "100%" }}>
+          {["#ef4444", "#3b82f6", "#7c3aed"].map((color) => (
+            <button
+              key={color}
+              role='menuitem'
+              style={{ background: color }}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => {
+                exec("foreColor", color, true);
+                setOpen(false);
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </span>
+  );
+}
+```
+
+> Call `e.preventDefault()` on `onMouseDown` in any custom control so pressing
+> it doesn't collapse the editor's text selection before your command runs.
+
+`useWysiwygContext()` exposes `exec(command, value?, useCss?)`, `commit(html)`,
+`isActive(command)`, `queryValue(command)`, the current `value`, `disabled`,
+and `editorRef` for anything more advanced.
+
+### Custom context access
+
+Build your own controls with the `useContentEditorContext` hook, which exposes
+the value, save state, current mode, view toggles and editor refs:
+
+```tsx
+import { useContentEditorContext } from "react-html-content-editor";
+
+function WordCount() {
+  const { value } = useContentEditorContext();
+  const words = value.html.replace(/<[^>]+>/g, " ").trim().split(/\s+/).filter(Boolean);
+  return <span>{words.length} words</span>;
+}
+
+// then: <ContentEditorToolbar><WordCount /></ContentEditorToolbar>
+```
+
 ## Type Exports
 
 The library exports the following TypeScript types:
@@ -214,6 +428,13 @@ import type {
   SaveStatus,
   ViewMode,
   EditorType,
+  ContentEditorMode,
+  ContentEditorContextValue,
+  ContentEditorToolbarProps,
+  ContentEditorBodyProps,
+  ContentEditorCodeProps,
+  ContentEditorPreviewProps,
+  ContentEditorWysiwygProps,
 } from "react-html-content-editor";
 ```
 
@@ -242,6 +463,12 @@ type ViewMode = "edit" | "preview" | "split";
 
 ```typescript
 type EditorType = "html" | "css";
+```
+
+### `ContentEditorMode`
+
+```typescript
+type ContentEditorMode = "code" | "wysiwyg";
 ```
 
 ## Advanced Usage
@@ -350,6 +577,71 @@ The library uses CSS modules and CSS variables for styling. You can customize th
 - **Text**: `--text-primary`, `--text-secondary`, `--text-muted`
 - **Spacing**: `--spacing-1` through `--spacing-4`
 - **Border Radius**: `--radius-sm`, `--radius-md`, `--radius-lg`
+
+### Styling `ContentEditorToolbar`
+
+`ContentEditorToolbar` accepts a `className`, letting you restyle the toolbar
+surface and the buttons inside it. The toolbar renders standard `<button>`
+elements, and active toggles expose `aria-pressed="true"` — a convenient hook
+for the "selected" look.
+
+```tsx
+<ContentEditorToolbar className='my-toolbar' />
+```
+
+```css
+/* A dark, pill-shaped toolbar */
+.my-toolbar {
+  background: #0f172a;
+  border-bottom-color: #1e293b;
+  border-radius: 0.75rem 0.75rem 0 0;
+  padding: 0.5rem 0.75rem;
+}
+
+.my-toolbar button {
+  border-radius: 9999px;
+  color: #cbd5e1;
+}
+
+/* Highlight the active mode / view toggle */
+.my-toolbar button[aria-pressed="true"] {
+  background: #6d28d9;
+  color: #fff;
+}
+
+.my-toolbar button:hover {
+  background: #1e293b;
+}
+```
+
+You can also **replace the toolbar contents entirely** by passing children —
+the shared state is still available through `useContentEditorContext`, so you
+can wire your own buttons:
+
+```tsx
+import { useContentEditorContext, ContentEditorToolbar } from "react-html-content-editor";
+
+function ModeSwitch() {
+  const { mode, setMode } = useContentEditorContext();
+  return (
+    <div className='segmented'>
+      <button data-active={mode === "code"} onClick={() => setMode("code")}>
+        Code
+      </button>
+      <button data-active={mode === "wysiwyg"} onClick={() => setMode("wysiwyg")}>
+        Visual
+      </button>
+    </div>
+  );
+}
+
+<ContentEditorToolbar className='my-toolbar'>
+  <ModeSwitch />
+</ContentEditorToolbar>;
+```
+
+> When you pass children, only the left group is replaced — the built-in
+> format/save actions on the right are hidden so you have full control.
 
 ## Keyboard Shortcuts
 

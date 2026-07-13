@@ -23,15 +23,25 @@ describe("Tabs", () => {
       expect(screen.getByText("Content 1")).toBeInTheDocument();
       const content2 = screen.getByText("Content 2");
       expect(content2).toBeInTheDocument();
-      expect(content2.parentElement).toHaveAttribute("aria-hidden", "true");
+
+      // The TabsContent wrapper (parent of the text) should have aria-hidden
+      const content2Panel = content2.closest('[role="tabpanel"]');
+      expect(content2Panel).toHaveAttribute("aria-hidden", "true");
 
       // Click on tab2
       const tab2Trigger = screen.getByRole("tab", { name: /tab 2/i });
       await user.click(tab2Trigger);
 
-      // Now tab2 content should be visible
-      expect(screen.queryByText("Content 1")).not.toBeInTheDocument();
-      expect(screen.getByText("Content 2")).toBeInTheDocument();
+      // Now tab2 content should be visible and tab1 should be hidden
+      const content1Panel = screen
+        .getByText("Content 1")
+        .closest('[role="tabpanel"]');
+      expect(content1Panel).toHaveAttribute("aria-hidden", "true");
+
+      const content2PanelAfter = screen
+        .getByText("Content 2")
+        .closest('[role="tabpanel"]');
+      expect(content2PanelAfter).toHaveAttribute("aria-hidden", "false");
     });
 
     it("should update aria-selected when switching tabs", async () => {
@@ -227,7 +237,10 @@ describe("Tabs", () => {
       expect(screen.getByText("Content 1")).toBeInTheDocument();
       const content2 = screen.getByText("Content 2");
       expect(content2).toBeInTheDocument();
-      expect(content2.parentElement).toHaveAttribute("aria-hidden", "true");
+
+      // The TabsContent wrapper (parent of the text) should have aria-hidden
+      const content2Panel = content2.closest('[role="tabpanel"]');
+      expect(content2Panel).toHaveAttribute("aria-hidden", "true");
     });
   });
 
@@ -360,7 +373,10 @@ describe("Tabs", () => {
       expect(screen.getByText("Content 1")).toBeInTheDocument();
       const content2 = screen.getByText("Content 2");
       expect(content2).toBeInTheDocument();
-      expect(content2.parentElement).toHaveAttribute("aria-hidden", "true");
+
+      // The TabsContent wrapper (parent of the text) should have aria-hidden
+      const content2Panel = content2.closest('[role="tabpanel"]');
+      expect(content2Panel).toHaveAttribute("aria-hidden", "true");
     });
 
     it("should have disabled attribute on disabled trigger", () => {

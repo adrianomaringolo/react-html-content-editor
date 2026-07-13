@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 /**
  * Represents the HTML and CSS content being edited.
  *
@@ -92,4 +94,18 @@ export interface ContentEditorProps {
 
   /** Error message to display below the editor */
   error?: string;
+
+  /**
+   * When provided, the editor renders in composition mode: the given children
+   * (e.g. `ContentEditorToolbar`, `ContentEditorBody`, `ContentEditorCode`,
+   * `ContentEditorPreview`, `ContentEditorWysiwyg`) are rendered inside a
+   * shared context instead of the default layout.
+   */
+  children?: ReactNode;
+
+  /**
+   * Initial view mode in composition mode: `code` (HTML/CSS + preview) or
+   * `wysiwyg` (default: "code").
+   */
+  defaultMode?: "code" | "wysiwyg";
 }

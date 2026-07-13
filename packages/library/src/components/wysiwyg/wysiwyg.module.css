@@ -1,0 +1,262 @@
+/* ================================================================
+   WYSIWYG editor
+   ================================================================ */
+.wysiwyg {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-lg, 0.75rem);
+  background-color: var(--bg-primary, #ffffff);
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.wysiwyg[data-disabled] {
+  opacity: 0.7;
+}
+
+/* ---- Toolbar ---- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background-color: var(--bg-muted, #f9fafb);
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.separator {
+  width: 1px;
+  align-self: stretch;
+  min-height: 1.5rem;
+  margin: 0 0.25rem;
+  background-color: var(--color-border, #e5e7eb);
+}
+
+/* ---- Control button ---- */
+.control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md, 0.375rem);
+  background-color: transparent;
+  color: var(--text-secondary, #6b7280);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.control:hover:not(:disabled) {
+  background-color: var(--bg-secondary, #f3f4f6);
+  color: var(--text-primary, #111827);
+}
+
+.control:active:not(:disabled) {
+  background-color: var(--bg-secondary, #e5e7eb);
+}
+
+.control:focus-visible {
+  outline: 2px solid var(--color-primary, #3b82f6);
+  outline-offset: 1px;
+}
+
+.controlActive {
+  background-color: var(--color-primary-soft, #eff6ff);
+  color: var(--color-primary, #3b82f6);
+  border-color: var(--color-primary, #3b82f6);
+}
+
+.controlActive:hover:not(:disabled) {
+  background-color: var(--color-primary-soft, #dbeafe);
+  color: var(--color-primary, #3b82f6);
+}
+
+.control:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- Select (font size, etc.) ---- */
+.select {
+  height: 2rem;
+  padding: 0 1.75rem 0 0.5rem;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 0.375rem);
+  background-color: var(--bg-primary, #ffffff);
+  color: var(--text-primary, #111827);
+  font-size: 0.8125rem;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  transition: border-color 0.15s ease;
+}
+
+.select:hover:not(:disabled) {
+  border-color: var(--color-border-hover, #d1d5db);
+}
+
+.select:focus-visible {
+  outline: 2px solid var(--color-primary, #3b82f6);
+  outline-offset: 1px;
+}
+
+.select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- Editable surface ---- */
+.content {
+  flex: 1;
+  padding: 1rem 1.25rem;
+  overflow-y: auto;
+  color: var(--text-primary, #111827);
+  font-size: 1rem;
+  line-height: 1.6;
+  outline: none;
+  word-break: break-word;
+}
+
+.content:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-primary-soft, #dbeafe);
+}
+
+/* Placeholder for an empty editor */
+.content:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-tertiary, #9ca3af);
+  pointer-events: none;
+}
+
+/* Prose defaults so formatted content reads well out of the box */
+.content :first-child {
+  margin-top: 0;
+}
+.content :last-child {
+  margin-bottom: 0;
+}
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+  margin: 1.25em 0 0.5em;
+  line-height: 1.25;
+  font-weight: 650;
+}
+.content h1 {
+  font-size: 1.75rem;
+}
+.content h2 {
+  font-size: 1.4rem;
+}
+.content h3 {
+  font-size: 1.2rem;
+}
+.content p {
+  margin: 0 0 0.75em;
+}
+.content ul,
+.content ol {
+  margin: 0 0 0.75em;
+  padding-left: 1.5rem;
+}
+.content li {
+  margin-bottom: 0.25em;
+}
+.content a {
+  color: var(--color-primary, #3b82f6);
+  text-decoration: underline;
+}
+.content blockquote {
+  margin: 0 0 0.75em;
+  padding-left: 1rem;
+  border-left: 3px solid var(--color-border, #e5e7eb);
+  color: var(--text-secondary, #6b7280);
+}
+
+/* ================================================================
+   Dark theme
+   ================================================================ */
+[data-theme="dark"] .wysiwyg {
+  border-color: var(--color-border, #374151);
+  background-color: var(--bg-primary, #111827);
+}
+[data-theme="dark"] .toolbar {
+  background-color: var(--bg-muted, #1f2937);
+  border-bottom-color: var(--color-border, #374151);
+}
+[data-theme="dark"] .separator {
+  background-color: var(--color-border, #374151);
+}
+[data-theme="dark"] .control {
+  color: var(--text-secondary, #9ca3af);
+}
+[data-theme="dark"] .control:hover:not(:disabled) {
+  background-color: var(--bg-secondary, #374151);
+  color: var(--text-primary, #f9fafb);
+}
+[data-theme="dark"] .controlActive {
+  background-color: var(--color-primary-soft, #1e3a5f);
+  color: var(--color-primary-light, #60a5fa);
+  border-color: var(--color-primary, #3b82f6);
+}
+[data-theme="dark"] .select {
+  background-color: var(--bg-secondary, #1f2937);
+  border-color: var(--color-border, #374151);
+  color: var(--text-primary, #f9fafb);
+}
+[data-theme="dark"] .content {
+  color: var(--text-primary, #f9fafb);
+}
+[data-theme="dark"] .content:empty::before {
+  color: var(--text-tertiary, #6b7280);
+}
+[data-theme="dark"] .content blockquote {
+  border-left-color: var(--color-border, #374151);
+  color: var(--text-secondary, #9ca3af);
+}
+
+/* ================================================================
+   High-contrast support
+   ================================================================ */
+@media (prefers-contrast: high) {
+  .control {
+    border-width: 1px;
+    border-color: var(--text-primary, #000000);
+  }
+  .controlActive {
+    border-width: 2px;
+  }
+  .control:focus-visible,
+  .select:focus-visible {
+    outline-width: 3px;
+    outline-offset: 2px;
+  }
+}
+
+/* ================================================================
+   Reduced motion
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .control,
+  .select {
+    transition: none;
+  }
+}
