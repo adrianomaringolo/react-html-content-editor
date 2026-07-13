@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import {
   ChevronDown,
   TextAlignStart,
@@ -7,6 +7,7 @@ import {
   TextAlignJustify,
 } from "lucide-react";
 import { WysiwygAlign } from "./WysiwygAlign";
+import { WysiwygDropdown } from "./WysiwygDropdown";
 import { useWysiwygContext } from "./context";
 import styles from "./wysiwyg.module.css";
 
@@ -38,9 +39,6 @@ export const WysiwygAlignMenu: React.FC<WysiwygAlignMenuProps> = ({
   // Re-render when the selection moves so the trigger icon stays in sync.
   void ctx.version;
 
-  const [open, setOpen] = useState(false);
-  const wrapRef = useRef<HTMLSpanElement>(null);
-
   const current: Align = ctx.isActive("justifyCenter")
     ? "center"
     : ctx.isActive("justifyRight")
@@ -50,55 +48,23 @@ export const WysiwygAlignMenu: React.FC<WysiwygAlignMenuProps> = ({
         : "left";
   const Icon = ICON[current];
 
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: MouseEvent) => {
-      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("mousedown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
-
   return (
-    <span ref={wrapRef} className={styles.menu}>
-      <button
-        type='button'
-        title={title}
-        aria-label={`${title} (${current})`}
-        aria-haspopup='true'
-        aria-expanded={open}
-        data-align={current}
-        disabled={ctx.disabled}
-        // Keep the editor selection intact when opening the menu.
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() => setOpen((o) => !o)}
-        className={`${styles.control} ${open ? styles.controlActive : ""} ${className}`.trim()}
-      >
-        <Icon size={16} aria-hidden='true' />
-        <ChevronDown size={12} aria-hidden='true' className={styles.menuChevron} />
-      </button>
-      {open && (
-        <div
-          className={styles.menuPopover}
-          role='menu'
-          aria-label={title}
-          // Close after any option is chosen; keep selection while inside.
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => setOpen(false)}
-        >
-          <WysiwygAlign value='left' />
-          <WysiwygAlign value='center' />
-          <WysiwygAlign value='justify' />
-          <WysiwygAlign value='right' />
-        </div>
-      )}
-    </span>
+    <WysiwygDropdown
+      title={title}
+      className={className}
+      triggerAriaLabel={`${title} (${current})`}
+      triggerData={{ align: current }}
+      trigger={
+        <>
+          <Icon size={16} aria-hidden='true' />
+          <ChevronDown size={12} aria-hidden='true' className={styles.menuChevron} />
+        </>
+      }
+    >
+      <WysiwygAlign value='left' />
+      <WysiwygAlign value='center' />
+      <WysiwygAlign value='justify' />
+      <WysiwygAlign value='right' />
+    </WysiwygDropdown>
   );
 };

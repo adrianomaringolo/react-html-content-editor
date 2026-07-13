@@ -9,26 +9,46 @@ export { WysiwygSeparator } from "./WysiwygSeparator";
 export { WysiwygContent } from "./WysiwygContent";
 export type { WysiwygContentProps } from "./WysiwygContent";
 
-// Generic building block
+// Generic building blocks
 export { WysiwygControl } from "./WysiwygControl";
 export type { WysiwygControlProps } from "./WysiwygControl";
+export { WysiwygDropdown } from "./WysiwygDropdown";
+export type { WysiwygDropdownProps } from "./WysiwygDropdown";
 
 // Inline formatting
 export { WysiwygBold } from "./WysiwygBold";
 export { WysiwygItalic } from "./WysiwygItalic";
 export { WysiwygUnderline } from "./WysiwygUnderline";
 export { WysiwygStrikethrough } from "./WysiwygStrikethrough";
+export { WysiwygSubscript } from "./WysiwygSubscript";
+export { WysiwygSuperscript } from "./WysiwygSuperscript";
+export { WysiwygInlineCode } from "./WysiwygInlineCode";
 export { WysiwygFontSize } from "./WysiwygFontSize";
 export type {
   WysiwygFontSizeProps,
   WysiwygFontSizeOption,
 } from "./WysiwygFontSize";
+export { WysiwygFontFamily } from "./WysiwygFontFamily";
+export type {
+  WysiwygFontFamilyProps,
+  WysiwygFontFamilyOption,
+} from "./WysiwygFontFamily";
+export { WysiwygTextColor } from "./WysiwygTextColor";
+export type { WysiwygTextColorProps } from "./WysiwygTextColor";
+export { WysiwygHighlight } from "./WysiwygHighlight";
+export type { WysiwygHighlightProps } from "./WysiwygHighlight";
 
 // Block formatting
 export { WysiwygHeading } from "./WysiwygHeading";
 export type { WysiwygHeadingProps } from "./WysiwygHeading";
+export { WysiwygHeadingMenu } from "./WysiwygHeadingMenu";
+export type { WysiwygHeadingMenuProps } from "./WysiwygHeadingMenu";
 export { WysiwygParagraph } from "./WysiwygParagraph";
 export { WysiwygBlockquote } from "./WysiwygBlockquote";
+export { WysiwygCodeBlock } from "./WysiwygCodeBlock";
+export { WysiwygHorizontalRule } from "./WysiwygHorizontalRule";
+export { WysiwygIndent } from "./WysiwygIndent";
+export { WysiwygOutdent } from "./WysiwygOutdent";
 
 // Lists & alignment
 export { WysiwygUnorderedList } from "./WysiwygUnorderedList";
@@ -47,6 +67,8 @@ export { WysiwygLink } from "./WysiwygLink";
 export type { WysiwygLinkProps } from "./WysiwygLink";
 export { WysiwygUnlink } from "./WysiwygUnlink";
 export { WysiwygClearFormatting } from "./WysiwygClearFormatting";
+export { WysiwygWordCount } from "./WysiwygWordCount";
+export type { WysiwygWordCountProps } from "./WysiwygWordCount";
 
 // Images
 export { WysiwygImage } from "./WysiwygImage";

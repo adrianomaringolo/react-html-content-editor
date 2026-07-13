@@ -151,11 +151,17 @@ const [html, setHtml] = useState("<p>Hi</p>");
   - `WysiwygAlign` — `value: "left"|"center"|"right"|"justify"` (required).
   - `WysiwygAlignMenu` — single alignment control: the trigger shows the alignment applied to the selection and opens a picker (left/center/justify/right, composed from `WysiwygAlign`). Props: `className?`, `title?`.
   - `WysiwygLink` — `getUrl?: () => string | null` (defaults to `window.prompt`).
+  - `WysiwygHeadingMenu` — H1–H6 + paragraph grouped in one dropdown; trigger shows the current level. Props: `levels?`, `className?`, `title?`.
   - `WysiwygFontSize` — `options?: WysiwygFontSizeOption[]`.
+  - `WysiwygFontFamily` — dropdown; `options?: WysiwygFontFamilyOption[]` ({label,value}).
+  - `WysiwygTextColor` — swatch picker (`foreColor`); `colors?: string[]`.
+  - `WysiwygHighlight` — swatch picker (`hiliteColor`); `colors?: string[]` (include `"transparent"` to clear).
+  - `WysiwygDropdown` — reusable popover primitive the grouped controls are built on. Props: `title`, `trigger`, `triggerAriaLabel?`, `triggerData?`, `active?`, `closeOnSelect?`, `children`.
+  - `WysiwygWordCount` — read-only counter (not a button); `render?: ({words,characters}) => ReactNode`.
   - `WysiwygImage` — insert an image. Default: file picker → embed as base64 data URI (no server). Pass `getSrc?: () => string | null | Promise<string | null>` to insert by URL/link instead. `accept?` defaults to `"image/*"`.
   - `WysiwygImageUpload` — file picker → `upload(file)` → insert the returned URL. `upload: (file: File) => Promise<string>` (required); `accept?` (`"image/*"`), `onError?`. Disables itself + shows a spinner while uploading.
   - `WysiwygImageResizer` — not a toolbar button; place it inside `<Wysiwyg>`/`<ContentEditorWysiwyg>`. Clicking an image shows a floating bar of size presets that set the image `width` (height auto). Props: `options?: WysiwygImageSizeOption[]` (default S 25% / M 50% / L 100%), `showReset?` (default true), `resetTitle?`, `className?`.
-- Inline/block controls: `WysiwygBold`, `WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygUnorderedList`, `WysiwygOrderedList`, `WysiwygUnlink`, `WysiwygClearFormatting`. History: `WysiwygUndo`, `WysiwygRedo`. Layout: `WysiwygToolbar`, `WysiwygSeparator`.
+- Inline: `WysiwygBold`, `WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygSubscript`, `WysiwygSuperscript`, `WysiwygInlineCode`. Block: `WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygCodeBlock`, `WysiwygHorizontalRule`, `WysiwygIndent`, `WysiwygOutdent`. Lists: `WysiwygUnorderedList`, `WysiwygOrderedList`. Utilities: `WysiwygUnlink`, `WysiwygClearFormatting`. History: `WysiwygUndo`, `WysiwygRedo`. Layout: `WysiwygToolbar`, `WysiwygSeparator`.
 
 ## Building custom WYSIWYG controls
 
@@ -253,12 +259,15 @@ Values: `ContentEditor`, `ContentEditorProvider`, `ContentEditorShell`,
 `ContentEditorToolbar`, `ContentEditorBody`, `ContentEditorCode`,
 `ContentEditorPreview`, `ContentEditorWysiwyg`, `useContentEditorContext`,
 `Wysiwyg`, `WysiwygToolbar`, `WysiwygSeparator`, `WysiwygControl`, `WysiwygBold`,
-`WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygHeading`,
-`WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygUnorderedList`,
+`WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygSubscript`,
+`WysiwygSuperscript`, `WysiwygInlineCode`, `WysiwygHeading`, `WysiwygHeadingMenu`,
+`WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygCodeBlock`, `WysiwygHorizontalRule`,
+`WysiwygIndent`, `WysiwygOutdent`, `WysiwygUnorderedList`,
 `WysiwygOrderedList`, `WysiwygAlign`, `WysiwygAlignMenu`, `WysiwygUndo`,
 `WysiwygRedo`, `WysiwygLink`, `WysiwygUnlink`,
 `WysiwygImage`, `WysiwygImageUpload`, `WysiwygImageResizer`, `WysiwygFontSize`,
-`WysiwygClearFormatting`, `WysiwygContent`,
+`WysiwygFontFamily`, `WysiwygTextColor`, `WysiwygHighlight`, `WysiwygDropdown`,
+`WysiwygClearFormatting`, `WysiwygWordCount`, `WysiwygContent`,
 `useWysiwygContext`, `Button`, `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`,
 `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`,
 `DialogDescription`, `DialogFooter`, `useScrollSync`, `useAutoSave`,
@@ -267,8 +276,11 @@ Values: `ContentEditor`, `ContentEditorProvider`, `ContentEditorShell`,
 Types: `ContentValue`, `ContentEditorProps`, `SaveStatus`, `ViewMode`,
 `EditorType`, `ContentEditorMode`, `ContentEditorContextValue`,
 `ContentEditor*Props` (Provider/Shell/Toolbar/Body/Code/Preview/Wysiwyg),
-`WysiwygProps`, `WysiwygControlProps`, `WysiwygHeadingProps`, `WysiwygAlignProps`,
-`WysiwygAlignMenuProps`, `WysiwygLinkProps`, `WysiwygImageProps`, `WysiwygImageUploadProps`,
+`WysiwygProps`, `WysiwygControlProps`, `WysiwygDropdownProps`, `WysiwygHeadingProps`,
+`WysiwygHeadingMenuProps`, `WysiwygAlignProps`,
+`WysiwygAlignMenuProps`, `WysiwygFontFamilyProps`, `WysiwygFontFamilyOption`,
+`WysiwygTextColorProps`, `WysiwygHighlightProps`, `WysiwygWordCountProps`,
+`WysiwygLinkProps`, `WysiwygImageProps`, `WysiwygImageUploadProps`,
 `WysiwygImageResizerProps`, `WysiwygImageSizeOption`,
 `WysiwygFontSizeProps`, `WysiwygFontSizeOption`,
 `WysiwygContentProps`, `WysiwygContextValue`, `NamedControlProps`,

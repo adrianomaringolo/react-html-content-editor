@@ -9,14 +9,25 @@ import {
   WysiwygRedo,
   // block
   WysiwygHeading,
+  WysiwygHeadingMenu,
   WysiwygParagraph,
   WysiwygBlockquote,
+  WysiwygCodeBlock,
+  WysiwygHorizontalRule,
+  WysiwygIndent,
+  WysiwygOutdent,
   // inline
   WysiwygBold,
   WysiwygItalic,
   WysiwygUnderline,
   WysiwygStrikethrough,
+  WysiwygSubscript,
+  WysiwygSuperscript,
+  WysiwygInlineCode,
   WysiwygFontSize,
+  WysiwygFontFamily,
+  WysiwygTextColor,
+  WysiwygHighlight,
   // lists
   WysiwygUnorderedList,
   WysiwygOrderedList,
@@ -32,18 +43,30 @@ import {
   WysiwygImageResizer,
   // utilities
   WysiwygClearFormatting,
+  WysiwygWordCount,
 } from "react-html-content-editor";
 import {
   Undo2,
   Redo2,
+  Heading,
   Heading1,
   Pilcrow,
   Quote,
+  SquareCode,
+  Minus,
+  IndentIncrease,
+  IndentDecrease,
   Bold,
   Italic,
   Underline,
   Strikethrough,
+  Subscript,
+  Superscript,
+  Code,
   ALargeSmall,
+  Type,
+  Baseline,
+  Highlighter,
   List,
   ListOrdered,
   TextAlignStart,
@@ -54,6 +77,7 @@ import {
   ImageUp,
   Scaling,
   RemoveFormatting,
+  Hash,
   type LucideIcon,
 } from "lucide-react";
 
@@ -101,8 +125,13 @@ const CONTROL_REFERENCE: { group: string; items: ControlInfo[] }[] = [
     group: "Block",
     items: [
       { icon: Heading1, name: "WysiwygHeading", fn: "Turn the block into a heading (level 1–6)" },
+      { icon: Heading, name: "WysiwygHeadingMenu", fn: "H1–H6 + paragraph grouped in one dropdown" },
       { icon: Pilcrow, name: "WysiwygParagraph", fn: "Reset the block to a paragraph" },
       { icon: Quote, name: "WysiwygBlockquote", fn: "Format the block as a quote" },
+      { icon: SquareCode, name: "WysiwygCodeBlock", fn: "Format the block as a <pre> code block" },
+      { icon: Minus, name: "WysiwygHorizontalRule", fn: "Insert a horizontal rule" },
+      { icon: IndentIncrease, name: "WysiwygIndent", fn: "Increase block indentation" },
+      { icon: IndentDecrease, name: "WysiwygOutdent", fn: "Decrease block indentation" },
     ],
   },
   {
@@ -112,7 +141,13 @@ const CONTROL_REFERENCE: { group: string; items: ControlInfo[] }[] = [
       { icon: Italic, name: "WysiwygItalic", fn: "Toggle italic on the selection" },
       { icon: Underline, name: "WysiwygUnderline", fn: "Toggle underline on the selection" },
       { icon: Strikethrough, name: "WysiwygStrikethrough", fn: "Toggle strikethrough on the selection" },
+      { icon: Subscript, name: "WysiwygSubscript", fn: "Toggle subscript" },
+      { icon: Superscript, name: "WysiwygSuperscript", fn: "Toggle superscript" },
+      { icon: Code, name: "WysiwygInlineCode", fn: "Wrap the selection in inline <code>" },
       { icon: ALargeSmall, name: "WysiwygFontSize", fn: "Dropdown to set the font size" },
+      { icon: Type, name: "WysiwygFontFamily", fn: "Dropdown to set the font family" },
+      { icon: Baseline, name: "WysiwygTextColor", fn: "Swatch picker for text color" },
+      { icon: Highlighter, name: "WysiwygHighlight", fn: "Swatch picker for highlight color" },
     ],
   },
   {
@@ -148,6 +183,7 @@ const CONTROL_REFERENCE: { group: string; items: ControlInfo[] }[] = [
     group: "Utilities",
     items: [
       { icon: RemoveFormatting, name: "WysiwygClearFormatting", fn: "Strip inline formatting from the selection" },
+      { icon: Hash, name: "WysiwygWordCount", fn: "Read-only word / character counter" },
     ],
   },
 ];
@@ -171,25 +207,38 @@ export function WysiwygControlsExample() {
           <WysiwygUndo />
           <WysiwygRedo />
           <WysiwygSeparator />
+          {/* headings 1–6 as individual buttons… */}
           <WysiwygHeading level={1} />
           <WysiwygHeading level={2} />
           <WysiwygHeading level={3} />
           <WysiwygHeading level={4} />
           <WysiwygHeading level={5} />
           <WysiwygHeading level={6} />
+          {/* …and the grouped heading dropdown */}
+          <WysiwygHeadingMenu />
           <WysiwygParagraph />
           <WysiwygBlockquote />
+          <WysiwygCodeBlock />
           <WysiwygSeparator />
           <WysiwygBold />
           <WysiwygItalic />
           <WysiwygUnderline />
           <WysiwygStrikethrough />
+          <WysiwygSubscript />
+          <WysiwygSuperscript />
+          <WysiwygInlineCode />
+          <WysiwygSeparator />
           <WysiwygFontSize />
+          <WysiwygFontFamily />
+          <WysiwygTextColor />
+          <WysiwygHighlight />
           <WysiwygSeparator />
           <WysiwygUnorderedList />
           <WysiwygOrderedList />
+          <WysiwygIndent />
+          <WysiwygOutdent />
           <WysiwygSeparator />
-          {/* individual alignment buttons */}
+          {/* individual alignment buttons… */}
           <WysiwygAlign value='left' />
           <WysiwygAlign value='center' />
           <WysiwygAlign value='justify' />
@@ -199,11 +248,13 @@ export function WysiwygControlsExample() {
           <WysiwygSeparator />
           <WysiwygLink />
           <WysiwygUnlink />
+          <WysiwygHorizontalRule />
           <WysiwygSeparator />
           <WysiwygImage />
           <WysiwygImageUpload upload={fakeUpload} />
           <WysiwygSeparator />
           <WysiwygClearFormatting />
+          <WysiwygWordCount />
         </WysiwygToolbar>
         <WysiwygContent placeholder='Start writing…' minHeight='340px' />
         {/* Click any image to resize it (S / M / L / reset) */}

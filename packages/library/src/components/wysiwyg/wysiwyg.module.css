@@ -354,3 +354,97 @@
   border-radius: var(--radius-md, 0.375rem);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
+
+/* ================================================================
+   Dropdown contents: color swatches, item lists, rows
+   ================================================================ */
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.25rem;
+  max-width: 8.5rem;
+}
+
+.swatch {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-sm, 0.25rem);
+  cursor: pointer;
+}
+
+.swatch:hover {
+  transform: scale(1.08);
+}
+
+.swatchNone {
+  position: relative;
+  background: var(--bg-primary, #fff);
+}
+
+.swatchNone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top right,
+    transparent calc(50% - 1px),
+    #ef4444 calc(50% - 1px),
+    #ef4444 calc(50% + 1px),
+    transparent calc(50% + 1px)
+  );
+}
+
+.menuRow {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.menuList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.0625rem;
+  min-width: 9rem;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--text-primary, #111827);
+  font-size: 0.875rem;
+  text-align: left;
+  border-radius: var(--radius-sm, 0.25rem);
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background-color: var(--bg-secondary, #f3f4f6);
+}
+
+.menuItemCheck {
+  display: inline-flex;
+  width: 0.875rem;
+  flex-shrink: 0;
+  color: var(--color-primary, #3b82f6);
+}
+
+.menuTriggerText {
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.wordCount {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary, #6b7280);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
