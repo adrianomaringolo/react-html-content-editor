@@ -45,7 +45,7 @@
     "url": "git+https://github.com/adrianomaringolo/react-html-content-editor.git",
     "directory": "packages/library"
   },
-  "homepage": "https://github.com/adrianomaringolo/react-html-content-editor#readme",
+  "homepage": "https://adrianomaringolo.github.io/react-html-content-editor/",
   "bugs": {
     "url": "https://github.com/adrianomaringolo/react-html-content-editor/issues"
   },
