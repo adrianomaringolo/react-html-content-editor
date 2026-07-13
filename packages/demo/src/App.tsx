@@ -1,5 +1,6 @@
-import { useState, type ReactElement } from "react";
+import { useEffect, useState, type ReactElement } from "react";
 import { version } from "react-html-content-editor";
+import { useHashRoute } from "./useHashRoute";
 import { QuickStartExample } from "./examples/QuickStartExample";
 import BasicExample from "./examples/BasicExample";
 import FullscreenExample from "./examples/FullscreenExample";
@@ -65,9 +66,23 @@ const PANELS: Record<ExampleTab, ReactElement> = {
 const REPO = "https://github.com/adrianomaringolo/react-html-content-editor";
 const NPM = "https://www.npmjs.com/package/react-html-content-editor";
 
+const TAB_IDS = Object.keys(PANELS) as ExampleTab[];
+const TAB_LABELS: Record<ExampleTab, string> = NAV.flatMap(
+  (g) => g.items,
+).reduce(
+  (acc, item) => ({ ...acc, [item.id]: item.label }),
+  {} as Record<ExampleTab, string>,
+);
+
 function App() {
-  const [activeTab, setActiveTab] = useState<ExampleTab>("quickstart");
+  const activeTab = useHashRoute(TAB_IDS, "quickstart");
   const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  // Reflect the active page in the tab title and reset scroll on navigation.
+  useEffect(() => {
+    document.title = `${TAB_LABELS[activeTab]} · React HTML Content Editor`;
+    window.scrollTo({ top: 0 });
+  }, [activeTab]);
 
   return (
     <div className='app' data-theme={theme}>
@@ -165,10 +180,10 @@ function App() {
               <div className='nav-group' key={group.title}>
                 <p className='nav-group__title'>{group.title}</p>
                 {group.items.map((item) => (
-                  <button
+                  <a
                     key={item.id}
+                    href={`#/${item.id}`}
                     className={`nav-item${activeTab === item.id ? " active" : ""}`}
-                    onClick={() => setActiveTab(item.id)}
                     aria-current={activeTab === item.id ? "page" : undefined}
                   >
                     <span className='nav-item__icon' aria-hidden='true'>
@@ -176,7 +191,7 @@ function App() {
                     </span>
                     {item.label}
                     {item.tag && <span className='nav-item__tag'>{item.tag}</span>}
-                  </button>
+                  </a>
                 ))}
               </div>
             ))}
