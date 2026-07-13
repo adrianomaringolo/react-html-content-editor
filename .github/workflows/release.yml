@@ -35,12 +35,38 @@ jobs:
       - name: Upgrade npm for OIDC
         run: npm install -g npm@latest
 
+      # Only act when there is something to do: pending changesets (⇒ open a
+      # Version PR) OR the current version isn't on npm yet (⇒ publish). This
+      # stops routine pushes (docs, CI) from re-running `changeset publish`,
+      # which would otherwise try to republish the current version and fail.
+      # We hit the registry HTTP API directly to avoid the CI .npmrc that
+      # breaks changesets' own `npm info` preflight.
+      - name: Decide whether a release is needed
+        id: gate
+        run: |
+          LOCAL=$(node -p "require('./packages/library/package.json').version")
+          HAS_CS=false
+          for f in .changeset/*.md; do
+            [ -e "$f" ] || continue
+            [ "$(basename "$f")" = "README.md" ] && continue
+            HAS_CS=true
+          done
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' "https://registry.npmjs.org/react-html-content-editor/$LOCAL")
+          echo "local=$LOCAL hasChangesets=$HAS_CS versionHttp=$CODE"
+          if [ "$HAS_CS" = "true" ] || [ "$CODE" != "200" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Get pnpm store directory
+        if: steps.gate.outputs.run == 'true'
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
       - name: Setup pnpm cache
+        if: steps.gate.outputs.run == 'true'
         uses: actions/cache@v4
         with:
           path: ${{ env.STORE_PATH }}
@@ -49,13 +75,16 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
+        if: steps.gate.outputs.run == 'true'
         run: pnpm install --no-frozen-lockfile
 
       - name: Build packages
+        if: steps.gate.outputs.run == 'true'
         run: pnpm run build
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
+        if: steps.gate.outputs.run == 'true'
         uses: changesets/action@v1
         with:
           publish: pnpm run release
