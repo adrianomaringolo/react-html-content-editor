@@ -1,5 +1,74 @@
 # react-html-content-editor
 
+## 1.3.0
+
+### Minor Changes
+
+- 591b2f7: Add more WYSIWYG controls:
+
+  - `WysiwygEmoji` / `WysiwygSpecialChar` — pickers that insert an emoji or a
+    special character.
+  - `WysiwygClearColor` — reset the text color to the inherited default.
+  - `WysiwygLinkEditor` — place inside the editor; when the caret is in a link, a
+    floating bar lets you open, edit (change URL) or remove it.
+  - `WysiwygFullscreen` — toggle fullscreen for the standalone editor.
+
+  Also exposes `rootRef` on the Wysiwyg context.
+
+- be742c5: Add more WYSIWYG controls:
+
+  - `WysiwygUndo` / `WysiwygRedo` — undo and redo edits.
+  - `WysiwygAlignMenu` — a single text-alignment control whose trigger shows the
+    alignment currently applied to the selection and opens a picker with
+    left / center / justify / right (composed from `WysiwygAlign`).
+
+- 4d40c4f: Add WYSIWYG image controls:
+
+  - `WysiwygImage` — insert an image with no server. By default it opens a file
+    picker and embeds the file as a base64 data URI; pass `getSrc` to insert by
+    URL/link instead.
+  - `WysiwygImageUpload` — pick a file, upload it via your `upload(file)` handler,
+    and insert the returned URL. Disables itself and shows a spinner while
+    uploading; supports `onError`.
+  - `WysiwygImageResizer` — click an image in the editor to reveal a floating bar
+    of size presets (S/M/L + reset) and a pixel-width input that set the image
+    width; place it inside the editor. The bar is rendered in a portal and
+    anchored to the image so it stays put regardless of ancestor transforms.
+
+  All work inside a standalone `Wysiwyg` or a `ContentEditorWysiwyg`.
+
+- 1bb4bff: Add a batch of WYSIWYG controls and a reusable dropdown primitive:
+
+  - **`WysiwygDropdown`** — reusable popover/trigger primitive (now powering the
+    grouped controls, incl. a refactored `WysiwygAlignMenu`).
+  - **Inline:** `WysiwygSubscript`, `WysiwygSuperscript`, `WysiwygInlineCode`.
+  - **Block:** `WysiwygCodeBlock`, `WysiwygHorizontalRule`, `WysiwygIndent`,
+    `WysiwygOutdent`, and `WysiwygHeadingMenu` (H1–H6 + paragraph in one dropdown).
+  - **Color / font:** `WysiwygTextColor`, `WysiwygHighlight` (swatch pickers),
+    `WysiwygFontFamily` (dropdown).
+  - **`WysiwygFontSizeInput`** — numeric input to type an exact font size in px.
+  - **`WysiwygWordCount`** — read-only word/character counter.
+
+- 4e4e76d: Add table, task-list and document WYSIWYG controls, and improve link and font-size UX:
+
+  - **Tables:** `WysiwygTable` (insert from a size picker) and `WysiwygTableEditor`
+    (floating bar to add/remove rows and columns, or delete the table).
+  - **`WysiwygTaskList`** — insert a checklist; click an item's checkbox to toggle it.
+  - **Text:** `WysiwygCaseTransform` (UPPER / lower / Title / Sentence, preserving
+    inline markup), `WysiwygLineHeight` and `WysiwygLetterSpacing`.
+  - **Documents:** `WysiwygCallout` (colored info boxes), `WysiwygTableOfContents`
+    (built from the headings), `WysiwygFindReplace` (find/replace panel),
+    `WysiwygPrint`, and `WysiwygExport` (HTML / Markdown / plain text, plus an
+    exported `htmlToMarkdown` helper).
+  - **`WysiwygLink`** now opens an inline popover with a URL field instead of a
+    `window.prompt` (the `getUrl` prop still works as an override).
+  - **`WysiwygFontSizeInput`** gains − / + steppers and applies the size live as you
+    type or step, re-sizing an existing span in place instead of nesting.
+
+  Toolbar popovers (grouped dropdowns and the find & replace panel) now render in a
+  body portal, so they are no longer clipped by the editor container near an edge
+  and flip to stay within the viewport.
+
 ## 1.2.1
 
 ### Patch Changes
