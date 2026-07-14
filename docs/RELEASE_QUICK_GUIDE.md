@@ -1,33 +1,33 @@
-# 🚀 Guia Rápido de Release
+# 🚀 Release Quick Guide
 
 ## TL;DR
 
 ```bash
-# 1. Fazer mudanças no código
-# 2. Criar changeset
+# 1. Make code changes
+# 2. Create changeset
 pnpm changeset
 
-# 3. Commit e push
+# 3. Commit and push
 git add .
 git commit -m "feat: add new feature"
 git push origin main
 
-# 4. GitHub Actions cria Release PR automaticamente
-# 5. Merge do PR → Publicação automática no npm
+# 4. GitHub Actions creates a Release PR automatically
+# 5. Merge the PR → Automatic publishing to npm
 ```
 
-## 📊 Fluxograma Visual
+## 📊 Visual Flowchart
 
 ```
 ┌─────────────────────┐
-│  Fazer mudanças     │
-│  no código          │
+│  Make code          │
+│  changes            │
 └──────────┬──────────┘
            │
            ▼
 ┌─────────────────────┐
 │  pnpm changeset     │
-│  (criar changeset)  │
+│  (create changeset) │
 └──────────┬──────────┘
            │
            ▼
@@ -39,72 +39,72 @@ git push origin main
            ▼
 ┌─────────────────────┐
 │  GitHub Actions     │
-│  roda CI tests      │
+│  runs CI tests      │
 └──────────┬──────────┘
            │
            ▼
 ┌─────────────────────┐
 │  GitHub Actions     │
-│  cria Release PR    │
+│  creates Release PR │
 └──────────┬──────────┘
            │
            ▼
 ┌─────────────────────┐
-│  Revisar e fazer    │
-│  merge do PR        │
+│  Review and merge   │
+│  the PR             │
 └──────────┬──────────┘
            │
            ▼
 ┌─────────────────────┐
 │  GitHub Actions     │
-│  publica no npm     │
+│  publishes to npm   │
 └──────────┬──────────┘
            │
            ▼
 ┌─────────────────────┐
-│  Tag e Release      │
-│  criados no GitHub  │
+│  Tag and Release    │
+│  created on GitHub  │
 └─────────────────────┘
 ```
 
-## 🎯 Comandos Essenciais
+## 🎯 Essential Commands
 
-### Criar Changeset
+### Create Changeset
 
 ```bash
 pnpm changeset
 ```
 
-### Ver Status
+### View Status
 
 ```bash
 pnpm changeset status
 ```
 
-### Helper Interativo
+### Interactive Helper
 
 ```bash
 pnpm release:helper
 ```
 
-## 📝 Tipos de Versão
+## 📝 Version Types
 
-| Tipo      | Quando usar                          | Exemplo       |
+| Type      | When to use                          | Example       |
 | --------- | ------------------------------------ | ------------- |
-| **patch** | Bug fixes, pequenas correções        | 1.0.0 → 1.0.1 |
-| **minor** | Novas features, sem breaking changes | 1.0.0 → 1.1.0 |
+| **patch** | Bug fixes, small corrections         | 1.0.0 → 1.0.1 |
+| **minor** | New features, no breaking changes    | 1.0.0 → 1.1.0 |
 | **major** | Breaking changes                     | 1.0.0 → 2.0.0 |
 
-## ⚙️ Configuração Inicial (Uma vez)
+## ⚙️ Initial Setup (One time)
 
 ### 1. NPM Token
 
 ```bash
-# 1. Gerar token em npmjs.com
-# 2. Adicionar no GitHub:
+# 1. Generate token at npmjs.com
+# 2. Add on GitHub:
 #    Settings → Secrets → New secret
-#    Nome: NPM_TOKEN
-#    Value: seu_token_aqui
+#    Name: NPM_TOKEN
+#    Value: your_token_here
 ```
 
 ### 2. GitHub Permissions
@@ -115,10 +115,10 @@ pnpm release:helper
 # ✅ Allow GitHub Actions to create and approve pull requests
 ```
 
-## 🔍 Verificar Antes de Release
+## 🔍 Check Before Release
 
 ```bash
-# Testes
+# Tests
 pnpm test
 
 # Build
@@ -127,55 +127,55 @@ pnpm build
 # Lint
 pnpm lint
 
-# Ver changesets pendentes
+# View pending changesets
 pnpm changeset status
 ```
 
-## 🆘 Problemas Comuns
+## 🆘 Common Problems
 
-### Release PR não foi criado
+### Release PR was not created
 
-- Verifique se há changesets: `pnpm changeset status`
-- Verifique os logs do GitHub Actions
-- Certifique-se de estar na branch `main`
+- Check for changesets: `pnpm changeset status`
+- Check the GitHub Actions logs
+- Make sure you are on the `main` branch
 
-### Publicação falhou
+### Publishing failed
 
-- Verifique o `NPM_TOKEN` no GitHub Secrets
-- Verifique permissões no npmjs.com
-- Verifique se a versão já existe
+- Check the `NPM_TOKEN` in GitHub Secrets
+- Check permissions on npmjs.com
+- Check whether the version already exists
 
-### Testes falhando
+### Tests failing
 
-- Rode localmente: `pnpm test`
-- Corrija os testes antes de fazer merge
+- Run locally: `pnpm test`
+- Fix the tests before merging
 
-## 📚 Documentação Completa
+## 📚 Full Documentation
 
-Para mais detalhes, veja:
+For more details, see:
 
-- [RELEASE.md](../RELEASE.md) - Guia completo
+- [RELEASE.md](../RELEASE.md) - Complete guide
 - [Changesets Docs](https://github.com/changesets/changesets)
 - [GitHub Actions Docs](https://docs.github.com/en/actions)
 
-## 💡 Dicas
+## 💡 Tips
 
-1. **Sempre crie changesets** para mudanças que devem ser publicadas
-2. **Revise o Release PR** antes de fazer merge
-3. **Teste localmente** antes de fazer push
-4. **Use mensagens descritivas** nos changesets
-5. **Siga semantic versioning** ao escolher o tipo de versão
+1. **Always create changesets** for changes that should be published
+2. **Review the Release PR** before merging
+3. **Test locally** before pushing
+4. **Use descriptive messages** in changesets
+5. **Follow semantic versioning** when choosing the version type
 
-## 🎉 Exemplo Completo
+## 🎉 Complete Example
 
 ```bash
-# 1. Fazer mudanças
+# 1. Make changes
 vim packages/library/src/components/ContentEditor.tsx
 
-# 2. Criar changeset
+# 2. Create changeset
 pnpm changeset
-# Escolher: minor
-# Descrição: "Add toggle buttons for edit/preview modes"
+# Choose: minor
+# Description: "Add toggle buttons for edit/preview modes"
 
 # 3. Commit
 git add .
@@ -184,8 +184,8 @@ git commit -m "feat: add toggle buttons for edit/preview modes"
 # 4. Push
 git push origin main
 
-# 5. Aguardar Release PR ser criado
-# 6. Revisar e fazer merge
-# 7. Aguardar publicação automática
-# 8. ✅ Pronto! Nova versão no npm
+# 5. Wait for the Release PR to be created
+# 6. Review and merge
+# 7. Wait for automatic publishing
+# 8. ✅ Done! New version on npm
 ```

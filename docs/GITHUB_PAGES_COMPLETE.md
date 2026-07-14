@@ -1,33 +1,33 @@
-# ✅ GitHub Pages - Configuração Completa
+# ✅ GitHub Pages - Complete Configuration
 
-## 🎉 Sistema Configurado!
+## 🎉 System Configured!
 
-O demo app está pronto para ser publicado no GitHub Pages com deploy automático.
+The demo app is ready to be published on GitHub Pages with automatic deploy.
 
-## 📦 O que foi configurado
+## 📦 What was configured
 
-### 1. Workflow de Deploy
+### 1. Deploy Workflow
 
 ✅ **`.github/workflows/deploy-demo.yml`**
 
-- Deploy automático em push para `main`
-- Build da library e demo
-- Upload para GitHub Pages
-- Pode ser executado manualmente
+- Automatic deploy on push to `main`
+- Build of the library and demo
+- Upload to GitHub Pages
+- Can be run manually
 
-### 2. Configuração do Vite
+### 2. Vite Configuration
 
 ✅ **`packages/demo/vite.config.ts`**
 
-- Base path configurado para GitHub Pages
-- Otimizações de build para produção
-- Minificação e tree-shaking
+- Base path configured for GitHub Pages
+- Build optimizations for production
+- Minification and tree-shaking
 
-### 3. Arquivos Necessários
+### 3. Required Files
 
 ✅ **`packages/demo/public/.nojekyll`**
 
-- Desabilita processamento Jekyll
+- Disables Jekyll processing
 
 ### 4. Scripts
 
@@ -39,70 +39,70 @@ O demo app está pronto para ser publicado no GitHub Pages com deploy automátic
 }
 ```
 
-### 5. Documentação
+### 5. Documentation
 
-✅ **Guias criados:**
+✅ **Guides created:**
 
-- `docs/GITHUB_PAGES_SETUP.md` - Guia completo
-- `GITHUB_PAGES_QUICK_START.md` - Guia rápido
-- `docs/GITHUB_PAGES_COMPLETE.md` - Este arquivo
+- `docs/GITHUB_PAGES_SETUP.md` - Complete guide
+- `GITHUB_PAGES_QUICK_START.md` - Quick guide
+- `docs/GITHUB_PAGES_COMPLETE.md` - This file
 
-## 🚀 Próximos Passos
+## 🚀 Next Steps
 
-### Passo 1: Habilitar GitHub Pages (1 minuto)
+### Step 1: Enable GitHub Pages (1 minute)
 
-1. Vá no repositório no GitHub
+1. Go to the repository on GitHub
 2. **Settings** → **Pages**
-3. Em **Source**, selecione: **GitHub Actions**
-4. Clique em **Save**
+3. Under **Source**, select: **GitHub Actions**
+4. Click **Save**
 
-### Passo 2: Ajustar Base Path (Se necessário)
+### Step 2: Adjust the Base Path (If necessary)
 
-Se o nome do seu repositório for diferente de `react-html-content-editor`:
+If your repository name is different from `react-html-content-editor`:
 
-**Edite `packages/demo/vite.config.ts`:**
+**Edit `packages/demo/vite.config.ts`:**
 
 ```typescript
-base: process.env.NODE_ENV === "production" ? "/SEU-REPO-AQUI/" : "/",
+base: process.env.NODE_ENV === "production" ? "/YOUR-REPO-HERE/" : "/",
 ```
 
-### Passo 3: Fazer Deploy
+### Step 3: Deploy
 
 ```bash
-# Commit tudo
+# Commit everything
 git add .
 git commit -m "chore: setup GitHub Pages"
 git push origin main
 
-# Aguarde o workflow completar
-# Acesse: https://seu-usuario.github.io/seu-repo/
+# Wait for the workflow to complete
+# Visit: https://your-username.github.io/your-repo/
 ```
 
-## 🌍 URL do Demo
+## 🌍 Demo URL
 
-Após o deploy, seu demo estará em:
+After the deploy, your demo will be at:
 
 ```
-https://SEU-USUARIO.github.io/SEU-REPO/
+https://YOUR-USERNAME.github.io/YOUR-REPO/
 ```
 
-Exemplo:
+Example:
 
 ```
 https://yourusername.github.io/react-html-content-editor/
 ```
 
-## 📊 Fluxo de Deploy
+## 📊 Deploy Flow
 
 ```
 ┌─────────────────────┐
-│  Push para main     │
+│  Push to main       │
 └──────────┬──────────┘
            │
            ▼
 ┌─────────────────────┐
 │  GitHub Actions     │
-│  detecta mudanças   │
+│  detects changes    │
 └──────────┬──────────┘
            │
            ▼
@@ -117,121 +117,121 @@ https://yourusername.github.io/react-html-content-editor/
            │
            ▼
 ┌─────────────────────┐
-│  Upload para        │
+│  Upload to          │
 │  GitHub Pages       │
 └──────────┬──────────┘
            │
            ▼
 ┌─────────────────────┐
-│  Deploy completo    │
+│  Deploy complete    │
 │  Site online! 🎉    │
 └─────────────────────┘
 ```
 
-## 🔄 Deploy Automático
+## 🔄 Automatic Deploy
 
-O deploy acontece automaticamente quando:
+The deploy happens automatically when:
 
-✅ **Push para `main`** com mudanças em:
+✅ **Push to `main`** with changes in:
 
 - `packages/demo/**`
 - `packages/library/**`
 - `.github/workflows/deploy-demo.yml`
 
-✅ **Execução manual:**
+✅ **Manual run:**
 
 - GitHub → Actions → Deploy Demo → Run workflow
 
-## 🎯 Comandos Úteis
+## 🎯 Useful Commands
 
 ```bash
-# Build local do demo
+# Local build of the demo
 pnpm build:demo
 
-# Testar build localmente
+# Test the build locally
 cd packages/demo/dist
 python -m http.server 8000
-# Acesse: http://localhost:8000
+# Visit: http://localhost:8000
 
-# Deploy manual (via workflow)
+# Manual deploy (via workflow)
 # GitHub → Actions → Deploy Demo → Run workflow
 ```
 
-## 🔍 Verificar Deploy
+## 🔍 Verify the Deploy
 
-### 1. Status do Workflow
+### 1. Workflow Status
 
 1. GitHub → **Actions**
-2. Veja **Deploy Demo to GitHub Pages**
-3. Verifique se está verde (✅)
+2. Look at **Deploy Demo to GitHub Pages**
+3. Check that it is green (✅)
 
-### 2. Acessar o Site
+### 2. Access the Site
 
 1. **Settings** → **Pages**
-2. Veja a URL publicada
-3. Clique para acessar
+2. Look at the published URL
+3. Click to visit it
 
-### 3. Verificar Logs
+### 3. Check the Logs
 
-Se houver problemas:
+If there are problems:
 
-1. **Actions** → Workflow que falhou
-2. Clique no job
-3. Veja os logs detalhados
+1. **Actions** → The workflow that failed
+2. Click the job
+3. View the detailed logs
 
 ## 🐛 Troubleshooting
 
-### Página 404
+### 404 Page
 
-**Soluções:**
+**Solutions:**
 
-- Aguarde 5-10 minutos (primeira vez pode demorar)
-- Verifique se GitHub Pages está habilitado
-- Verifique se o workflow completou
-- Limpe o cache do navegador
+- Wait 5-10 minutes (the first time can take a while)
+- Check that GitHub Pages is enabled
+- Check that the workflow completed
+- Clear the browser cache
 
-### Assets não carregam
+### Assets not loading
 
-**Solução:**
+**Solution:**
 
-- Verifique o `base` no `vite.config.ts`
-- Deve ser: `"/nome-do-repo/"`
+- Check the `base` in `vite.config.ts`
+- It should be: `"/repo-name/"`
 - Rebuild: `pnpm build:demo`
 
-### Workflow falha
+### Workflow fails
 
-**Soluções:**
+**Solutions:**
 
-- Teste localmente: `pnpm build:demo`
-- Veja os logs do GitHub Actions
-- Verifique dependências no `package.json`
+- Test locally: `pnpm build:demo`
+- View the GitHub Actions logs
+- Check the dependencies in `package.json`
 
-## ✨ Features do Demo
+## ✨ Demo Features
 
-O demo publicado inclui:
+The published demo includes:
 
-✅ **Quick Start** - Página inicial com guia rápido
-✅ **Basic Usage** - Exemplo básico
-✅ **WYSIWYG (WIP)** - Editor visual em desenvolvimento
-✅ **Fullscreen Mode** - Modo tela cheia
-✅ **Auto-Save** - Salvamento automático
-✅ **Themes** - Temas claro e escuro
-✅ **Error Handling** - Tratamento de erros
+✅ **Quick Start** - Home page with a quick guide
+✅ **Basic Usage** - Basic example
+✅ **WYSIWYG (WIP)** - Visual editor under development
+✅ **Fullscreen Mode** - Fullscreen mode
+✅ **Auto-Save** - Automatic saving
+✅ **Themes** - Light and dark themes
+✅ **Error Handling** - Error handling
 
-## 🎨 Customização
+## 🎨 Customization
 
-### Domínio Customizado
+### Custom Domain
 
 1. **Settings** → **Pages** → **Custom domain**
-2. Adicione seu domínio
+2. Add your domain
 3. Configure DNS:
    ```
-   CNAME: seu-usuario.github.io
+   CNAME: your-username.github.io
    ```
 
 ### Analytics
 
-Adicione em `packages/demo/index.html`:
+Add to `packages/demo/index.html`:
 
 ```html
 <script async src="https://www.googletagmanager.com/gtag/js?id=GA_ID"></script>
@@ -239,71 +239,71 @@ Adicione em `packages/demo/index.html`:
 
 ### SEO
 
-Adicione meta tags em `packages/demo/index.html`:
+Add meta tags to `packages/demo/index.html`:
 
 ```html
 <meta name="description" content="React HTML Content Editor Demo" />
 <meta property="og:title" content="React HTML Content Editor" />
 ```
 
-## 📊 Monitoramento
+## 📊 Monitoring
 
-### Estatísticas
+### Statistics
 
 1. **Insights** → **Traffic**
-2. Veja visitantes e views
+2. View visitors and views
 
-### Histórico de Deploys
+### Deploy History
 
 1. **Actions** → **Deploy Demo to GitHub Pages**
-2. Veja todos os deploys
+2. View all the deploys
 
-## ✅ Checklist Final
+## ✅ Final Checklist
 
-Antes do primeiro deploy:
+Before the first deploy:
 
-- [ ] GitHub Pages habilitado (Source: GitHub Actions)
-- [ ] Base path correto no `vite.config.ts`
-- [ ] `.nojekyll` existe
-- [ ] Workflow existe
-- [ ] Build local funciona
+- [ ] GitHub Pages enabled (Source: GitHub Actions)
+- [ ] Correct base path in `vite.config.ts`
+- [ ] `.nojekyll` exists
+- [ ] Workflow exists
+- [ ] Local build works
 
-Após o deploy:
+After the deploy:
 
-- [ ] Workflow completou (✅)
-- [ ] Site acessível
-- [ ] Assets carregam
-- [ ] Navegação funciona
-- [ ] Exemplos funcionam
+- [ ] Workflow completed (✅)
+- [ ] Site accessible
+- [ ] Assets load
+- [ ] Navigation works
+- [ ] Examples work
 
-## 🎉 Pronto!
+## 🎉 Done!
 
-Seu demo está configurado e será atualizado automaticamente!
+Your demo is configured and will be updated automatically!
 
-**Próximos passos:**
+**Next steps:**
 
-1. Habilite GitHub Pages
-2. Ajuste o base path (se necessário)
-3. Faça push para `main`
-4. Aguarde o deploy
-5. Acesse seu demo online! 🚀
+1. Enable GitHub Pages
+2. Adjust the base path (if necessary)
+3. Push to `main`
+4. Wait for the deploy
+5. Visit your demo online! 🚀
 
-## 📚 Recursos
+## 📚 Resources
 
-- [Guia Completo](./GITHUB_PAGES_SETUP.md)
-- [Guia Rápido](../GITHUB_PAGES_QUICK_START.md)
+- [Complete Guide](./GITHUB_PAGES_SETUP.md)
+- [Quick Guide](../GITHUB_PAGES_QUICK_START.md)
 - [GitHub Pages Docs](https://docs.github.com/en/pages)
 - [Vite Deployment](https://vitejs.dev/guide/static-deploy.html)
 
-## 💡 Dicas
+## 💡 Tips
 
-1. **Teste localmente** antes de fazer push
-2. **Monitore os workflows** para detectar problemas
-3. **Mantenha o demo atualizado** com as últimas features
-4. **Adicione exemplos** para mostrar funcionalidades
-5. **Use branches** para testar mudanças grandes
+1. **Test locally** before pushing
+2. **Monitor the workflows** to catch problems
+3. **Keep the demo up to date** with the latest features
+4. **Add examples** to showcase functionality
+5. **Use branches** to test large changes
 
 ---
 
-**Status:** ✅ Configuração Completa
-**Próximo passo:** Habilitar GitHub Pages e fazer primeiro deploy
+**Status:** ✅ Complete Configuration
+**Next step:** Enable GitHub Pages and do the first deploy

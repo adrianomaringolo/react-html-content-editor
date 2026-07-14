@@ -1,58 +1,58 @@
 # Release Process
 
-Este documento descreve o processo automatizado de versionamento e publicação no npm usando Changesets e GitHub Actions.
+This document describes the automated versioning and npm publishing process using Changesets and GitHub Actions.
 
-## 📋 Pré-requisitos
+## 📋 Prerequisites
 
-### 1. Configurar NPM Token
+### 1. Configure NPM Token
 
-Para publicar no npm automaticamente, você precisa configurar um token:
+To publish to npm automatically, you need to configure a token:
 
-1. Acesse [npmjs.com](https://www.npmjs.com/) e faça login
-2. Vá em **Account Settings** → **Access Tokens**
-3. Clique em **Generate New Token** → **Classic Token**
-4. Selecione **Automation** (para CI/CD)
-5. Copie o token gerado
+1. Go to [npmjs.com](https://www.npmjs.com/) and log in
+2. Go to **Account Settings** → **Access Tokens**
+3. Click **Generate New Token** → **Classic Token**
+4. Select **Automation** (for CI/CD)
+5. Copy the generated token
 
-### 2. Adicionar Secret no GitHub
+### 2. Add Secret on GitHub
 
-1. Vá no seu repositório no GitHub
-2. Acesse **Settings** → **Secrets and variables** → **Actions**
-3. Clique em **New repository secret**
-4. Nome: `NPM_TOKEN`
-5. Value: Cole o token do npm
-6. Clique em **Add secret**
+1. Go to your repository on GitHub
+2. Go to **Settings** → **Secrets and variables** → **Actions**
+3. Click **New repository secret**
+4. Name: `NPM_TOKEN`
+5. Value: Paste the npm token
+6. Click **Add secret**
 
-### 3. Configurar Permissões do GitHub Actions
+### 3. Configure GitHub Actions Permissions
 
-1. Vá em **Settings** → **Actions** → **General**
-2. Em **Workflow permissions**, selecione:
+1. Go to **Settings** → **Actions** → **General**
+2. Under **Workflow permissions**, select:
    - ✅ **Read and write permissions**
    - ✅ **Allow GitHub Actions to create and approve pull requests**
-3. Clique em **Save**
+3. Click **Save**
 
-## 🚀 Processo de Release
+## 🚀 Release Process
 
-### Passo 1: Criar um Changeset
+### Step 1: Create a Changeset
 
-Quando você fizer mudanças que devem ser publicadas, crie um changeset:
+When you make changes that should be published, create a changeset:
 
 ```bash
 pnpm changeset
 ```
 
-Você será perguntado:
+You will be asked:
 
-1. **Qual package mudou?** Selecione `react-html-content-editor`
-2. **Tipo de mudança:**
+1. **Which package changed?** Select `react-html-content-editor`
+2. **Type of change:**
    - `major` - Breaking changes (1.0.0 → 2.0.0)
-   - `minor` - Novas features (1.0.0 → 1.1.0)
+   - `minor` - New features (1.0.0 → 1.1.0)
    - `patch` - Bug fixes (1.0.0 → 1.0.1)
-3. **Descrição:** Escreva um resumo das mudanças
+3. **Description:** Write a summary of the changes
 
-Isso criará um arquivo em `.changeset/` com as informações da mudança.
+This will create a file in `.changeset/` with the change information.
 
-### Passo 2: Commit e Push
+### Step 2: Commit and Push
 
 ```bash
 git add .
@@ -60,158 +60,158 @@ git commit -m "feat: add new feature"
 git push origin main
 ```
 
-### Passo 3: Automação GitHub Actions
+### Step 3: GitHub Actions Automation
 
-Quando você fizer push para `main`, o GitHub Actions irá:
+When you push to `main`, GitHub Actions will:
 
 1. **CI Workflow** (`ci.yml`):
-   - ✅ Rodar testes
-   - ✅ Fazer lint
+   - ✅ Run tests
+   - ✅ Lint
    - ✅ Type check
    - ✅ Build
 
 2. **Release Workflow** (`release.yml`):
-   - 🔍 Detectar changesets pendentes
-   - 📝 Criar um Pull Request chamado "chore: release packages"
-   - 📦 O PR incluirá:
-     - Atualização da versão no `package.json`
-     - Atualização do `CHANGELOG.md`
-     - Remoção dos changesets processados
+   - 🔍 Detect pending changesets
+   - 📝 Create a Pull Request named "chore: release packages"
+   - 📦 The PR will include:
+     - Version bump in `package.json`
+     - Update to `CHANGELOG.md`
+     - Removal of the processed changesets
 
-### Passo 4: Merge do Release PR
+### Step 4: Merge the Release PR
 
-1. Revise o Pull Request de release
-2. Verifique se a versão e o changelog estão corretos
-3. Faça merge do PR
+1. Review the release Pull Request
+2. Verify that the version and changelog are correct
+3. Merge the PR
 
-### Passo 5: Publicação Automática
+### Step 5: Automatic Publishing
 
-Após o merge do PR de release:
+After merging the release PR:
 
-1. ✅ GitHub Actions detecta o merge
-2. 📦 Faz build da biblioteca
-3. 🚀 Publica no npm automaticamente
-4. 🏷️ Cria uma tag Git (ex: `v1.0.1`)
-5. 📋 Cria um GitHub Release com o changelog
+1. ✅ GitHub Actions detects the merge
+2. 📦 Builds the library
+3. 🚀 Publishes to npm automatically
+4. 🏷️ Creates a Git tag (e.g., `v1.0.1`)
+5. 📋 Creates a GitHub Release with the changelog
 
-## 📝 Exemplos de Changesets
+## 📝 Changeset Examples
 
 ### Bug Fix (patch)
 
 ```bash
 pnpm changeset
-# Selecione: patch
-# Descrição: "Fix cursor jumping issue in split view"
+# Select: patch
+# Description: "Fix cursor jumping issue in split view"
 ```
 
-### Nova Feature (minor)
+### New Feature (minor)
 
 ```bash
 pnpm changeset
-# Selecione: minor
-# Descrição: "Add WYSIWYG toolbar with visual editing capabilities"
+# Select: minor
+# Description: "Add WYSIWYG toolbar with visual editing capabilities"
 ```
 
 ### Breaking Change (major)
 
 ```bash
 pnpm changeset
-# Selecione: major
-# Descrição: "Change API: rename 'activeTab' prop to 'defaultView'"
+# Select: major
+# Description: "Change API: rename 'activeTab' prop to 'defaultView'"
 ```
 
-## 🔄 Workflow Completo
+## 🔄 Complete Workflow
 
 ```
-1. Fazer mudanças no código
+1. Make code changes
    ↓
-2. pnpm changeset (criar changeset)
+2. pnpm changeset (create changeset)
    ↓
 3. git commit & push
    ↓
-4. GitHub Actions roda CI
+4. GitHub Actions runs CI
    ↓
-5. GitHub Actions cria Release PR
+5. GitHub Actions creates Release PR
    ↓
-6. Revisar e fazer merge do PR
+6. Review and merge the PR
    ↓
-7. GitHub Actions publica no npm
+7. GitHub Actions publishes to npm
    ↓
-8. Tag e Release criados automaticamente
+8. Tag and Release created automatically
 ```
 
-## 🛠️ Comandos Úteis
+## 🛠️ Useful Commands
 
 ```bash
-# Criar um changeset
+# Create a changeset
 pnpm changeset
 
-# Ver status dos changesets
+# View changeset status
 pnpm changeset status
 
-# Aplicar changesets localmente (para testar)
+# Apply changesets locally (for testing)
 pnpm changeset version
 
-# Publicar manualmente (se necessário)
+# Publish manually (if needed)
 pnpm release
 
-# Build antes de publicar
+# Build before publishing
 pnpm build
 ```
 
-## 📊 Versionamento Semântico
+## 📊 Semantic Versioning
 
-Seguimos [Semantic Versioning](https://semver.org/):
+We follow [Semantic Versioning](https://semver.org/):
 
 - **MAJOR** (1.0.0 → 2.0.0): Breaking changes
-  - Mudanças na API que quebram compatibilidade
-  - Remoção de features
-  - Mudanças significativas no comportamento
+  - API changes that break compatibility
+  - Removal of features
+  - Significant changes in behavior
 
-- **MINOR** (1.0.0 → 1.1.0): Novas features
-  - Novas funcionalidades
-  - Melhorias que não quebram compatibilidade
-  - Deprecações (mas ainda funcionam)
+- **MINOR** (1.0.0 → 1.1.0): New features
+  - New functionality
+  - Improvements that don't break compatibility
+  - Deprecations (but still functional)
 
 - **PATCH** (1.0.0 → 1.0.1): Bug fixes
-  - Correções de bugs
-  - Melhorias de performance
-  - Atualizações de documentação
+  - Bug fixes
+  - Performance improvements
+  - Documentation updates
 
 ## 🚨 Troubleshooting
 
-### Erro: "npm publish failed"
+### Error: "npm publish failed"
 
-1. Verifique se o `NPM_TOKEN` está configurado corretamente
-2. Verifique se você tem permissão para publicar o package
-3. Verifique se a versão já não existe no npm
+1. Check that `NPM_TOKEN` is configured correctly
+2. Check that you have permission to publish the package
+3. Check that the version doesn't already exist on npm
 
-### Erro: "Permission denied"
+### Error: "Permission denied"
 
-1. Verifique as permissões do GitHub Actions
-2. Certifique-se de que "Read and write permissions" está habilitado
+1. Check the GitHub Actions permissions
+2. Make sure "Read and write permissions" is enabled
 
-### Release PR não foi criado
+### Release PR was not created
 
-1. Verifique se há changesets pendentes: `pnpm changeset status`
-2. Verifique os logs do GitHub Actions
-3. Certifique-se de que o push foi para a branch `main`
+1. Check that there are pending changesets: `pnpm changeset status`
+2. Check the GitHub Actions logs
+3. Make sure the push was to the `main` branch
 
-## 📚 Recursos
+## 📚 Resources
 
 - [Changesets Documentation](https://github.com/changesets/changesets)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [npm Publishing Guide](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry)
 - [Semantic Versioning](https://semver.org/)
 
-## 🎯 Checklist de Release
+## 🎯 Release Checklist
 
-Antes de fazer um release, verifique:
+Before making a release, verify:
 
-- [ ] Todos os testes estão passando
-- [ ] Build está funcionando
-- [ ] Documentação está atualizada
-- [ ] CHANGELOG está correto
-- [ ] Versão segue semantic versioning
-- [ ] Não há breaking changes não documentadas
-- [ ] Exemplos no demo estão funcionando
+- [ ] All tests are passing
+- [ ] Build is working
+- [ ] Documentation is up to date
+- [ ] CHANGELOG is correct
+- [ ] Version follows semantic versioning
+- [ ] There are no undocumented breaking changes
+- [ ] Demo examples are working

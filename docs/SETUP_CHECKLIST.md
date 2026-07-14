@@ -1,108 +1,108 @@
-# ✅ Checklist de Configuração de Release
+# ✅ Release Configuration Checklist
 
-Use este checklist para configurar o sistema de release automatizado.
+Use this checklist to set up the automated release system.
 
-## 📋 Configuração Inicial (Fazer uma vez)
+## 📋 Initial Setup (Do once)
 
 ### 1. NPM Setup
 
-- [ ] Criar conta no [npmjs.com](https://www.npmjs.com/) (se não tiver)
-- [ ] Verificar email da conta npm
-- [ ] Ir em Account Settings → Access Tokens
-- [ ] Clicar em "Generate New Token" → "Classic Token"
-- [ ] Selecionar tipo "Automation"
-- [ ] Copiar o token gerado (guarde em local seguro!)
+- [ ] Create an account on [npmjs.com](https://www.npmjs.com/) (if you don't have one)
+- [ ] Verify the npm account email
+- [ ] Go to Account Settings → Access Tokens
+- [ ] Click "Generate New Token" → "Classic Token"
+- [ ] Select the "Automation" type
+- [ ] Copy the generated token (keep it somewhere safe!)
 
 ### 2. GitHub Secrets
 
-- [ ] Ir no repositório do GitHub
-- [ ] Acessar Settings → Secrets and variables → Actions
-- [ ] Clicar em "New repository secret"
-- [ ] Nome: `NPM_TOKEN`
-- [ ] Value: Colar o token do npm
-- [ ] Clicar em "Add secret"
-- [ ] Verificar se o secret aparece na lista
+- [ ] Go to the GitHub repository
+- [ ] Navigate to Settings → Secrets and variables → Actions
+- [ ] Click "New repository secret"
+- [ ] Name: `NPM_TOKEN`
+- [ ] Value: Paste the npm token
+- [ ] Click "Add secret"
+- [ ] Verify that the secret appears in the list
 
 ### 3. GitHub Actions Permissions
 
-- [ ] Ir em Settings → Actions → General
-- [ ] Em "Workflow permissions", selecionar:
+- [ ] Go to Settings → Actions → General
+- [ ] Under "Workflow permissions", select:
   - [ ] ✅ Read and write permissions
   - [ ] ✅ Allow GitHub Actions to create and approve pull requests
-- [ ] Clicar em "Save"
+- [ ] Click "Save"
 
 ### 4. Package.json Configuration
 
-- [ ] Verificar se `name` está correto em `packages/library/package.json`
-- [ ] Verificar se `version` está em "1.0.0" (ou versão desejada)
-- [ ] Verificar se `publishConfig.access` está como "public"
-- [ ] Verificar se `repository` está configurado
+- [ ] Verify that `name` is correct in `packages/library/package.json`
+- [ ] Verify that `version` is "1.0.0" (or the desired version)
+- [ ] Verify that `publishConfig.access` is set to "public"
+- [ ] Verify that `repository` is configured
 
-### 5. Verificar Arquivos
+### 5. Verify Files
 
-- [ ] `.github/workflows/ci.yml` existe
-- [ ] `.github/workflows/release.yml` existe
-- [ ] `.changeset/config.json` existe
-- [ ] `.changeset/initial-release.md` existe
-- [ ] `RELEASE.md` existe
+- [ ] `.github/workflows/ci.yml` exists
+- [ ] `.github/workflows/release.yml` exists
+- [ ] `.changeset/config.json` exists
+- [ ] `.changeset/initial-release.md` exists
+- [ ] `RELEASE.md` exists
 
-## 🧪 Teste Inicial
+## 🧪 Initial Test
 
-### 1. Teste Local
+### 1. Local Test
 
 ```bash
-# Instalar dependências
+# Install dependencies
 pnpm install
 
-# Rodar testes
+# Run tests
 pnpm test
 
 # Build
 pnpm build
 
-# Verificar se o build gerou os arquivos
+# Verify that the build generated the files
 ls -la packages/library/dist/
 ```
 
-- [ ] Testes passando
-- [ ] Build funcionando
-- [ ] Arquivos gerados em `dist/`
+- [ ] Tests passing
+- [ ] Build working
+- [ ] Files generated in `dist/`
 
-### 2. Teste de Changeset
+### 2. Changeset Test
 
 ```bash
-# Criar um changeset de teste
+# Create a test changeset
 pnpm changeset
 
-# Ver status
+# Check status
 pnpm changeset status
 ```
 
-- [ ] Changeset criado com sucesso
-- [ ] Status mostra o changeset pendente
+- [ ] Changeset created successfully
+- [ ] Status shows the pending changeset
 
-### 3. Teste de CI (Opcional)
+### 3. CI Test (Optional)
 
 ```bash
-# Commit e push para testar CI
+# Commit and push to test CI
 git add .
 git commit -m "test: verify CI setup"
 git push origin main
 ```
 
-- [ ] GitHub Actions iniciou
-- [ ] CI workflow passou
-- [ ] Nenhum erro nos logs
+- [ ] GitHub Actions started
+- [ ] CI workflow passed
+- [ ] No errors in the logs
 
-## 🚀 Primeiro Release
+## 🚀 First Release
 
-### 1. Preparar Release
+### 1. Prepare Release
 
-- [ ] Verificar se há um changeset (`.changeset/initial-release.md`)
-- [ ] Revisar a descrição do changeset
-- [ ] Verificar a versão que será publicada
+- [ ] Verify that there is a changeset (`.changeset/initial-release.md`)
+- [ ] Review the changeset description
+- [ ] Verify the version that will be published
 
-### 2. Fazer Push
+### 2. Push
 
 ```bash
 git add .
@@ -110,106 +110,106 @@ git commit -m "chore: prepare initial release"
 git push origin main
 ```
 
-- [ ] Push realizado com sucesso
-- [ ] GitHub Actions iniciou
+- [ ] Push completed successfully
+- [ ] GitHub Actions started
 
-### 3. Aguardar Release PR
+### 3. Wait for the Release PR
 
-- [ ] Release PR foi criado automaticamente
-- [ ] PR tem título "chore: release packages"
-- [ ] PR mostra as mudanças de versão
-- [ ] CHANGELOG.md foi atualizado
+- [ ] Release PR was created automatically
+- [ ] PR has the title "chore: release packages"
+- [ ] PR shows the version changes
+- [ ] CHANGELOG.md was updated
 
-### 4. Revisar e Merge
+### 4. Review and Merge
 
-- [ ] Revisar as mudanças no PR
-- [ ] Verificar se a versão está correta
-- [ ] Verificar se o CHANGELOG está correto
-- [ ] Fazer merge do PR
+- [ ] Review the changes in the PR
+- [ ] Verify that the version is correct
+- [ ] Verify that the CHANGELOG is correct
+- [ ] Merge the PR
 
-### 5. Verificar Publicação
+### 5. Verify Publication
 
-- [ ] GitHub Actions iniciou após merge
-- [ ] Workflow de release passou
-- [ ] Package foi publicado no npm
-- [ ] Tag foi criada no GitHub
-- [ ] GitHub Release foi criado
+- [ ] GitHub Actions started after the merge
+- [ ] Release workflow passed
+- [ ] Package was published to npm
+- [ ] Tag was created on GitHub
+- [ ] GitHub Release was created
 
-### 6. Verificar no NPM
+### 6. Verify on NPM
 
-- [ ] Acessar https://www.npmjs.com/package/react-html-content-editor
-- [ ] Verificar se a versão está correta
-- [ ] Verificar se os arquivos estão corretos
-- [ ] Testar instalação: `npm install react-html-content-editor`
+- [ ] Go to https://www.npmjs.com/package/react-html-content-editor
+- [ ] Verify that the version is correct
+- [ ] Verify that the files are correct
+- [ ] Test the installation: `npm install react-html-content-editor`
 
-## 📝 Releases Futuros
+## 📝 Future Releases
 
-Para cada novo release:
+For each new release:
 
-- [ ] Fazer mudanças no código
-- [ ] Criar changeset: `pnpm changeset`
-- [ ] Commit e push
-- [ ] Aguardar Release PR
-- [ ] Revisar e fazer merge
-- [ ] Verificar publicação
+- [ ] Make code changes
+- [ ] Create a changeset: `pnpm changeset`
+- [ ] Commit and push
+- [ ] Wait for the Release PR
+- [ ] Review and merge
+- [ ] Verify publication
 
 ## 🔍 Troubleshooting
 
-Se algo der errado:
+If something goes wrong:
 
-### CI Falhou
+### CI Failed
 
-- [ ] Verificar logs do GitHub Actions
-- [ ] Rodar testes localmente: `pnpm test`
-- [ ] Verificar lint: `pnpm lint`
-- [ ] Corrigir erros e fazer novo push
+- [ ] Check the GitHub Actions logs
+- [ ] Run tests locally: `pnpm test`
+- [ ] Check lint: `pnpm lint`
+- [ ] Fix the errors and push again
 
-### Release PR não foi criado
+### Release PR was not created
 
-- [ ] Verificar se há changesets: `pnpm changeset status`
-- [ ] Verificar logs do GitHub Actions
-- [ ] Verificar se está na branch `main`
-- [ ] Verificar permissões do GitHub Actions
+- [ ] Check whether there are changesets: `pnpm changeset status`
+- [ ] Check the GitHub Actions logs
+- [ ] Verify that you are on the `main` branch
+- [ ] Check the GitHub Actions permissions
 
-### Publicação Falhou
+### Publication Failed
 
-- [ ] Verificar se NPM_TOKEN está configurado
-- [ ] Verificar se o token é válido
-- [ ] Verificar se você tem permissão para publicar
-- [ ] Verificar se a versão já existe no npm
-- [ ] Verificar logs do GitHub Actions
+- [ ] Verify that NPM_TOKEN is configured
+- [ ] Verify that the token is valid
+- [ ] Verify that you have permission to publish
+- [ ] Verify whether the version already exists on npm
+- [ ] Check the GitHub Actions logs
 
-### Tag não foi criada
+### Tag was not created
 
-- [ ] Verificar se o workflow completou
-- [ ] Verificar permissões do GitHub Actions
-- [ ] Criar tag manualmente se necessário:
+- [ ] Verify that the workflow completed
+- [ ] Check the GitHub Actions permissions
+- [ ] Create the tag manually if necessary:
   ```bash
   git tag v1.0.0
   git push --tags
   ```
 
-## 📚 Recursos Úteis
+## 📚 Useful Resources
 
-- [ ] Ler [RELEASE.md](../RELEASE.md)
-- [ ] Ler [RELEASE_QUICK_GUIDE.md](./RELEASE_QUICK_GUIDE.md)
-- [ ] Ler [AUTOMATION_SUMMARY.md](./AUTOMATION_SUMMARY.md)
+- [ ] Read [RELEASE.md](../RELEASE.md)
+- [ ] Read [RELEASE_QUICK_GUIDE.md](./RELEASE_QUICK_GUIDE.md)
+- [ ] Read [AUTOMATION_SUMMARY.md](./AUTOMATION_SUMMARY.md)
 - [ ] Bookmark [Changesets Docs](https://github.com/changesets/changesets)
 - [ ] Bookmark [GitHub Actions Docs](https://docs.github.com/en/actions)
 
-## ✨ Dicas
+## ✨ Tips
 
-1. **Sempre teste localmente** antes de fazer push
-2. **Revise o Release PR** cuidadosamente
-3. **Use mensagens descritivas** nos changesets
-4. **Siga semantic versioning** ao escolher o tipo
-5. **Mantenha o CHANGELOG limpo** e organizado
+1. **Always test locally** before pushing
+2. **Review the Release PR** carefully
+3. **Use descriptive messages** in changesets
+4. **Follow semantic versioning** when choosing the type
+5. **Keep the CHANGELOG clean** and organized
 
-## 🎉 Pronto!
+## 🎉 Done!
 
-Quando todos os itens estiverem marcados, seu sistema de release automatizado estará funcionando!
+Once all the items are checked, your automated release system will be up and running!
 
-Para fazer um release:
+To make a release:
 
 ```bash
 pnpm changeset
@@ -218,4 +218,4 @@ git commit -m "feat: add new feature"
 git push origin main
 ```
 
-E pronto! O resto é automático! 🚀
+And that's it! The rest is automatic! 🚀

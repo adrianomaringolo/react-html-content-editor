@@ -1,39 +1,39 @@
-# ✅ Sistema de Release Automatizado - Configuração Completa
+# ✅ Automated Release System - Setup Complete
 
-## 🎉 Parabéns! O sistema está configurado
+## 🎉 Congratulations! The system is configured
 
-Seu projeto agora possui um sistema completo de versionamento e publicação automatizada no npm.
+Your project now has a complete automated versioning and npm publishing system.
 
-## 📦 O que foi configurado
+## 📦 What was configured
 
 ### 1. GitHub Actions Workflows
 
 ✅ **CI Workflow** (`.github/workflows/ci.yml`)
 
-- Roda em todo push e PR para `main`
-- Executa: testes, lint, type-check, build
-- Garante qualidade antes do merge
+- Runs on every push and PR to `main`
+- Executes: tests, lint, type-check, build
+- Ensures quality before merge
 
 ✅ **Release Workflow** (`.github/workflows/release.yml`)
 
-- Detecta changesets pendentes
-- Cria Release PR automaticamente
-- Publica no npm após merge
-- Cria tags e GitHub Releases
+- Detects pending changesets
+- Creates Release PR automatically
+- Publishes to npm after merge
+- Creates tags and GitHub Releases
 
-### 2. Documentação Completa
+### 2. Complete Documentation
 
-✅ **Guias criados:**
+✅ **Guides created:**
 
-- `RELEASE.md` - Guia completo detalhado
-- `docs/RELEASE_QUICK_GUIDE.md` - Guia rápido visual
-- `docs/AUTOMATION_SUMMARY.md` - Resumo técnico
-- `docs/SETUP_CHECKLIST.md` - Checklist de configuração
-- `.changeset/README.md` - Documentação de changesets
+- `RELEASE.md` - Complete detailed guide
+- `docs/RELEASE_QUICK_GUIDE.md` - Visual quick guide
+- `docs/AUTOMATION_SUMMARY.md` - Technical summary
+- `docs/SETUP_CHECKLIST.md` - Setup checklist
+- `.changeset/README.md` - Changesets documentation
 
-### 3. Scripts e Ferramentas
+### 3. Scripts and Tools
 
-✅ **Scripts adicionados:**
+✅ **Scripts added:**
 
 ```json
 {
@@ -44,108 +44,108 @@ Seu projeto agora possui um sistema completo de versionamento e publicação aut
 }
 ```
 
-✅ **Helper interativo:**
+✅ **Interactive helper:**
 
-- `scripts/release-helper.sh` - Menu interativo para releases
+- `scripts/release-helper.sh` - Interactive menu for releases
 
 ### 4. Templates
 
 ✅ **PR Template:**
 
-- `.github/PULL_REQUEST_TEMPLATE.md` - Checklist para PRs
+- `.github/PULL_REQUEST_TEMPLATE.md` - Checklist for PRs
 
-### 5. Changeset Inicial
+### 5. Initial Changeset
 
-✅ **Preparado para primeira versão:**
+✅ **Prepared for the first version:**
 
-- `.changeset/initial-release.md` - Changeset com todas as features
+- `.changeset/initial-release.md` - Changeset with all the features
 
-## 🚀 Próximos Passos
+## 🚀 Next Steps
 
-### Passo 1: Configurar NPM Token (5 minutos)
+### Step 1: Configure NPM Token (5 minutes)
 
-1. Acesse [npmjs.com](https://www.npmjs.com/) e faça login
-2. Vá em **Account Settings** → **Access Tokens**
-3. Clique em **Generate New Token** → **Classic Token**
-4. Selecione **Automation**
-5. Copie o token
+1. Go to [npmjs.com](https://www.npmjs.com/) and log in
+2. Go to **Account Settings** → **Access Tokens**
+3. Click **Generate New Token** → **Classic Token**
+4. Select **Automation**
+5. Copy the token
 
-### Passo 2: Adicionar Secret no GitHub (2 minutos)
+### Step 2: Add Secret on GitHub (2 minutes)
 
-1. Vá no repositório no GitHub
+1. Go to the repository on GitHub
 2. **Settings** → **Secrets and variables** → **Actions**
 3. **New repository secret**
-4. Nome: `NPM_TOKEN`
-5. Value: (cole o token)
+4. Name: `NPM_TOKEN`
+5. Value: (paste the token)
 6. **Add secret**
 
-### Passo 3: Configurar Permissões (1 minuto)
+### Step 3: Configure Permissions (1 minute)
 
 1. **Settings** → **Actions** → **General**
-2. Em **Workflow permissions**:
+2. Under **Workflow permissions**:
    - ✅ Read and write permissions
    - ✅ Allow GitHub Actions to create and approve pull requests
 3. **Save**
 
-### Passo 4: Testar o Sistema
+### Step 4: Test the System
 
 ```bash
-# Commit tudo
+# Commit everything
 git add .
 git commit -m "chore: setup automated release system"
 git push origin main
 
-# Aguarde o GitHub Actions criar o Release PR
-# Revise e faça merge
-# Aguarde a publicação automática
+# Wait for GitHub Actions to create the Release PR
+# Review and merge
+# Wait for automatic publishing
 ```
 
-## 📝 Uso Diário
+## 📝 Daily Use
 
-### Fluxo Simples
+### Simple Flow
 
 ```bash
-# 1. Fazer mudanças no código
+# 1. Make code changes
 
-# 2. Criar changeset
+# 2. Create changeset
 pnpm changeset
 
-# 3. Commit e push
+# 3. Commit and push
 git add .
 git commit -m "feat: add new feature"
 git push origin main
 
-# 4. Aguardar Release PR
-# 5. Fazer merge → Publicação automática!
+# 4. Wait for Release PR
+# 5. Merge → Automatic publishing!
 ```
 
-### Usando o Helper
+### Using the Helper
 
 ```bash
 pnpm release:helper
 ```
 
-Menu interativo com opções:
+Interactive menu with options:
 
-1. Criar novo changeset
-2. Ver status dos changesets
-3. Aplicar changesets
-4. Build e publicar
-5. Ver último release
+1. Create new changeset
+2. View changeset status
+3. Apply changesets
+4. Build and publish
+5. View latest release
 
-## 🎯 Tipos de Versão
+## 🎯 Version Types
 
-| Tipo      | Quando usar      | Exemplo       |
+| Type      | When to use      | Example       |
 | --------- | ---------------- | ------------- |
 | **patch** | Bug fixes        | 1.0.0 → 1.0.1 |
-| **minor** | Novas features   | 1.0.0 → 1.1.0 |
+| **minor** | New features     | 1.0.0 → 1.1.0 |
 | **major** | Breaking changes | 1.0.0 → 2.0.0 |
 
-## 📊 Fluxo Automatizado
+## 📊 Automated Flow
 
 ```
 ┌─────────────────────┐
-│  Fazer mudanças     │
+│  Make changes       │
 └──────────┬──────────┘
            │
            ▼
@@ -161,7 +161,7 @@ Menu interativo com opções:
            ▼
 ┌─────────────────────┐
 │  GitHub Actions     │
-│  cria Release PR    │
+│  creates Release PR │
 └──────────┬──────────┘
            │
            ▼
@@ -171,109 +171,109 @@ Menu interativo com opções:
            │
            ▼
 ┌─────────────────────┐
-│  Publicação         │
-│  automática no npm  │
+│  Automatic          │
+│  publishing to npm  │
 └─────────────────────┘
 ```
 
-## ✨ Benefícios
+## ✨ Benefits
 
-✅ **Automação Total**
+✅ **Full Automation**
 
-- Push → Release PR → Publish (tudo automático)
+- Push → Release PR → Publish (all automatic)
 
-✅ **Changelog Automático**
+✅ **Automatic Changelog**
 
-- Gerado a partir dos changesets
+- Generated from the changesets
 
-✅ **Versionamento Semântico**
+✅ **Semantic Versioning**
 
-- Seguido automaticamente
+- Followed automatically
 
-✅ **Qualidade Garantida**
+✅ **Guaranteed Quality**
 
-- CI roda testes antes de publicar
+- CI runs tests before publishing
 
-✅ **Rastreabilidade**
+✅ **Traceability**
 
-- Histórico completo de mudanças
+- Complete history of changes
 
-✅ **Tags e Releases**
+✅ **Tags and Releases**
 
-- Criados automaticamente no GitHub
+- Created automatically on GitHub
 
-## 📚 Documentação
+## 📚 Documentation
 
-Para mais detalhes, consulte:
+For more details, see:
 
-- **Guia Completo:** [RELEASE.md](../RELEASE.md)
-- **Guia Rápido:** [docs/RELEASE_QUICK_GUIDE.md](./RELEASE_QUICK_GUIDE.md)
+- **Complete Guide:** [RELEASE.md](../RELEASE.md)
+- **Quick Guide:** [docs/RELEASE_QUICK_GUIDE.md](./RELEASE_QUICK_GUIDE.md)
 - **Checklist:** [docs/SETUP_CHECKLIST.md](./SETUP_CHECKLIST.md)
-- **Resumo Técnico:** [docs/AUTOMATION_SUMMARY.md](./AUTOMATION_SUMMARY.md)
+- **Technical Summary:** [docs/AUTOMATION_SUMMARY.md](./AUTOMATION_SUMMARY.md)
 
-## 🆘 Precisa de Ajuda?
+## 🆘 Need Help?
 
-### Problemas Comuns
+### Common Problems
 
-**Release PR não foi criado:**
+**Release PR was not created:**
 
 ```bash
-# Verificar changesets pendentes
+# Check pending changesets
 pnpm changeset status
 
-# Verificar logs do GitHub Actions
-# GitHub → Actions → Ver workflow
+# Check the GitHub Actions logs
+# GitHub → Actions → View workflow
 ```
 
-**Publicação falhou:**
+**Publishing failed:**
 
-- Verificar NPM_TOKEN no GitHub Secrets
-- Verificar permissões no npmjs.com
-- Verificar se a versão já existe
+- Check NPM_TOKEN in GitHub Secrets
+- Check permissions on npmjs.com
+- Check whether the version already exists
 
-**Testes falhando:**
+**Tests failing:**
 
 ```bash
-# Rodar localmente
+# Run locally
 pnpm test
 
-# Corrigir e fazer novo push
+# Fix and push again
 ```
 
-## 🎓 Recursos de Aprendizado
+## 🎓 Learning Resources
 
 - [Changesets Documentation](https://github.com/changesets/changesets)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Semantic Versioning](https://semver.org/)
 - [npm Publishing Guide](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry)
 
-## ✅ Checklist Final
+## ✅ Final Checklist
 
-Antes do primeiro release:
+Before the first release:
 
-- [ ] NPM_TOKEN configurado no GitHub
-- [ ] Permissões do GitHub Actions configuradas
-- [ ] Testes passando localmente (`pnpm test`)
-- [ ] Build funcionando (`pnpm build`)
-- [ ] Changeset inicial revisado
-- [ ] README atualizado
-- [ ] Documentação completa
+- [ ] NPM_TOKEN configured on GitHub
+- [ ] GitHub Actions permissions configured
+- [ ] Tests passing locally (`pnpm test`)
+- [ ] Build working (`pnpm build`)
+- [ ] Initial changeset reviewed
+- [ ] README updated
+- [ ] Documentation complete
 
-## 🚀 Pronto para o Primeiro Release!
+## 🚀 Ready for the First Release!
 
-Quando estiver pronto:
+When you're ready:
 
 ```bash
-# Commit tudo
+# Commit everything
 git add .
 git commit -m "chore: prepare for initial release"
 git push origin main
 
-# Aguarde a mágica acontecer! ✨
+# Wait for the magic to happen! ✨
 ```
 
 ---
 
-**Criado em:** $(date +"%Y-%m-%d")
-**Status:** ✅ Configuração Completa
-**Próximo passo:** Configurar NPM_TOKEN e fazer primeiro release
+**Created on:** $(date +"%Y-%m-%d")
+**Status:** ✅ Setup Complete
+**Next step:** Configure NPM_TOKEN and make the first release

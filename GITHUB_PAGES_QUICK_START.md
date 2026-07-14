@@ -3,36 +3,36 @@
 ## TL;DR
 
 ```bash
-# 1. Habilitar GitHub Pages no repositório
+# 1. Enable GitHub Pages in the repository
 #    Settings → Pages → Source: GitHub Actions
 
-# 2. Ajustar base path (se necessário)
+# 2. Adjust the base path (if necessary)
 #    packages/demo/vite.config.ts
-#    base: "/seu-repo-aqui/"
+#    base: "/your-repo-here/"
 
-# 3. Push para main
+# 3. Push to main
 git push origin main
 
-# 4. Aguardar deploy automático
-# 5. Acessar: https://seu-usuario.github.io/seu-repo/
+# 4. Wait for the automatic deploy
+# 5. Visit: https://your-username.github.io/your-repo/
 ```
 
-## ⚙️ Configuração (2 minutos)
+## ⚙️ Configuration (2 minutes)
 
-### 1. Habilitar GitHub Pages
+### 1. Enable GitHub Pages
 
 1. GitHub Repo → **Settings** → **Pages**
 2. Source: **GitHub Actions**
 3. Save
 
-### 2. Ajustar Base Path
+### 2. Adjust the Base Path
 
-**Se o nome do repo for diferente de `react-html-content-editor`:**
+**If the repo name is different from `react-html-content-editor`:**
 
-Edite `packages/demo/vite.config.ts`:
+Edit `packages/demo/vite.config.ts`:
 
 ```typescript
-base: process.env.NODE_ENV === "production" ? "/SEU-REPO/" : "/",
+base: process.env.NODE_ENV === "production" ? "/YOUR-REPO/" : "/",
 ```
 
 ### 3. Deploy
@@ -43,49 +43,49 @@ git commit -m "chore: setup GitHub Pages"
 git push origin main
 ```
 
-## 🌍 URL do Demo
+## 🌍 Demo URL
 
 ```
-https://SEU-USUARIO.github.io/SEU-REPO/
+https://YOUR-USERNAME.github.io/YOUR-REPO/
 ```
 
-## ✅ Verificar
+## ✅ Verify
 
-1. **Actions** → Ver workflow "Deploy Demo to GitHub Pages"
-2. Aguardar conclusão (✅)
-3. Acessar a URL
+1. **Actions** → View the "Deploy Demo to GitHub Pages" workflow
+2. Wait for it to finish (✅)
+3. Visit the URL
 
-## 🔄 Atualizações
+## 🔄 Updates
 
-Deploy automático a cada push para `main` que modifique:
+Automatic deploy on every push to `main` that modifies:
 
 - `packages/demo/**`
 - `packages/library/**`
 
-## 📚 Documentação Completa
+## 📚 Full Documentation
 
 [docs/GITHUB_PAGES_SETUP.md](./docs/GITHUB_PAGES_SETUP.md)
 
-## 🆘 Problemas?
+## 🆘 Problems?
 
 ### 404 Error
 
-- Aguarde 5-10 minutos
-- Limpe cache do navegador
-- Verifique se GitHub Pages está habilitado
+- Wait 5-10 minutes
+- Clear the browser cache
+- Check that GitHub Pages is enabled
 
-### Assets não carregam
+### Assets not loading
 
-- Verifique `base` no `vite.config.ts`
-- Deve terminar com `/`
+- Check `base` in `vite.config.ts`
+- It must end with `/`
 
-### Build falha
+### Build fails
 
 ```bash
-# Teste localmente
+# Test locally
 pnpm build:demo
 ```
 
-## ✨ Pronto!
+## ✨ Done!
 
-Seu demo está online e será atualizado automaticamente! 🎉
+Your demo is online and will be updated automatically! 🎉

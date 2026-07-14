@@ -1,78 +1,78 @@
-# 🤖 Resumo da Automação de Release
+# 🤖 Release Automation Summary
 
-## ✅ O que foi configurado
+## ✅ What has been configured
 
 ### 1. GitHub Actions Workflows
 
 #### `.github/workflows/ci.yml`
 
-- ✅ Roda em todo push e PR para `main`
-- ✅ Executa testes, lint, type-check e build
-- ✅ Garante qualidade do código antes do merge
+- ✅ Runs on every push and PR to `main`
+- ✅ Executes tests, lint, type-check, and build
+- ✅ Ensures code quality before merging
 
 #### `.github/workflows/release.yml`
 
-- ✅ Roda quando há push para `main`
-- ✅ Detecta changesets pendentes
-- ✅ Cria Release PR automaticamente
-- ✅ Publica no npm após merge do Release PR
-- ✅ Cria tags Git automaticamente
-- ✅ Cria GitHub Releases
+- ✅ Runs when there is a push to `main`
+- ✅ Detects pending changesets
+- ✅ Creates a Release PR automatically
+- ✅ Publishes to npm after the Release PR is merged
+- ✅ Creates Git tags automatically
+- ✅ Creates GitHub Releases
 
 ### 2. Changesets
 
-#### Configuração (`.changeset/config.json`)
+#### Configuration (`.changeset/config.json`)
 
-- ✅ Configurado para publicação pública
-- ✅ Branch base: `main`
-- ✅ Demo ignorado (não será publicado)
+- ✅ Configured for public publishing
+- ✅ Base branch: `main`
+- ✅ Demo ignored (will not be published)
 
-#### Scripts no `package.json`
+#### Scripts in `package.json`
 
 ```json
 {
-  "changeset": "changeset", // Criar changeset
-  "version": "changeset version", // Atualizar versões
-  "release": "pnpm build && changeset publish", // Publicar
-  "release:helper": "./scripts/release-helper.sh" // Helper interativo
+  "changeset": "changeset", // Create a changeset
+  "version": "changeset version", // Update versions
+  "release": "pnpm build && changeset publish", // Publish
+  "release:helper": "./scripts/release-helper.sh" // Interactive helper
 }
 ```
 
-### 3. Documentação
+### 3. Documentation
 
-- ✅ `RELEASE.md` - Guia completo de release
-- ✅ `docs/RELEASE_QUICK_GUIDE.md` - Guia rápido visual
-- ✅ `.changeset/README.md` - Documentação de changesets
-- ✅ `.github/PULL_REQUEST_TEMPLATE.md` - Template de PR
-- ✅ `scripts/release-helper.sh` - Script helper interativo
+- ✅ `RELEASE.md` - Complete release guide
+- ✅ `docs/RELEASE_QUICK_GUIDE.md` - Quick visual guide
+- ✅ `.changeset/README.md` - Changesets documentation
+- ✅ `.github/PULL_REQUEST_TEMPLATE.md` - PR template
+- ✅ `scripts/release-helper.sh` - Interactive helper script
 
-### 4. Changeset Inicial
+### 4. Initial Changeset
 
-- ✅ `.changeset/initial-release.md` - Changeset para primeira versão
+- ✅ `.changeset/initial-release.md` - Changeset for the first version
 
-## 🚀 Como usar
+## 🚀 How to use
 
-### Fluxo Básico
+### Basic Flow
 
 ```bash
-# 1. Fazer mudanças
-# 2. Criar changeset
+# 1. Make changes
+# 2. Create a changeset
 pnpm changeset
 
-# 3. Commit e push
+# 3. Commit and push
 git add .
 git commit -m "feat: add feature"
 git push origin main
 
-# 4. GitHub Actions faz o resto!
+# 4. GitHub Actions does the rest!
 ```
 
-### Fluxo Completo Automatizado
+### Full Automated Flow
 
 ```
-Desenvolvedor                    GitHub Actions
+Developer                        GitHub Actions
     │                                  │
-    ├─ Fazer mudanças                  │
+    ├─ Make changes                   │
     ├─ pnpm changeset                  │
     ├─ git push                        │
     │                                  │
@@ -86,7 +86,7 @@ Desenvolvedor                    GitHub Actions
     │                            └─────┬─────────┘
     │                                  │
     │◄─────────────────────────────────┘
-    │  (Notificação de PR criado)
+    │  (Notification: PR created)
     │
     ├─ Review PR
     ├─ Merge PR
@@ -108,24 +108,24 @@ Desenvolvedor                    GitHub Actions
     │                            └───────────────┘
     │
     │◄─────────────────────────────────┘
-       (Notificação de publicação)
+       (Notification: publication)
 ```
 
-## 🔧 Configuração Necessária (Uma vez)
+## 🔧 Required Configuration (Once)
 
 ### 1. NPM Token
 
-1. Acesse [npmjs.com](https://www.npmjs.com/)
+1. Go to [npmjs.com](https://www.npmjs.com/)
 2. Account Settings → Access Tokens
 3. Generate New Token → Automation
-4. Copie o token
+4. Copy the token
 
 ### 2. GitHub Secret
 
 1. GitHub Repo → Settings → Secrets → Actions
 2. New repository secret
-3. Nome: `NPM_TOKEN`
-4. Value: (cole o token)
+3. Name: `NPM_TOKEN`
+4. Value: (paste the token)
 
 ### 3. GitHub Permissions
 
@@ -134,31 +134,31 @@ Desenvolvedor                    GitHub Actions
    - ✅ Read and write permissions
    - ✅ Allow GitHub Actions to create and approve pull requests
 
-## 📊 Versionamento
+## 📊 Versioning
 
-| Tipo      | Quando           | Exemplo       |
+| Type      | When             | Example       |
 | --------- | ---------------- | ------------- |
 | **patch** | Bug fixes        | 1.0.0 → 1.0.1 |
-| **minor** | Novas features   | 1.0.0 → 1.1.0 |
+| **minor** | New features     | 1.0.0 → 1.1.0 |
 | **major** | Breaking changes | 1.0.0 → 2.0.0 |
 
-## 🎯 Comandos Úteis
+## 🎯 Useful Commands
 
 ```bash
-# Criar changeset
+# Create a changeset
 pnpm changeset
 
-# Ver status
+# Check status
 pnpm changeset status
 
-# Helper interativo
+# Interactive helper
 pnpm release:helper
 
-# Publicar manualmente (se necessário)
+# Publish manually (if necessary)
 pnpm release
 ```
 
-## 📝 Exemplo de Changeset
+## 📝 Changeset Example
 
 ```markdown
 ---
@@ -168,51 +168,51 @@ pnpm release
 Add toggle buttons for edit/preview modes with split view support
 ```
 
-## 🔍 Verificações Automáticas
+## 🔍 Automatic Checks
 
-Antes de cada release, o CI verifica:
+Before each release, the CI checks:
 
-- ✅ Testes passando
-- ✅ Build funcionando
-- ✅ Lint sem erros
-- ✅ Type-check sem erros
+- ✅ Tests passing
+- ✅ Build working
+- ✅ Lint with no errors
+- ✅ Type-check with no errors
 
-## 🎉 Benefícios
+## 🎉 Benefits
 
-1. **Automação Total**: Push → Release PR → Publish
-2. **Changelog Automático**: Gerado a partir dos changesets
-3. **Versionamento Semântico**: Seguido automaticamente
-4. **Tags Git**: Criadas automaticamente
-5. **GitHub Releases**: Criados automaticamente
-6. **Qualidade**: CI garante que tudo funciona
-7. **Rastreabilidade**: Histórico completo de mudanças
-8. **Colaboração**: PRs facilitam review
+1. **Full Automation**: Push → Release PR → Publish
+2. **Automatic Changelog**: Generated from the changesets
+3. **Semantic Versioning**: Followed automatically
+4. **Git Tags**: Created automatically
+5. **GitHub Releases**: Created automatically
+6. **Quality**: CI ensures everything works
+7. **Traceability**: Complete history of changes
+8. **Collaboration**: PRs make reviewing easier
 
-## 📚 Recursos
+## 📚 Resources
 
 - [Changesets](https://github.com/changesets/changesets)
 - [GitHub Actions](https://docs.github.com/en/actions)
 - [Semantic Versioning](https://semver.org/)
 - [npm Publishing](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry)
 
-## 🆘 Suporte
+## 🆘 Support
 
-Se tiver problemas:
+If you run into problems:
 
-1. Veja [RELEASE.md](../RELEASE.md) para troubleshooting
-2. Verifique os logs do GitHub Actions
-3. Use `pnpm release:helper` para diagnóstico
-4. Verifique a configuração do NPM_TOKEN
+1. See [RELEASE.md](../RELEASE.md) for troubleshooting
+2. Check the GitHub Actions logs
+3. Use `pnpm release:helper` for diagnostics
+4. Verify the NPM_TOKEN configuration
 
-## ✨ Próximos Passos
+## ✨ Next Steps
 
-1. Configure o NPM_TOKEN no GitHub
-2. Configure as permissões do GitHub Actions
-3. Faça um teste com o changeset inicial:
+1. Configure the NPM_TOKEN on GitHub
+2. Configure the GitHub Actions permissions
+3. Run a test with the initial changeset:
    ```bash
    git add .
    git commit -m "chore: setup automated releases"
    git push origin main
    ```
-4. Aguarde o Release PR ser criado
-5. Faça merge e veja a mágica acontecer! 🎉
+4. Wait for the Release PR to be created
+5. Merge it and watch the magic happen! 🎉

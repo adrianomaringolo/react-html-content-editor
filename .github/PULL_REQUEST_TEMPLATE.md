@@ -1,6 +1,6 @@
 ## Description
 
-<!-- Descreva suas mudanças aqui -->
+<!-- Describe your changes here -->
 
 ## Type of Change
 
@@ -15,30 +15,30 @@
 
 ## Checklist
 
-- [ ] Meu código segue o style guide do projeto
-- [ ] Fiz uma self-review do meu código
-- [ ] Comentei áreas complexas do código
-- [ ] Atualizei a documentação relevante
-- [ ] Minhas mudanças não geram novos warnings
-- [ ] Adicionei testes que provam que meu fix funciona ou que minha feature funciona
-- [ ] Testes unitários novos e existentes passam localmente
-- [ ] Criei um changeset (`pnpm changeset`)
+- [ ] My code follows the project's style guide
+- [ ] I have performed a self-review of my code
+- [ ] I have commented complex areas of the code
+- [ ] I have updated the relevant documentation
+- [ ] My changes generate no new warnings
+- [ ] I have added tests that prove my fix works or that my feature works
+- [ ] New and existing unit tests pass locally
+- [ ] I have created a changeset (`pnpm changeset`)
 
 ## Changeset
 
-- [ ] ✅ Changeset criado
-- [ ] ⏭️ Não precisa de changeset (apenas docs, testes, etc)
+- [ ] ✅ Changeset created
+- [ ] ⏭️ No changeset needed (docs, tests, etc. only)
 
-## Screenshots (se aplicável)
+## Screenshots (if applicable)
 
-<!-- Adicione screenshots aqui -->
+<!-- Add screenshots here -->
 
 ## Related Issues
 
-<!-- Link para issues relacionadas -->
+<!-- Link to related issues -->
 
 Closes #
 
 ## Additional Notes
 
-<!-- Notas adicionais para os reviewers -->
+<!-- Additional notes for the reviewers -->

@@ -1,48 +1,48 @@
 # 🔧 CI Troubleshooting Guide
 
-## Problema: pnpm-lock.yaml não compatível
+## Problem: pnpm-lock.yaml not compatible
 
-### Erro
+### Error
 
 ```
 WARN  Ignoring not compatible lockfile
 ERR_PNPM_NO_LOCKFILE  Cannot install with "frozen-lockfile" because pnpm-lock.yaml is absent
 ```
 
-### Causa
+### Cause
 
-O `pnpm-lock.yaml` pode estar:
+The `pnpm-lock.yaml` might be:
 
-1. Não commitado no repositório
-2. Em formato incompatível com a versão do pnpm no CI
-3. Corrompido
+1. Not committed to the repository
+2. In a format incompatible with the pnpm version used in CI
+3. Corrupted
 
-### Solução Aplicada
+### Applied Solution
 
-Atualizamos os workflows para usar `--no-frozen-lockfile`:
+We updated the workflows to use `--no-frozen-lockfile`:
 
-**Antes:**
+**Before:**
 
 ```yaml
 - name: Install dependencies
   run: pnpm install --frozen-lockfile
 ```
 
-**Depois:**
+**After:**
 
 ```yaml
 - name: Install dependencies
   run: pnpm install --no-frozen-lockfile
 ```
 
-### Por que isso funciona?
+### Why does this work?
 
-- `--frozen-lockfile`: Falha se o lockfile não existir ou estiver desatualizado
-- `--no-frozen-lockfile`: Permite instalar e atualizar o lockfile se necessário
+- `--frozen-lockfile`: Fails if the lockfile doesn't exist or is out of date
+- `--no-frozen-lockfile`: Allows installing and updating the lockfile if necessary
 
-### Melhores Práticas
+### Best Practices
 
-#### 1. Sempre commitar o pnpm-lock.yaml
+#### 1. Always commit the pnpm-lock.yaml
 
 ```bash
 git add pnpm-lock.yaml
@@ -50,16 +50,16 @@ git commit -m "chore: update lockfile"
 git push
 ```
 
-#### 2. Verificar se não está no .gitignore
+#### 2. Check that it is not in .gitignore
 
 ```bash
-# Verificar
+# Check
 grep "pnpm-lock" .gitignore
 
-# Se estiver, remover a linha
+# If it is there, remove the line
 ```
 
-#### 3. Manter versão consistente do pnpm
+#### 3. Keep the pnpm version consistent
 
 **`.github/workflows/*.yml`:**
 
@@ -67,7 +67,7 @@ grep "pnpm-lock" .gitignore
 - name: Install pnpm
   uses: pnpm/action-setup@v4
   with:
-    version: 8 # Mesma versão em todos os workflows
+    version: 8 # Same version across all workflows
 ```
 
 **`package.json`:**
@@ -80,46 +80,46 @@ grep "pnpm-lock" .gitignore
 }
 ```
 
-#### 4. Regenerar lockfile se necessário
+#### 4. Regenerate the lockfile if necessary
 
 ```bash
-# Deletar lockfile antigo
+# Delete the old lockfile
 rm pnpm-lock.yaml
 
-# Reinstalar
+# Reinstall
 pnpm install
 
-# Commitar novo lockfile
+# Commit the new lockfile
 git add pnpm-lock.yaml
 git commit -m "chore: regenerate lockfile"
 ```
 
-## Outros Problemas Comuns
+## Other Common Problems
 
-### 1. Versão do Node.js
+### 1. Node.js Version
 
-**Erro:**
+**Error:**
 
 ```
 Error: The engine "node" is incompatible with this module
 ```
 
-**Solução:**
-Verificar versão do Node nos workflows:
+**Solution:**
+Check the Node version in the workflows:
 
 ```yaml
 - name: Setup Node.js
   uses: actions/setup-node@v4
   with:
-    node-version: 20 # Mesma versão em todos
+    node-version: 20 # Same version everywhere
 ```
 
-### 2. Cache do pnpm
+### 2. pnpm Cache
 
-**Problema:** Build lento ou falhas intermitentes
+**Problem:** Slow build or intermittent failures
 
-**Solução:**
-Limpar cache:
+**Solution:**
+Clear the cache:
 
 ```yaml
 - name: Setup pnpm cache
@@ -131,42 +131,42 @@ Limpar cache:
       ${{ runner.os }}-pnpm-store-
 ```
 
-Ou desabilitar cache temporariamente para debug.
+Or disable the cache temporarily for debugging.
 
-### 3. Dependências faltando
+### 3. Missing dependencies
 
-**Erro:**
+**Error:**
 
 ```
 Cannot find module 'xxx'
 ```
 
-**Solução:**
+**Solution:**
 
 ```bash
-# Instalar dependência
+# Install the dependency
 pnpm add xxx
 
-# Ou dev dependency
+# Or as a dev dependency
 pnpm add -D xxx
 
-# Commitar
+# Commit
 git add package.json pnpm-lock.yaml
 git commit -m "chore: add missing dependency"
 ```
 
-### 4. Build falha no CI mas funciona localmente
+### 4. Build fails in CI but works locally
 
-**Causas comuns:**
+**Common causes:**
 
-- Variáveis de ambiente diferentes
-- Arquivos não commitados
-- Dependências globais no local
+- Different environment variables
+- Uncommitted files
+- Global dependencies on your local machine
 
 **Debug:**
 
 ```bash
-# Simular ambiente CI localmente
+# Simulate the CI environment locally
 rm -rf node_modules
 rm pnpm-lock.yaml
 pnpm install
@@ -174,22 +174,22 @@ pnpm build
 pnpm test
 ```
 
-### 5. Testes falhando no CI
+### 5. Tests failing in CI
 
-**Solução:**
+**Solution:**
 
 ```bash
-# Rodar testes localmente
+# Run tests locally
 pnpm test
 
-# Ver logs detalhados
+# See detailed logs
 pnpm test -- --reporter=verbose
 
-# Rodar teste específico
+# Run a specific test
 pnpm test -- path/to/test.ts
 ```
 
-## Workflows Atualizados
+## Updated Workflows
 
 ### CI Workflow (`.github/workflows/ci.yml`)
 
@@ -199,11 +199,11 @@ pnpm test -- path/to/test.ts
 
 - name: Lint
   run: pnpm run lint
-  continue-on-error: true # Não falha o build
+  continue-on-error: true # Does not fail the build
 
 - name: Type check
   run: pnpm run type-check
-  continue-on-error: true # Não falha o build
+  continue-on-error: true # Does not fail the build
 
 - name: Run tests
   run: pnpm run test
@@ -243,74 +243,74 @@ pnpm test -- path/to/test.ts
     NODE_ENV: production
 ```
 
-## Verificação Rápida
+## Quick Check
 
-Antes de fazer push, verifique:
+Before pushing, verify:
 
 ```bash
-# 1. Lockfile existe
+# 1. Lockfile exists
 ls -lh pnpm-lock.yaml
 
-# 2. Não está no .gitignore
+# 2. It is not in .gitignore
 grep "pnpm-lock" .gitignore
 
-# 3. Está commitado
+# 3. It is committed
 git status pnpm-lock.yaml
 
-# 4. Build funciona
+# 4. Build works
 pnpm install
 pnpm build
 
-# 5. Testes passam
+# 5. Tests pass
 pnpm test
 ```
 
-## Comandos Úteis
+## Useful Commands
 
 ```bash
-# Ver logs do workflow
+# View the workflow logs
 gh run view --log
 
-# Rerun workflow
+# Rerun a workflow
 gh run rerun <run-id>
 
-# Ver status dos workflows
+# View the status of the workflows
 gh run list
 
-# Cancelar workflow
+# Cancel a workflow
 gh run cancel <run-id>
 ```
 
-## Quando usar --frozen-lockfile
+## When to use --frozen-lockfile
 
-Use `--frozen-lockfile` quando:
+Use `--frozen-lockfile` when:
 
-- ✅ Lockfile está sempre atualizado
-- ✅ Quer garantir builds reproduzíveis
-- ✅ Quer detectar lockfile desatualizado
+- ✅ The lockfile is always up to date
+- ✅ You want to guarantee reproducible builds
+- ✅ You want to detect an outdated lockfile
 
-Use `--no-frozen-lockfile` quando:
+Use `--no-frozen-lockfile` when:
 
-- ✅ Lockfile pode estar desatualizado
-- ✅ Quer mais flexibilidade no CI
-- ✅ Está tendo problemas com lockfile
+- ✅ The lockfile might be out of date
+- ✅ You want more flexibility in CI
+- ✅ You are having lockfile issues
 
-## Migração Futura
+## Future Migration
 
-Quando o lockfile estiver estável, você pode voltar para `--frozen-lockfile`:
+Once the lockfile is stable, you can switch back to `--frozen-lockfile`:
 
 ```yaml
 - name: Install dependencies
   run: pnpm install --frozen-lockfile
 ```
 
-Mas certifique-se de:
+But make sure to:
 
-1. Sempre commitar o lockfile
-2. Manter versão do pnpm consistente
-3. Regenerar lockfile quando necessário
+1. Always commit the lockfile
+2. Keep the pnpm version consistent
+3. Regenerate the lockfile when necessary
 
-## Recursos
+## Resources
 
 - [pnpm CI Documentation](https://pnpm.io/continuous-integration)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
