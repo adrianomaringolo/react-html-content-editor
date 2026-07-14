@@ -29,12 +29,25 @@ import {
   WysiwygFontFamily,
   WysiwygTextColor,
   WysiwygClearColor,
+  WysiwygCaseTransform,
+  WysiwygLineHeight,
+  WysiwygLetterSpacing,
   WysiwygHighlight,
   WysiwygEmoji,
   WysiwygSpecialChar,
   // lists
   WysiwygUnorderedList,
   WysiwygOrderedList,
+  WysiwygTaskList,
+  // tables
+  WysiwygTable,
+  WysiwygTableEditor,
+  // documents & utilities
+  WysiwygCallout,
+  WysiwygTableOfContents,
+  WysiwygFindReplace,
+  WysiwygPrint,
+  WysiwygExport,
   // alignment
   WysiwygAlign,
   WysiwygAlignMenu,
@@ -81,6 +94,17 @@ import {
   SquarePen,
   List,
   ListOrdered,
+  ListTodo,
+  Table,
+  Rows3,
+  CaseSensitive,
+  UnfoldVertical,
+  MoveHorizontal,
+  Search,
+  ListTree,
+  Info,
+  Printer,
+  Download,
   TextAlignStart,
   TextAlignJustify,
   Link,
@@ -163,6 +187,9 @@ const CONTROL_REFERENCE: { group: string; items: ControlInfo[] }[] = [
       { icon: Baseline, name: "WysiwygTextColor", fn: "Swatch picker for text color" },
       { icon: DropletOff, name: "WysiwygClearColor", fn: "Reset the text color to default" },
       { icon: Highlighter, name: "WysiwygHighlight", fn: "Swatch picker for highlight color" },
+      { icon: CaseSensitive, name: "WysiwygCaseTransform", fn: "Change case: UPPER / lower / Title / Sentence" },
+      { icon: UnfoldVertical, name: "WysiwygLineHeight", fn: "Set the line height of the selected block(s)" },
+      { icon: MoveHorizontal, name: "WysiwygLetterSpacing", fn: "Set the letter spacing of the selection" },
       { icon: Smile, name: "WysiwygEmoji", fn: "Insert an emoji from a picker" },
       { icon: Omega, name: "WysiwygSpecialChar", fn: "Insert a special character" },
     ],
@@ -172,6 +199,24 @@ const CONTROL_REFERENCE: { group: string; items: ControlInfo[] }[] = [
     items: [
       { icon: List, name: "WysiwygUnorderedList", fn: "Toggle a bulleted list" },
       { icon: ListOrdered, name: "WysiwygOrderedList", fn: "Toggle a numbered list" },
+      { icon: ListTodo, name: "WysiwygTaskList", fn: "Insert a checklist; click an item's box to toggle it" },
+    ],
+  },
+  {
+    group: "Tables",
+    items: [
+      { icon: Table, name: "WysiwygTable", fn: "Insert a table from a size picker" },
+      { icon: Rows3, name: "WysiwygTableEditor", fn: "Click a table to add/remove rows and columns" },
+    ],
+  },
+  {
+    group: "Documents",
+    items: [
+      { icon: Info, name: "WysiwygCallout", fn: "Insert a colored callout / info box" },
+      { icon: ListTree, name: "WysiwygTableOfContents", fn: "Insert a table of contents from the headings" },
+      { icon: Search, name: "WysiwygFindReplace", fn: "Find and replace text in the editor" },
+      { icon: Printer, name: "WysiwygPrint", fn: "Print the editor content" },
+      { icon: Download, name: "WysiwygExport", fn: "Export as HTML, Markdown or plain text" },
     ],
   },
   {
@@ -253,11 +298,15 @@ export function WysiwygControlsExample() {
           <WysiwygTextColor />
           <WysiwygClearColor />
           <WysiwygHighlight />
+          <WysiwygCaseTransform />
+          <WysiwygLineHeight />
+          <WysiwygLetterSpacing />
           <WysiwygEmoji />
           <WysiwygSpecialChar />
           <WysiwygSeparator />
           <WysiwygUnorderedList />
           <WysiwygOrderedList />
+          <WysiwygTaskList />
           <WysiwygIndent />
           <WysiwygOutdent />
           <WysiwygSeparator />
@@ -272,12 +321,18 @@ export function WysiwygControlsExample() {
           <WysiwygLink />
           <WysiwygUnlink />
           <WysiwygHorizontalRule />
+          <WysiwygTable />
+          <WysiwygCallout />
+          <WysiwygTableOfContents />
           <WysiwygSeparator />
           <WysiwygImage />
           <WysiwygImageUpload upload={fakeUpload} />
           <WysiwygSeparator />
+          <WysiwygFindReplace />
           <WysiwygClearFormatting />
           <WysiwygFullscreen />
+          <WysiwygPrint />
+          <WysiwygExport />
           <WysiwygWordCount />
         </WysiwygToolbar>
         <WysiwygContent placeholder='Start writing…' minHeight='340px' />
@@ -285,6 +340,8 @@ export function WysiwygControlsExample() {
         <WysiwygImageResizer />
         {/* Click a link to open / edit / remove it */}
         <WysiwygLinkEditor />
+        {/* Click a table to add / remove rows and columns */}
+        <WysiwygTableEditor />
       </Wysiwyg>
 
       <div className='wysiwyg-panels'>

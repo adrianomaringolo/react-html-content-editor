@@ -37,6 +37,21 @@ export type {
 } from "./WysiwygFontFamily";
 export { WysiwygTextColor } from "./WysiwygTextColor";
 export type { WysiwygTextColorProps } from "./WysiwygTextColor";
+export { WysiwygCaseTransform } from "./WysiwygCaseTransform";
+export type {
+  WysiwygCaseTransformProps,
+  WysiwygCaseMode,
+} from "./WysiwygCaseTransform";
+export { WysiwygLineHeight } from "./WysiwygLineHeight";
+export type {
+  WysiwygLineHeightProps,
+  WysiwygLineHeightOption,
+} from "./WysiwygLineHeight";
+export { WysiwygLetterSpacing } from "./WysiwygLetterSpacing";
+export type {
+  WysiwygLetterSpacingProps,
+  WysiwygLetterSpacingOption,
+} from "./WysiwygLetterSpacing";
 export { WysiwygClearColor } from "./WysiwygClearColor";
 export { WysiwygHighlight } from "./WysiwygHighlight";
 export type { WysiwygHighlightProps } from "./WysiwygHighlight";
@@ -60,6 +75,7 @@ export { WysiwygOutdent } from "./WysiwygOutdent";
 // Lists & alignment
 export { WysiwygUnorderedList } from "./WysiwygUnorderedList";
 export { WysiwygOrderedList } from "./WysiwygOrderedList";
+export { WysiwygTaskList } from "./WysiwygTaskList";
 export { WysiwygAlign } from "./WysiwygAlign";
 export type { WysiwygAlignProps } from "./WysiwygAlign";
 export { WysiwygAlignMenu } from "./WysiwygAlignMenu";
@@ -79,6 +95,28 @@ export { WysiwygClearFormatting } from "./WysiwygClearFormatting";
 export { WysiwygFullscreen } from "./WysiwygFullscreen";
 export { WysiwygWordCount } from "./WysiwygWordCount";
 export type { WysiwygWordCountProps } from "./WysiwygWordCount";
+
+// Tables
+export { WysiwygTable } from "./WysiwygTable";
+export type { WysiwygTableProps } from "./WysiwygTable";
+export { WysiwygTableEditor } from "./WysiwygTableEditor";
+export type { WysiwygTableEditorProps } from "./WysiwygTableEditor";
+
+// Blocks & documents
+export { WysiwygCallout } from "./WysiwygCallout";
+export type {
+  WysiwygCalloutProps,
+  WysiwygCalloutVariant,
+} from "./WysiwygCallout";
+export { WysiwygTableOfContents } from "./WysiwygTableOfContents";
+export { WysiwygFindReplace } from "./WysiwygFindReplace";
+export { WysiwygPrint } from "./WysiwygPrint";
+export type { WysiwygPrintProps } from "./WysiwygPrint";
+export { WysiwygExport, htmlToMarkdown } from "./WysiwygExport";
+export type {
+  WysiwygExportProps,
+  WysiwygExportFormat,
+} from "./WysiwygExport";
 
 // Images
 export { WysiwygImage } from "./WysiwygImage";

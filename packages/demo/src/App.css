@@ -700,10 +700,14 @@
    WYSIWYG "all controls" reference grid
    ============================================================ */
 .controls-reference {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1.25rem 1.5rem;
+  /* Flow the groups continuously down balanced columns so short groups
+     don't leave the white gaps a grid's row-alignment would create. */
+  columns: 240px;
+  column-gap: 1.5rem;
   padding: 1rem;
+}
+.controls-reference__group {
+  margin-bottom: 1.25rem;
 }
 .controls-reference__group h4 {
   font-size: 0.7rem;
@@ -711,7 +715,11 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-faint);
+  margin-top: 0;
   margin-bottom: 0.5rem;
+  /* Never strand a heading at the foot of a column, split from its list. */
+  -webkit-column-break-after: avoid;
+  break-after: avoid;
 }
 .controls-reference__group ul {
   list-style: none;
@@ -725,6 +733,9 @@
   display: flex;
   align-items: flex-start;
   gap: 0.6rem;
+  /* Keep each entry whole when it lands at a column boundary. */
+  -webkit-column-break-inside: avoid;
+  break-inside: avoid;
 }
 .control-ref__icon {
   display: inline-flex;
