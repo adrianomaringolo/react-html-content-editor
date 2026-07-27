@@ -52,16 +52,23 @@ yarn add react-html-content-editor
 This library requires the following peer dependencies to be installed in your project:
 
 ```bash
-npm install react react-dom @monaco-editor/react monaco-editor lucide-react
+npm install react react-dom lucide-react
 ```
 
 **Required versions:**
 
-- `react` ^18.0.0
-- `react-dom` ^18.0.0
-- `@monaco-editor/react` ^4.6.0
-- `monaco-editor` ^0.44.0
-- `lucide-react` ^0.263.0
+- `react` ^18.0.0 || ^19.0.0
+- `react-dom` ^18.0.0 || ^19.0.0
+- `lucide-react` ^1.0.0
+
+### Monaco Editor
+
+`@monaco-editor/react` and `monaco-editor` ship as regular dependencies of this
+library, so they are installed transitively — you do **not** need to add them to
+your own `package.json`.
+
+Only install them directly if your app also uses Monaco's API on its own (for
+example calling `monaco.editor.defineTheme` outside of this component).
 
 ## Importing Styles
 
