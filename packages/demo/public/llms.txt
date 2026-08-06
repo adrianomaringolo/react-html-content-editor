@@ -7,7 +7,7 @@
 > This file is optimized for AI coding agents: it is self-contained — you can use
 > the library correctly from this file alone, without fetching anything else.
 
-- Package: `react-html-content-editor` (npm), version 1.2.0+
+- Package: `react-html-content-editor` (npm), version 2.0.0+ (the `/monaco` entry point and the `codeEditor` prop require 2.0.0; in 1.x Monaco was built in and always installed)
 - Peer deps: `react` >=18, `react-dom` >=18, `lucide-react`
 - Optional peer deps (Monaco only): `@monaco-editor/react` ^4.7, `monaco-editor` >=0.55 — needed ONLY if you import `react-html-content-editor/monaco`
 - License: MIT. Repo: https://github.com/adrianomaringolo/react-html-content-editor
