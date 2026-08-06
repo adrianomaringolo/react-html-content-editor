@@ -40,8 +40,10 @@ describe("ContentEditor composition", () => {
   it("switches to the WYSIWYG surface and reflects the shared HTML value", () => {
     render(<Harness />);
 
-    // Code mode initially: no rich-text surface yet.
-    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    // Code mode initially: no rich-text surface yet (only the code editors).
+    expect(
+      screen.queryByRole("textbox", { name: /rich text editor/i }),
+    ).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: /visual editor/i }));
 

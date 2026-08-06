@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ContentEditor, ContentValue } from "react-html-content-editor";
+import { MonacoCodeEditor } from "react-html-content-editor/monaco";
 
 const initialValue: ContentValue = {
   html: `<article class="blog-post">
@@ -137,6 +138,7 @@ function FullscreenExample() {
           value={value}
           onChange={setValue}
           height='600px'
+          codeEditor={MonacoCodeEditor}
           htmlLabel='Article HTML'
           cssLabel='Article Styles'
         />

@@ -19,6 +19,8 @@ interface EditorToolbarProps {
   onToggleCss: () => void;
   onFormatHtml: () => void;
   onFormatCss: () => void;
+  /** Hides the Format actions when the code editor cannot format documents. */
+  canFormat?: boolean;
   onOpenFullscreen: () => void;
   fullscreenButtonRef: React.RefObject<HTMLButtonElement | null>;
 }
@@ -40,6 +42,7 @@ export function EditorToolbar({
   onToggleCss,
   onFormatHtml,
   onFormatCss,
+  canFormat = true,
   onOpenFullscreen,
   fullscreenButtonRef,
 }: EditorToolbarProps) {
@@ -115,7 +118,7 @@ export function EditorToolbar({
       </div>
 
       <div className={styles.toolbarRight}>
-        {showEdit && activeEditor === "html" && (
+        {canFormat && showEdit && activeEditor === "html" && (
           <Button
             variant='ghost'
             size='icon'
@@ -126,7 +129,7 @@ export function EditorToolbar({
             <WandSparkles size={18} />
           </Button>
         )}
-        {showEdit && activeEditor === "css" && (
+        {canFormat && showEdit && activeEditor === "css" && (
           <Button
             variant='ghost'
             size='icon'

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ContentEditor, ContentValue } from "react-html-content-editor";
+import { MonacoCodeEditor } from "react-html-content-editor/monaco";
 
 const initialValue: ContentValue = {
   html: `<div class="error-demo">
@@ -228,6 +229,7 @@ function ErrorHandlingExample() {
           onSave={errorType === "save" ? handleSave : undefined}
           isSaving={isSaving}
           error={getErrorMessage()}
+          codeEditor={MonacoCodeEditor}
           height='500px'
         />
       </div>

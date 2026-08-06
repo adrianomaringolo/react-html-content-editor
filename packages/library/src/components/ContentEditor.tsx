@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import type { editor } from "monaco-editor";
-import { OnMount } from "@monaco-editor/react";
 import { CircleAlert } from "lucide-react";
 import { Button } from "./Button";
 import {
@@ -12,7 +10,8 @@ import {
   DialogFooter,
 } from "./Dialog";
 import { EditorToolbar } from "./EditorToolbar";
-import { MonacoEditorWrapper } from "./MonacoEditorWrapper";
+import { TextareaCodeEditor } from "./code-editor/TextareaCodeEditor";
+import type { CodeEditorHandle } from "./code-editor/types";
 import { PreviewPane } from "./PreviewPane";
 import { FullscreenOverlay } from "./FullscreenOverlay";
 import { useAutoSave } from "../hooks/useAutoSave";
@@ -23,7 +22,12 @@ import styles from "./content-editor.module.css";
 
 /**
  * ContentEditor component provides a sophisticated HTML and CSS editor
- * with Monaco Editor integration, multiple view modes, and auto-save functionality.
+ * with multiple view modes and auto-save functionality.
+ *
+ * The code panes use the dependency-free `TextareaCodeEditor` by default.
+ * Install `@monaco-editor/react` and pass `MonacoCodeEditor` from
+ * `react-html-content-editor/monaco` through `codeEditor` for syntax
+ * highlighting, IntelliSense and formatting.
  *
  * @component
  * @example
@@ -63,6 +67,7 @@ export function ContentEditor(props: ContentEditorProps) {
       defaultTab,
       editorOptions,
       theme,
+      codeEditor,
       defaultMode,
       className,
       height,
@@ -81,6 +86,7 @@ export function ContentEditor(props: ContentEditorProps) {
         defaultTab={defaultTab}
         editorOptions={editorOptions}
         theme={theme}
+        codeEditor={codeEditor}
         defaultMode={defaultMode}
       >
         <ContentEditorShell
@@ -98,8 +104,8 @@ export function ContentEditor(props: ContentEditorProps) {
 }
 
 /**
- * The default, batteries-included ContentEditor layout (toolbar, Monaco
- * editors, preview, fullscreen). Rendered when no children are provided.
+ * The default, batteries-included ContentEditor layout (toolbar, code editors,
+ * preview, fullscreen). Rendered when no children are provided.
  */
 function DefaultContentEditor({
   value,
@@ -113,6 +119,7 @@ function DefaultContentEditor({
   defaultTab = "html",
   editorOptions = {},
   theme = "vs-dark",
+  codeEditor: CodeEditor = TextareaCodeEditor,
   error,
 }: ContentEditorProps) {
   // Normalize value to handle null/undefined
@@ -142,15 +149,16 @@ function DefaultContentEditor({
   // Dialog state for unsaved changes confirmation
   const [showCloseDialog, setShowCloseDialog] = useState(false);
 
-  // Editor refs - SEPARATE refs for normal and fullscreen editors
-  const htmlEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const cssEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const fullscreenHtmlEditorRef = useRef<editor.IStandaloneCodeEditor | null>(
-    null,
-  );
-  const fullscreenCssEditorRef = useRef<editor.IStandaloneCodeEditor | null>(
-    null,
-  );
+  // Editor handles - SEPARATE handles for normal and fullscreen editors.
+  // Held in state (not refs) so the scroll-sync effect can re-subscribe with
+  // fresh values whenever an editor mounts or the sync settings change.
+  const [htmlEditor, setHtmlEditor] = useState<CodeEditorHandle | null>(null);
+  const [cssEditor, setCssEditor] = useState<CodeEditorHandle | null>(null);
+  const [fullscreenHtmlEditor, setFullscreenHtmlEditor] =
+    useState<CodeEditorHandle | null>(null);
+  const [fullscreenCssEditor, setFullscreenCssEditor] =
+    useState<CodeEditorHandle | null>(null);
+
   const previewRef = useRef<HTMLDivElement | null>(null);
   const fullscreenButtonRef = useRef<HTMLButtonElement | null>(null);
   const isScrollingSyncRef = useRef(false);
@@ -162,80 +170,49 @@ function DefaultContentEditor({
     isSaving,
   });
 
-  // Monaco editor mount handlers for normal view
-  const handleHtmlEditorMount: OnMount = (editor) => {
-    htmlEditorRef.current = editor;
-  };
+  // Scroll sync, fullscreen split view, HTML editor -> preview. Re-subscribes
+  // whenever the editor or any sync condition changes, so the listener never
+  // reads stale state.
+  const syncEnabled =
+    syncScroll && fullscreenMode === "split" && activeEditor === "html";
 
-  const handleCssEditorMount: OnMount = (editor) => {
-    cssEditorRef.current = editor;
-  };
+  useEffect(() => {
+    if (!fullscreenHtmlEditor || !syncEnabled) return;
 
-  // Monaco editor mount handlers for fullscreen view
-  const handleFullscreenHtmlEditorMount: OnMount = (editor) => {
-    fullscreenHtmlEditorRef.current = editor;
+    return fullscreenHtmlEditor.onScroll(() => {
+      const preview = previewRef.current;
+      if (isScrollingSyncRef.current || !preview) return;
 
-    // Setup scroll sync for HTML editor only
-    editor.onDidScrollChange(() => {
-      if (
-        !syncScroll ||
-        isScrollingSyncRef.current ||
-        !previewRef.current ||
-        fullscreenMode !== "split" ||
-        activeEditor !== "html" // Only sync when HTML editor is active
-      )
-        return;
-
-      const scrollTop = editor.getScrollTop();
-      const scrollHeight = editor.getScrollHeight();
-      const clientHeight = editor.getLayoutInfo().height;
-      const maxScroll = scrollHeight - clientHeight;
-
+      const maxScroll = fullscreenHtmlEditor.getMaxScroll();
       if (maxScroll <= 0) return;
 
-      const scrollPercent = scrollTop / maxScroll;
-      const previewMaxScroll =
-        previewRef.current.scrollHeight - previewRef.current.clientHeight;
+      const scrollPercent = fullscreenHtmlEditor.getScrollTop() / maxScroll;
+      const previewMaxScroll = preview.scrollHeight - preview.clientHeight;
 
       isScrollingSyncRef.current = true;
-      previewRef.current.scrollTop = scrollPercent * previewMaxScroll;
+      preview.scrollTop = scrollPercent * previewMaxScroll;
       requestAnimationFrame(() => {
         isScrollingSyncRef.current = false;
       });
     });
-  };
+  }, [fullscreenHtmlEditor, syncEnabled]);
 
-  const handleFullscreenCssEditorMount: OnMount = (editor) => {
-    fullscreenCssEditorRef.current = editor;
-    // No scroll sync for CSS editor
-  };
-
-  // Preview scroll handler - only sync with HTML editor
+  // Preview scroll handler - only sync with the HTML editor
   const handlePreviewScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    if (
-      !syncScroll ||
-      isScrollingSyncRef.current ||
-      fullscreenMode !== "split" ||
-      activeEditor !== "html" // Only sync when HTML editor is active
-    )
+    if (!syncEnabled || isScrollingSyncRef.current || !fullscreenHtmlEditor) {
       return;
-
-    const activeRef = fullscreenHtmlEditorRef;
-    if (!activeRef.current) return;
+    }
 
     const target = e.currentTarget;
-    const scrollTop = target.scrollTop;
     const maxScroll = target.scrollHeight - target.clientHeight;
-
     if (maxScroll <= 0) return;
 
-    const scrollPercent = scrollTop / maxScroll;
-    const editorMaxScroll =
-      activeRef.current.getScrollHeight() -
-      activeRef.current.getLayoutInfo().height;
+    const scrollPercent = target.scrollTop / maxScroll;
 
     isScrollingSyncRef.current = true;
-    activeRef.current.setScrollTop(scrollPercent * editorMaxScroll);
+    fullscreenHtmlEditor.setScrollTop(
+      scrollPercent * fullscreenHtmlEditor.getMaxScroll(),
+    );
     requestAnimationFrame(() => {
       isScrollingSyncRef.current = false;
     });
@@ -293,14 +270,14 @@ function DefaultContentEditor({
     showEdit && showPreview ? "split" : showEdit ? "edit" : "preview";
 
   // Format handlers
+  const canFormat = CodeEditor.canFormat !== false;
+
   const handleFormatHtml = () => {
-    const ref = isFullscreen ? fullscreenHtmlEditorRef : htmlEditorRef;
-    ref.current?.getAction("editor.action.formatDocument")?.run();
+    (isFullscreen ? fullscreenHtmlEditor : htmlEditor)?.format();
   };
 
   const handleFormatCss = () => {
-    const ref = isFullscreen ? fullscreenCssEditorRef : cssEditorRef;
-    ref.current?.getAction("editor.action.formatDocument")?.run();
+    (isFullscreen ? fullscreenCssEditor : cssEditor)?.format();
   };
 
   // Fullscreen handlers
@@ -342,13 +319,17 @@ function DefaultContentEditor({
 
     // Focus the active editor when switching to edit mode
     if (fullscreenMode === "edit" || fullscreenMode === "split") {
-      const activeRef =
-        activeEditor === "html"
-          ? fullscreenHtmlEditorRef
-          : fullscreenCssEditorRef;
-      activeRef.current?.focus();
+      const active =
+        activeEditor === "html" ? fullscreenHtmlEditor : fullscreenCssEditor;
+      active?.focus();
     }
-  }, [fullscreenMode, activeEditor, isFullscreen]);
+  }, [
+    fullscreenMode,
+    activeEditor,
+    isFullscreen,
+    fullscreenHtmlEditor,
+    fullscreenCssEditor,
+  ]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -365,7 +346,7 @@ function DefaultContentEditor({
       }
 
       // Ctrl/Cmd + Shift + F: Format
-      if (ctrlOrCmd && e.shiftKey && e.key === "F") {
+      if (ctrlOrCmd && e.shiftKey && e.key === "F" && canFormat) {
         e.preventDefault();
         if (showEdit) {
           if (activeEditor === "html") {
@@ -402,6 +383,7 @@ function DefaultContentEditor({
     handleSave,
     showEdit,
     activeEditor,
+    canFormat,
     handleFormatHtml,
     handleFormatCss,
     isFullscreen,
@@ -410,7 +392,7 @@ function DefaultContentEditor({
     showCloseDialog,
   ]);
 
-  // Default Monaco options
+  // Default code editor options (Monaco-compatible naming)
   const defaultEditorOptions: any = {
     minimap: { enabled: false },
     fontSize: 14,
@@ -461,6 +443,7 @@ function DefaultContentEditor({
           onToggleCss={handleToggleCss}
           onFormatHtml={handleFormatHtml}
           onFormatCss={handleFormatCss}
+          canFormat={canFormat}
           onOpenFullscreen={handleOpenFullscreen}
           fullscreenButtonRef={fullscreenButtonRef}
         />
@@ -477,14 +460,14 @@ function DefaultContentEditor({
                       display: activeEditor === "html" ? "flex" : "none",
                     }}
                   >
-                    <MonacoEditorWrapper
-                      editorKey='normal-html'
+                    <CodeEditor
                       defaultValue={normalizedValue.html}
                       language='html'
                       theme={theme}
                       options={htmlEditorOptions}
+                      ariaLabel={`${htmlLabel} code`}
                       onChange={handleHtmlChange}
-                      onMount={handleHtmlEditorMount}
+                      onReady={setHtmlEditor}
                     />
                   </div>
 
@@ -494,14 +477,14 @@ function DefaultContentEditor({
                       display: activeEditor === "css" ? "flex" : "none",
                     }}
                   >
-                    <MonacoEditorWrapper
-                      editorKey='normal-css'
+                    <CodeEditor
                       defaultValue={normalizedValue.css}
                       language='css'
                       theme={theme}
                       options={cssEditorOptions}
+                      ariaLabel={`${cssLabel} code`}
                       onChange={handleCssChange}
-                      onMount={handleCssEditorMount}
+                      onReady={setCssEditor}
                     />
                   </div>
                 </div>
@@ -524,14 +507,14 @@ function DefaultContentEditor({
                   display: activeEditor === "html" ? "flex" : "none",
                 }}
               >
-                <MonacoEditorWrapper
-                  editorKey='normal-html'
+                <CodeEditor
                   defaultValue={normalizedValue.html}
                   language='html'
                   theme={theme}
                   options={htmlEditorOptions}
+                  ariaLabel={`${htmlLabel} code`}
                   onChange={handleHtmlChange}
-                  onMount={handleHtmlEditorMount}
+                  onReady={setHtmlEditor}
                 />
               </div>
 
@@ -541,14 +524,14 @@ function DefaultContentEditor({
                   display: activeEditor === "css" ? "flex" : "none",
                 }}
               >
-                <MonacoEditorWrapper
-                  editorKey='normal-css'
+                <CodeEditor
                   defaultValue={normalizedValue.css}
                   language='css'
                   theme={theme}
                   options={cssEditorOptions}
+                  ariaLabel={`${cssLabel} code`}
                   onChange={handleCssChange}
-                  onMount={handleCssEditorMount}
+                  onReady={setCssEditor}
                 />
               </div>
             </div>
@@ -582,6 +565,8 @@ function DefaultContentEditor({
           htmlLabel={htmlLabel}
           cssLabel={cssLabel}
           theme={theme}
+          codeEditor={CodeEditor}
+          canFormat={canFormat}
           htmlEditorOptions={htmlEditorOptions}
           cssEditorOptions={cssEditorOptions}
           syncScroll={syncScroll}
@@ -598,8 +583,8 @@ function DefaultContentEditor({
           onFormatCss={handleFormatCss}
           onHtmlChange={handleHtmlChange}
           onCssChange={handleCssChange}
-          onFullscreenHtmlEditorMount={handleFullscreenHtmlEditorMount}
-          onFullscreenCssEditorMount={handleFullscreenCssEditorMount}
+          onFullscreenHtmlEditorReady={setFullscreenHtmlEditor}
+          onFullscreenCssEditorReady={setFullscreenCssEditor}
           onPreviewScroll={handlePreviewScroll}
         />
       )}

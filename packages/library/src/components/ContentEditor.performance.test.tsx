@@ -11,6 +11,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ContentEditor } from "./ContentEditor";
+import { FormattingCodeEditor } from "../test/codeEditors";
 import type { ContentValue } from "../types";
 
 // Helper to generate large HTML content
@@ -158,18 +159,15 @@ describe("Performance Tests", () => {
       };
       const onChange = vi.fn();
 
-      // Mock Monaco editor's formatDocument action
-      const mockFormatAction = {
-        run: vi.fn().mockResolvedValue(undefined),
-      };
-
-      const mockEditor = {
-        getAction: vi.fn().mockReturnValue(mockFormatAction),
-      };
-
-      // We can't easily test Monaco's actual formatting performance in unit tests
-      // but we can verify the format button is responsive
-      render(<ContentEditor value={value} onChange={onChange} />);
+      // We can't test a real formatter's throughput in unit tests, but we can
+      // verify the format button stays responsive on a large document.
+      render(
+        <ContentEditor
+          value={value}
+          onChange={onChange}
+          codeEditor={FormattingCodeEditor}
+        />,
+      );
 
       const formatButton = screen.getByLabelText(/format html/i);
 
@@ -192,7 +190,13 @@ describe("Performance Tests", () => {
       };
       const onChange = vi.fn();
 
-      render(<ContentEditor value={value} onChange={onChange} />);
+      render(
+        <ContentEditor
+          value={value}
+          onChange={onChange}
+          codeEditor={FormattingCodeEditor}
+        />,
+      );
 
       // Switch to CSS editor
       const cssButton = screen.getByLabelText(/css editor/i);

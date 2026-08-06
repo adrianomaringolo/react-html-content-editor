@@ -8,6 +8,8 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { ContentEditor } from "../ContentEditor";
+import { FormattingCodeEditor } from "../../test/codeEditors";
+import type { CodeEditorComponent } from "../code-editor/types";
 import { ContentEditorToolbar } from "./ContentEditorToolbar";
 import { ContentEditorBody } from "./ContentEditorBody";
 import { ContentEditorCode } from "./ContentEditorCode";
@@ -24,6 +26,7 @@ function Composed({
   defaultTab,
   defaultMode,
   error,
+  codeEditor,
 }: {
   onSave?: () => Promise<void>;
   withWysiwyg?: boolean;
@@ -32,6 +35,7 @@ function Composed({
   defaultTab?: "html" | "css";
   defaultMode?: "code" | "wysiwyg";
   error?: string;
+  codeEditor?: CodeEditorComponent;
 }) {
   const [value, setValue] = useState({
     html: "<p>Hi</p>",
@@ -45,6 +49,7 @@ function Composed({
       defaultTab={defaultTab}
       defaultMode={defaultMode}
       error={error}
+      codeEditor={codeEditor}
     >
       <ContentEditorToolbar className={toolbarClassName}>
         {toolbarChildren}
@@ -103,8 +108,15 @@ describe("ContentEditorToolbar", () => {
     ).toHaveAttribute("aria-pressed", "true");
   });
 
-  it("swaps the format button label with the active editor", () => {
+  it("hides the format action when the code editor cannot format", () => {
     render(<Composed />);
+    expect(
+      screen.queryByRole("button", { name: /format html/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("swaps the format button label with the active editor", () => {
+    render(<Composed codeEditor={FormattingCodeEditor} />);
     expect(
       screen.getByRole("button", { name: /format html/i }),
     ).toBeInTheDocument();

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/adrianomaringolo/react-html-content-editor/main/assets/cover.png" alt="React HTML Content Editor — Monaco-powered HTML/CSS editor with an integrated WYSIWYG mode" width="100%" />
+  <img src="https://raw.githubusercontent.com/adrianomaringolo/react-html-content-editor/main/assets/cover.png" alt="React HTML Content Editor — HTML/CSS editor with a live preview and an integrated WYSIWYG mode" width="100%" />
 </p>
 
 <p align="center">
@@ -12,7 +12,10 @@
 
 # React HTML Content Editor
 
-A sophisticated HTML and CSS content editor built with Monaco Editor (the same editor that powers VS Code). Features multiple view modes, real-time preview, scroll synchronization, and auto-save functionality.
+A sophisticated HTML and CSS content editor with multiple view modes, real-time preview,
+scroll synchronization, and auto-save functionality. Code editing works out of the box with
+no editor dependency, and upgrades to Monaco Editor (the engine behind VS Code) with a
+single prop when you want it.
 
 > **Using an AI coding agent?** A self-contained, LLM-optimized reference lives at
 > [`llms.txt`](https://github.com/adrianomaringolo/react-html-content-editor/blob/main/llms.txt)
@@ -21,7 +24,8 @@ A sophisticated HTML and CSS content editor built with Monaco Editor (the same e
 
 ## Features
 
-- **Dual Editor Support**: Separate Monaco Editor instances for HTML and CSS
+- **Dual Editor Support**: Separate code editors for HTML and CSS
+- **Optional Monaco**: Ships with a dependency-free textarea editor (line numbers, indentation handling); pass `codeEditor={MonacoCodeEditor}` for syntax highlighting and formatting
 - **Composition API**: Assemble the editor from small parts (`ContentEditorToolbar`, `ContentEditorBody`, `ContentEditorCode`, `ContentEditorPreview`, `ContentEditorWysiwyg`) — or drop in the batteries-included default
 - **Integrated WYSIWYG**: Toggle between the code view (HTML/CSS + preview) and a rich-text visual editor, both editing the same value
 - **Multiple View Modes**: Edit, preview, and split view options
@@ -61,14 +65,43 @@ npm install react react-dom lucide-react
 - `react-dom` ^18.0.0 || ^19.0.0
 - `lucide-react` ^1.0.0
 
-### Monaco Editor
+### Monaco Editor (optional)
 
-`@monaco-editor/react` and `monaco-editor` ship as regular dependencies of this
-library, so they are installed transitively — you do **not** need to add them to
-your own `package.json`.
+Monaco is **opt-in**. Out of the box the HTML/CSS panes use the built-in
+`TextareaCodeEditor`: a plain textarea with a line-number gutter, Tab/Shift+Tab
+indentation and indentation-preserving Enter. Nothing extra to install, nothing
+extra in your bundle.
 
-Only install them directly if your app also uses Monaco's API on its own (for
-example calling `monaco.editor.defineTheme` outside of this component).
+For syntax highlighting, IntelliSense and formatting, install the optional peer
+dependencies and pass the Monaco adapter:
+
+```bash
+npm install @monaco-editor/react monaco-editor
+```
+
+```tsx
+import { ContentEditor } from "react-html-content-editor";
+import { MonacoCodeEditor } from "react-html-content-editor/monaco";
+
+<ContentEditor value={value} onChange={setValue} codeEditor={MonacoCodeEditor} />;
+```
+
+The `react-html-content-editor/monaco` entry point is the only module that
+imports Monaco, so projects that never import it never resolve those packages —
+the main entry point stays Monaco-free.
+
+| | Built-in textarea | `MonacoCodeEditor` |
+| --- | --- | --- |
+| Extra install | none | `@monaco-editor/react`, `monaco-editor` |
+| Line numbers | yes (documents up to 2,000 lines) | yes |
+| Tab / Shift+Tab indent, auto-indent on Enter | yes | yes |
+| Light / dark theme, scroll sync | yes | yes |
+| Syntax highlighting, IntelliSense | no | yes |
+| Format action (`Ctrl+Shift+F`) | hidden — nothing to format with | yes |
+
+Both accept the same props, so switching is a one-line change and no content is
+lost. You can also supply your own implementation: any component matching
+`CodeEditorProps` (see [Custom code editors](#custom-code-editors)) works.
 
 ## Importing Styles
 
@@ -82,7 +115,7 @@ import "react-html-content-editor/dist/style.css";
 The CSS file includes all necessary styles for:
 
 - Component layout and structure
-- Monaco Editor wrapper
+- Code editor surface (including the built-in textarea editor)
 - Buttons and controls
 - Tabs and navigation
 - Preview pane
@@ -196,9 +229,11 @@ Which editor tab should be active by default.
 
 #### `editorOptions` (optional)
 
-Type: `editor.IStandaloneEditorOptions`
+Type: `Record<string, any>`
 
-Monaco Editor configuration options. Merged with default options.
+Code editor configuration options, merged with the defaults. Follows Monaco's option
+naming; the built-in textarea editor honours the `fontSize`, `tabSize`, `wordWrap`,
+`lineNumbers` and `readOnly` subset.
 
 ```tsx
 <ContentEditor
@@ -217,7 +252,23 @@ Type: `"vs-dark" | "vs-light"`
 
 Default: `"vs-dark"`
 
-Monaco Editor theme.
+Code editor theme.
+
+#### `codeEditor` (optional)
+
+Type: `CodeEditorComponent`
+
+Default: `TextareaCodeEditor`
+
+Code editor implementation for the HTML/CSS panes. See
+[Monaco Editor (optional)](#monaco-editor-optional) and
+[Custom code editors](#custom-code-editors).
+
+```tsx
+import { MonacoCodeEditor } from "react-html-content-editor/monaco";
+
+<ContentEditor value={value} onChange={setValue} codeEditor={MonacoCodeEditor} />;
+```
 
 #### `error` (optional)
 
@@ -251,8 +302,59 @@ rendered inside a shared context instead of the default layout. See
 
 Type: `"code" | "wysiwyg"` (default: `"code"`)
 
-Initial view mode in composition mode: `code` (Monaco HTML/CSS + preview) or
+Initial view mode in composition mode: `code` (HTML/CSS + preview) or
 `wysiwyg` (rich-text visual editor).
+
+## Custom code editors
+
+The `codeEditor` prop accepts any component that implements `CodeEditorProps`, so
+you can plug in CodeMirror, Ace, a highlighted read-only view, or your own
+surface. Two contracts to honour:
+
+1. **Props in** — the pane passes `defaultValue`, `language`, `theme`, `options`,
+   `onChange`, `onReady`, `className` and `ariaLabel`. The surface is
+   uncontrolled: seed it from `defaultValue` and report edits via `onChange`.
+2. **Handle out** — call `onReady(handle)` on mount and `onReady(null)` on
+   unmount. The handle powers the Format action and preview scroll sync.
+
+```tsx
+import type { CodeEditorHandle, CodeEditorProps } from "react-html-content-editor";
+
+function MyCodeEditor({ defaultValue, onChange, onReady }: CodeEditorProps) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const handle: CodeEditorHandle = {
+      focus: () => ref.current?.focus(),
+      format: () => false, // no formatter -> toolbars hide the action
+      getScrollTop: () => ref.current?.scrollTop ?? 0,
+      getMaxScroll: () =>
+        Math.max(0, (ref.current?.scrollHeight ?? 0) - (ref.current?.clientHeight ?? 0)),
+      setScrollTop: (top) => {
+        if (ref.current) ref.current.scrollTop = top;
+      },
+      onScroll: (listener) => {
+        ref.current?.addEventListener("scroll", listener);
+        return () => ref.current?.removeEventListener("scroll", listener);
+      },
+    };
+    onReady?.(handle);
+    return () => onReady?.(null);
+  }, [onReady]);
+
+  return (
+    <textarea
+      ref={ref}
+      defaultValue={defaultValue}
+      onChange={(e) => onChange(e.currentTarget.value)}
+    />
+  );
+}
+
+// Set to false when the implementation cannot reformat documents;
+// the toolbars then hide the Format action entirely.
+MyCodeEditor.canFormat = false;
+```
 
 ## Composition API
 
@@ -266,7 +368,7 @@ rendered exactly as before, so this is fully backwards compatible.
 | `ContentEditor`         | Root. Owns the shared value/state and provides context to children.  |
 | `ContentEditorToolbar`  | Default toolbar: mode switch, view toggles, tabs, format & save.     |
 | `ContentEditorBody`     | Lays visible panes out side-by-side (split) or stacked on mobile.    |
-| `ContentEditorCode`     | Monaco HTML/CSS editors. Visible in `code` mode.                     |
+| `ContentEditorCode`     | HTML/CSS code editors. Visible in `code` mode.                       |
 | `ContentEditorPreview`  | Live HTML+CSS preview. Visible in `code` mode.                       |
 | `ContentEditorWysiwyg`  | Rich-text surface bound to the HTML value. Visible in `wysiwyg` mode.|
 
@@ -523,6 +625,9 @@ The library exports the following TypeScript types:
 import type {
   ContentValue,
   ContentEditorProps,
+  CodeEditorComponent,
+  CodeEditorHandle,
+  CodeEditorProps,
   SaveStatus,
   ViewMode,
   EditorType,
@@ -676,6 +781,30 @@ The library uses CSS modules and CSS variables for styling. You can customize th
 - **Spacing**: `--spacing-1` through `--spacing-4`
 - **Border Radius**: `--radius-sm`, `--radius-md`, `--radius-lg`
 
+### Styling the built-in code editor
+
+`TextareaCodeEditor` defaults to Monaco's `vs` / `vs-dark` palettes (picked from
+the `theme` prop) and exposes its own variables so you can restyle the code
+surface without touching the rest of the editor:
+
+- `--rhce-code-bg`, `--rhce-code-fg` — editor background and text
+- `--rhce-code-gutter-bg`, `--rhce-code-gutter-fg` — line-number column
+- `--rhce-code-selection` — selection highlight
+- `--rhce-code-font` — monospace font stack
+
+```css
+.my-editor {
+  --rhce-code-bg: #0b1021;
+  --rhce-code-fg: #e6e6f0;
+  --rhce-code-gutter-fg: #5b6180;
+  --rhce-code-font: "JetBrains Mono", monospace;
+}
+```
+
+These have no effect when `codeEditor={MonacoCodeEditor}` is used — Monaco paints
+its own surface, so theme it through Monaco's own API (`monaco.editor.defineTheme`)
+or the `theme` prop instead.
+
 ### Styling `ContentEditorToolbar`
 
 `ContentEditorToolbar` accepts a `className`, letting you restyle the toolbar
@@ -745,7 +874,7 @@ function ModeSwitch() {
 
 ### Editor Shortcuts
 
-All Monaco Editor shortcuts are available:
+With `MonacoCodeEditor`, all Monaco shortcuts are available:
 
 - **Ctrl+S / Cmd+S**: Save (triggers `onSave` callback)
 - **Ctrl+F / Cmd+F**: Find
@@ -790,7 +919,7 @@ function SafeEditor() {
 - Firefox: Latest 2 versions
 - Safari: Latest 2 versions
 
-Monaco Editor requires modern browser features and does not support IE11.
+The library requires modern browser features and does not support IE11.
 
 ## License
 

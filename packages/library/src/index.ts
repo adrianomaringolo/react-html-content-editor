@@ -1,9 +1,12 @@
 /**
  * React HTML Content Editor
  *
- * A sophisticated HTML and CSS content editor built with Monaco Editor.
- * Features multiple view modes, real-time preview, scroll synchronization,
- * and auto-save functionality.
+ * A sophisticated HTML and CSS content editor. Features multiple view modes,
+ * real-time preview, scroll synchronization, and auto-save functionality.
+ *
+ * Code editing runs on the dependency-free `TextareaCodeEditor` by default.
+ * For Monaco, install `@monaco-editor/react` and pass `MonacoCodeEditor` from
+ * `react-html-content-editor/monaco` via the `codeEditor` prop.
  *
  * @packageDocumentation
  */
@@ -13,6 +16,7 @@ import "./components/button.module.css";
 import "./components/tabs.module.css";
 import "./components/dialog.module.css";
 import "./components/content-editor.module.css";
+import "./components/code-editor/textarea-code-editor.module.css";
 import "./components/wysiwyg/wysiwyg.module.css";
 
 // Main library entry point
@@ -39,6 +43,7 @@ export {
   DialogDescription,
   DialogFooter,
   ContentEditor,
+  TextareaCodeEditor,
   ContentEditorProvider,
   ContentEditorShell,
   ContentEditorToolbar,
@@ -107,6 +112,9 @@ export {
 } from "./components";
 
 export type {
+  CodeEditorComponent,
+  CodeEditorHandle,
+  CodeEditorProps,
   ContentEditorProviderProps,
   ContentEditorShellProps,
   ContentEditorToolbarProps,

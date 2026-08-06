@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ContentEditor, ContentValue } from "react-html-content-editor";
+import { MonacoCodeEditor } from "react-html-content-editor/monaco";
 
 const initialValue: ContentValue = {
   html: `<div class="note">
@@ -159,6 +160,7 @@ function AutoSaveExample() {
           onChange={setValue}
           onSave={handleSave}
           isSaving={isSaving}
+          codeEditor={MonacoCodeEditor}
           height='500px'
         />
       </div>

@@ -64,6 +64,12 @@ function BasicExample() {
         content, then click the Preview tab to see your changes rendered.
       </div>
 
+      <div className='example-info'>
+        <strong>No dependencies:</strong> this example uses the built-in
+        textarea editor — line numbers, indentation handling, zero extra
+        install. See <em>Code Editor</em> for the optional Monaco upgrade.
+      </div>
+
       <div className='example-content'>
         <ContentEditor value={value} onChange={handleChange} height='500px' />
       </div>

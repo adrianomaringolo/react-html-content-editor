@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/cover.png" alt="React HTML Content Editor — Monaco-powered HTML/CSS editor with an integrated WYSIWYG mode" width="100%" />
+  <img src="assets/cover.png" alt="React HTML Content Editor — HTML/CSS editor with a live preview and an integrated WYSIWYG mode" width="100%" />
 </p>
 
 # React HTML Content Editor
@@ -9,7 +9,7 @@
 [![Deploy Demo](https://github.com/adrianomaringolo/react-html-content-editor/workflows/Deploy%20Demo%20to%20GitHub%20Pages/badge.svg)](https://github.com/adrianomaringolo/react-html-content-editor/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A sophisticated HTML and CSS content editor with Monaco Editor integration, multiple view modes, scroll synchronization, and auto-save functionality.
+A sophisticated HTML and CSS content editor with multiple view modes, scroll synchronization, and auto-save functionality — plus optional Monaco Editor integration for syntax highlighting and formatting.
 
 ## Project Structure
 

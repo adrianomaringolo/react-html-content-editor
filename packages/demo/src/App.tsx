@@ -3,6 +3,7 @@ import { version } from "react-html-content-editor";
 import { useHashRoute } from "./useHashRoute";
 import { QuickStartExample } from "./examples/QuickStartExample";
 import BasicExample from "./examples/BasicExample";
+import CodeEditorExample from "./examples/CodeEditorExample";
 import FullscreenExample from "./examples/FullscreenExample";
 import AutoSaveExample from "./examples/AutoSaveExample";
 import ThemeExample from "./examples/ThemeExample";
@@ -15,6 +16,7 @@ import "./App.css";
 type ExampleTab =
   | "quickstart"
   | "basic"
+  | "code-editor"
   | "wysiwyg"
   | "wysiwyg-controls"
   | "composition"
@@ -44,6 +46,7 @@ const NAV: NavGroup[] = [
     title: "Examples",
     items: [
       { id: "basic", label: "Basic Usage", icon: "📝" },
+      { id: "code-editor", label: "Code Editor", icon: "⌨️", tag: "NEW" },
       { id: "wysiwyg", label: "WYSIWYG", icon: "🎨", tag: "NEW" },
       { id: "wysiwyg-controls", label: "All Controls", icon: "🧰", tag: "NEW" },
       { id: "composition", label: "Composition", icon: "🧩", tag: "NEW" },
@@ -58,6 +61,7 @@ const NAV: NavGroup[] = [
 const PANELS: Record<ExampleTab, ReactElement> = {
   quickstart: <QuickStartExample />,
   basic: <BasicExample />,
+  "code-editor": <CodeEditorExample />,
   wysiwyg: <WysiwygExample />,
   "wysiwyg-controls": <WysiwygControlsExample />,
   composition: <CompositionExample />,

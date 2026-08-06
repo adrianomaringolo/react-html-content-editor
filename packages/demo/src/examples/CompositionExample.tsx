@@ -18,6 +18,7 @@ import {
   WysiwygLink,
   WysiwygContent,
 } from "react-html-content-editor";
+import { MonacoCodeEditor } from "react-html-content-editor/monaco";
 
 /**
  * ContentEditor — composition + integrated WYSIWYG
@@ -172,7 +173,12 @@ export function CompositionExample() {
         ))}
       </div>
 
-      <ContentEditor value={content} onChange={setContent} height='520px'>
+      <ContentEditor
+        value={content}
+        onChange={setContent}
+        codeEditor={MonacoCodeEditor}
+        height='520px'
+      >
         <ContentEditorToolbar className={active.className} />
         <ContentEditorBody>
           <ContentEditorCode />
