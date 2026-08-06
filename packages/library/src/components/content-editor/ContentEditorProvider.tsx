@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { editor } from "monaco-editor";
-import type { OnMount } from "@monaco-editor/react";
+import { TextareaCodeEditor } from "../code-editor/TextareaCodeEditor";
+import type {
+  CodeEditorComponent,
+  CodeEditorHandle,
+} from "../code-editor/types";
 import { useAutoSave } from "../../hooks/useAutoSave";
 import type { ContentValue, EditorType } from "../../types";
 import {
@@ -19,6 +22,12 @@ export interface ContentEditorProviderProps {
   defaultTab?: EditorType;
   editorOptions?: Record<string, unknown>;
   theme?: "vs-dark" | "vs-light";
+  /**
+   * Code editor implementation for the HTML/CSS panes. Defaults to the
+   * dependency-free {@link TextareaCodeEditor}. Pass `MonacoCodeEditor` from
+   * `react-html-content-editor/monaco` to use Monaco.
+   */
+  codeEditor?: CodeEditorComponent;
   /** Initial view mode (default: "code"). */
   defaultMode?: ContentEditorMode;
   /**
@@ -43,6 +52,7 @@ export function ContentEditorProvider({
   defaultTab = "html",
   editorOptions = {},
   theme = "vs-dark",
+  codeEditor = TextareaCodeEditor,
   defaultMode = "code",
   forceHasWysiwyg = false,
   children,
@@ -71,9 +81,9 @@ export function ContentEditorProvider({
   const [showPreview, setShowPreview] = useState(false);
   const [activeEditor, setActiveEditor] = useState<EditorType>(defaultTab);
 
-  // Editor refs.
-  const htmlEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const cssEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  // Handles of the mounted code editors.
+  const htmlEditorRef = useRef<CodeEditorHandle | null>(null);
+  const cssEditorRef = useRef<CodeEditorHandle | null>(null);
 
   const { saveStatus, hasUnsavedChanges, handleSave } = useAutoSave({
     value: normalizedValue,
@@ -110,20 +120,26 @@ export function ContentEditorProvider({
     }
   }, [showEdit, showPreview]);
 
-  const handleHtmlEditorMount = useCallback<OnMount>((editorInstance) => {
-    htmlEditorRef.current = editorInstance;
-  }, []);
+  const handleHtmlEditorReady = useCallback(
+    (handle: CodeEditorHandle | null) => {
+      htmlEditorRef.current = handle;
+    },
+    [],
+  );
 
-  const handleCssEditorMount = useCallback<OnMount>((editorInstance) => {
-    cssEditorRef.current = editorInstance;
-  }, []);
+  const handleCssEditorReady = useCallback(
+    (handle: CodeEditorHandle | null) => {
+      cssEditorRef.current = handle;
+    },
+    [],
+  );
 
   const formatHtml = useCallback(() => {
-    htmlEditorRef.current?.getAction("editor.action.formatDocument")?.run();
+    htmlEditorRef.current?.format();
   }, []);
 
   const formatCss = useCallback(() => {
-    cssEditorRef.current?.getAction("editor.action.formatDocument")?.run();
+    cssEditorRef.current?.format();
   }, []);
 
   const defaultEditorOptions: Record<string, unknown> = {
@@ -168,15 +184,17 @@ export function ContentEditorProvider({
       setActiveEditor,
       formatHtml,
       formatCss,
+      canFormat: codeEditor.canFormat !== false,
       theme,
       htmlEditorOptions,
       cssEditorOptions,
       htmlLabel,
       cssLabel,
+      codeEditor,
       htmlEditorRef,
       cssEditorRef,
-      handleHtmlEditorMount,
-      handleCssEditorMount,
+      handleHtmlEditorReady,
+      handleCssEditorReady,
     }),
     // normalizedValue / options are recreated each render; depend on their
     // primitive parts to avoid needless context churn.
@@ -205,6 +223,9 @@ export function ContentEditorProvider({
       theme,
       htmlLabel,
       cssLabel,
+      codeEditor,
+      handleHtmlEditorReady,
+      handleCssEditorReady,
     ],
   );
 

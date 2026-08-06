@@ -42,6 +42,7 @@ export function ContentEditorToolbar({
     setActiveEditor,
     formatHtml,
     formatCss,
+    canFormat,
     onSave,
     saveStatus,
     hasUnsavedChanges,
@@ -49,6 +50,9 @@ export function ContentEditorToolbar({
     htmlLabel,
     cssLabel,
   } = useContentEditorContext();
+
+  // Formatting needs a code editor that supports it and a visible code pane.
+  const showFormat = canFormat && mode === "code" && showEdit;
 
   return (
     <div className={`${styles.editorToolbar} ${className}`.trim()}>
@@ -144,7 +148,7 @@ export function ContentEditorToolbar({
 
       {!children && (
         <div className={styles.toolbarRight}>
-          {mode === "code" && showEdit && activeEditor === "html" && (
+          {showFormat && activeEditor === "html" && (
             <Button
               variant='ghost'
               size='icon'
@@ -155,7 +159,7 @@ export function ContentEditorToolbar({
               <WandSparkles size={18} />
             </Button>
           )}
-          {mode === "code" && showEdit && activeEditor === "css" && (
+          {showFormat && activeEditor === "css" && (
             <Button
               variant='ghost'
               size='icon'

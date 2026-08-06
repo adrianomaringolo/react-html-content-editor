@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { CodeEditorComponent } from "../components/code-editor/types";
 
 /**
  * Represents the HTML and CSS content being edited.
@@ -86,11 +87,31 @@ export interface ContentEditorProps {
   /** Which editor tab should be active by default (default: "html") */
   defaultTab?: EditorType;
 
-  /** Monaco Editor configuration options. Merged with default options. */
+  /**
+   * Code editor configuration options, merged with the defaults. Follows
+   * Monaco's option naming; the built-in textarea editor honours the
+   * `fontSize`, `tabSize`, `wordWrap`, `lineNumbers` and `readOnly` subset.
+   */
   editorOptions?: Record<string, any>;
 
-  /** Monaco Editor theme (default: "vs-dark") */
+  /** Code editor theme (default: "vs-dark") */
   theme?: "vs-dark" | "vs-light";
+
+  /**
+   * Code editor implementation for the HTML/CSS panes.
+   *
+   * Defaults to the dependency-free `TextareaCodeEditor` (line numbers,
+   * indentation handling, no syntax highlighting). For the full Monaco
+   * experience, install `@monaco-editor/react` + `monaco-editor` and pass
+   * `MonacoCodeEditor`:
+   *
+   * ```tsx
+   * import { MonacoCodeEditor } from "react-html-content-editor/monaco";
+   *
+   * <ContentEditor value={value} onChange={setValue} codeEditor={MonacoCodeEditor} />
+   * ```
+   */
+  codeEditor?: CodeEditorComponent;
 
   /** Error message to display below the editor */
   error?: string;

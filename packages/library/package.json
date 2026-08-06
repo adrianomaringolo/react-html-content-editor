@@ -1,16 +1,21 @@
 {
   "name": "react-html-content-editor",
   "version": "1.3.0",
-  "description": "A sophisticated HTML and CSS content editor with Monaco Editor integration, multiple view modes, and auto-save functionality",
+  "description": "A sophisticated HTML and CSS content editor with multiple view modes, auto-save and optional Monaco Editor integration",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
+    },
+    "./monaco": {
+      "types": "./dist/monaco.d.ts",
+      "import": "./dist/monaco.mjs",
+      "require": "./dist/monaco.cjs"
     },
     "./dist/style.css": "./dist/style.css"
   },
@@ -49,16 +54,24 @@
   "bugs": {
     "url": "https://github.com/adrianomaringolo/react-html-content-editor/issues"
   },
-  "dependencies": {
-    "@monaco-editor/react": "^4.7.0",
-    "monaco-editor": "^0.55.1"
-  },
   "peerDependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "lucide-react": "^1.0.0",
+    "monaco-editor": "^0.55.1",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   },
+  "peerDependenciesMeta": {
+    "@monaco-editor/react": {
+      "optional": true
+    },
+    "monaco-editor": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "monaco-editor": "^0.55.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

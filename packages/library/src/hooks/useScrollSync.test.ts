@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useScrollSync } from "./useScrollSync";
 import fc from "fast-check";
-import type { editor } from "monaco-editor";
+import type { CodeEditorHandle } from "../components/code-editor/types";
 
 // Feature: react-html-content-editor, Property 4: Scroll Synchronization Proportionality
 // Validates: Requirements 4.1, 4.2
@@ -39,10 +39,12 @@ describe("useScrollSync - Property 4: Scroll Synchronization Proportionality", (
           // Create mock editor
           const mockEditor = {
             getScrollTop: vi.fn(() => scrollTop),
-            getScrollHeight: vi.fn(() => scrollHeight),
-            getLayoutInfo: vi.fn(() => ({ height: clientHeight })),
+            getMaxScroll: vi.fn(() => scrollHeight - clientHeight),
             setScrollTop: vi.fn(),
-          } as unknown as editor.IStandaloneCodeEditor;
+            focus: vi.fn(),
+            format: vi.fn(() => false),
+            onScroll: vi.fn(() => () => {}),
+          } satisfies CodeEditorHandle;
 
           // Create mock preview element
           const mockPreview = {
@@ -114,10 +116,12 @@ describe("useScrollSync - Property 4: Scroll Synchronization Proportionality", (
           // Create mock editor
           const mockEditor = {
             getScrollTop: vi.fn(() => 0),
-            getScrollHeight: vi.fn(() => editorScrollHeight),
-            getLayoutInfo: vi.fn(() => ({ height: editorClientHeight })),
+            getMaxScroll: vi.fn(() => editorScrollHeight - editorClientHeight),
             setScrollTop: vi.fn(),
-          } as unknown as editor.IStandaloneCodeEditor;
+            focus: vi.fn(),
+            format: vi.fn(() => false),
+            onScroll: vi.fn(() => () => {}),
+          } satisfies CodeEditorHandle;
 
           // Create mock preview element
           const mockPreview = {
@@ -174,10 +178,12 @@ describe("useScrollSync - Property 4: Scroll Synchronization Proportionality", (
 
           const mockEditor = {
             getScrollTop: vi.fn(() => scrollTop),
-            getScrollHeight: vi.fn(() => scrollHeight),
-            getLayoutInfo: vi.fn(() => ({ height: clientHeight })),
+            getMaxScroll: vi.fn(() => scrollHeight - clientHeight),
             setScrollTop: vi.fn(),
-          } as unknown as editor.IStandaloneCodeEditor;
+            focus: vi.fn(),
+            format: vi.fn(() => false),
+            onScroll: vi.fn(() => () => {}),
+          } satisfies CodeEditorHandle;
 
           const mockPreview = {
             scrollTop: 0,

@@ -1,4 +1,3 @@
-import { MonacoEditorWrapper } from "../MonacoEditorWrapper";
 import { useContentEditorContext } from "./context";
 import styles from "../content-editor.module.css";
 
@@ -7,10 +6,12 @@ export interface ContentEditorCodeProps {
 }
 
 /**
- * Code-editing pane: Monaco editors for the HTML and CSS content. Renders only
- * in `code` mode while the editors are toggled on. The HTML/CSS editors are
- * kept mounted and swapped via visibility so their state (scroll, undo) is
- * preserved when switching tabs.
+ * Code-editing pane: the HTML and CSS code editors. Renders only in `code` mode
+ * while the editors are toggled on. Both editors stay mounted and are swapped
+ * via visibility so their state (scroll, undo) survives a tab switch.
+ *
+ * The editor implementation comes from the `codeEditor` prop on the editor root
+ * — the dependency-free `TextareaCodeEditor` by default.
  */
 export function ContentEditorCode({ className = "" }: ContentEditorCodeProps) {
   const {
@@ -19,12 +20,15 @@ export function ContentEditorCode({ className = "" }: ContentEditorCodeProps) {
     activeEditor,
     value,
     theme,
+    htmlLabel,
+    cssLabel,
     htmlEditorOptions,
     cssEditorOptions,
+    codeEditor: CodeEditor,
     onHtmlChange,
     onCssChange,
-    handleHtmlEditorMount,
-    handleCssEditorMount,
+    handleHtmlEditorReady,
+    handleCssEditorReady,
   } = useContentEditorContext();
 
   if (mode !== "code" || !showEdit) return null;
@@ -36,14 +40,14 @@ export function ContentEditorCode({ className = "" }: ContentEditorCodeProps) {
           className={styles.monacoWrapper}
           style={{ display: activeEditor === "html" ? "flex" : "none" }}
         >
-          <MonacoEditorWrapper
-            editorKey='compose-html'
+          <CodeEditor
             defaultValue={value.html}
             language='html'
             theme={theme}
             options={htmlEditorOptions}
-            onChange={(v) => onHtmlChange(v ?? "")}
-            onMount={handleHtmlEditorMount}
+            ariaLabel={`${htmlLabel} code`}
+            onChange={onHtmlChange}
+            onReady={handleHtmlEditorReady}
           />
         </div>
 
@@ -51,14 +55,14 @@ export function ContentEditorCode({ className = "" }: ContentEditorCodeProps) {
           className={styles.monacoWrapper}
           style={{ display: activeEditor === "css" ? "flex" : "none" }}
         >
-          <MonacoEditorWrapper
-            editorKey='compose-css'
+          <CodeEditor
             defaultValue={value.css}
             language='css'
             theme={theme}
             options={cssEditorOptions}
-            onChange={(v) => onCssChange(v ?? "")}
-            onMount={handleCssEditorMount}
+            ariaLabel={`${cssLabel} code`}
+            onChange={onCssChange}
+            onReady={handleCssEditorReady}
           />
         </div>
       </div>

@@ -2,19 +2,22 @@
 
 ## Overview
 
-The React HTML Content Editor is a standalone library that provides a sophisticated code editing experience for HTML and CSS content. Built on top of Monaco Editor (the same editor that powers VS Code), it offers multiple view modes, real-time preview, scroll synchronization, and auto-save functionality.
+The React HTML Content Editor is a standalone library that provides a sophisticated code editing experience for HTML and CSS content. It offers multiple view modes, real-time preview, scroll synchronization, and auto-save functionality. Code editing runs on a pluggable editor: a dependency-free textarea implementation by default, or Monaco Editor (the same editor that powers VS Code) when the consumer opts in.
 
 The library is designed to be framework-agnostic, dependency-light, and easily integrable into any React application. It removes all dependencies on Tailwind CSS and buildgrid-ui, making it suitable for projects with different styling approaches.
 
 ### Key Features
 
-- **Dual Editor Support**: Separate Monaco Editor instances for HTML and CSS
+- **Dual Editor Support**: Separate code editor instances for HTML and CSS
+- **Pluggable Code Editor**: `TextareaCodeEditor` (built in, no dependencies, line-number gutter and indentation handling) by default; `MonacoCodeEditor` from the `/monaco` entry point when `@monaco-editor/react` is installed; or any component implementing `CodeEditorProps`
+- **Composition API**: Assemble the editor from compound parts, or use the batteries-included default layout
+- **Integrated WYSIWYG**: Rich-text surface bound to the same HTML value as the code view
 - **Multiple View Modes**: Edit, preview, and split view
 - **Fullscreen Mode**: Distraction-free editing experience
 - **Scroll Synchronization**: Synchronized scrolling between editor and preview
 - **Auto-Save**: Automatic change detection with save status indicators
-- **Keyboard Shortcuts**: Ctrl+S for save, Monaco's built-in shortcuts
-- **Format on Demand**: One-click code formatting for both HTML and CSS
+- **Keyboard Shortcuts**: Ctrl+S for save, plus the active code editor's own shortcuts
+- **Format on Demand**: One-click code formatting for both HTML and CSS, when the code editor supports formatting
 - **TypeScript First**: Full type safety with exported type definitions
 - **Theme Support**: Dark and light themes via CSS variables
 - **Accessibility**: ARIA labels, keyboard navigation, screen reader support

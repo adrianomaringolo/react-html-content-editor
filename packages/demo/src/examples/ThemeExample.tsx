@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ContentEditor, ContentValue } from "react-html-content-editor";
+import { MonacoCodeEditor } from "react-html-content-editor/monaco";
 
 const initialValue: ContentValue = {
   html: `<div class="theme-demo">
@@ -190,6 +191,7 @@ function ThemeExample() {
           value={value}
           onChange={setValue}
           theme={theme}
+          codeEditor={MonacoCodeEditor}
           height='500px'
         />
       </div>

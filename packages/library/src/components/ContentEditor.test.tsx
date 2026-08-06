@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import fc from "fast-check";
 import { ContentEditor } from "./ContentEditor";
+import { FormattingCodeEditor } from "../test/codeEditors";
 import type { ContentValue } from "../types";
 import styles from "./content-editor.module.css";
 
@@ -623,7 +624,11 @@ describe("Property 3: Format Preserves Validity", () => {
           const onChange = vi.fn();
 
           const { unmount } = render(
-            <ContentEditor value={value} onChange={onChange} />,
+            <ContentEditor
+              value={value}
+              onChange={onChange}
+              codeEditor={FormattingCodeEditor}
+            />,
           );
 
           // Select the HTML editor (active by default in edit mode)
@@ -656,7 +661,11 @@ describe("Property 3: Format Preserves Validity", () => {
           const onChange = vi.fn();
 
           const { unmount } = render(
-            <ContentEditor value={value} onChange={onChange} />,
+            <ContentEditor
+              value={value}
+              onChange={onChange}
+              codeEditor={FormattingCodeEditor}
+            />,
           );
 
           // Select the CSS editor
@@ -689,7 +698,11 @@ describe("Property 3: Format Preserves Validity", () => {
           const onChange = vi.fn();
 
           const { unmount } = render(
-            <ContentEditor value={value} onChange={onChange} />,
+            <ContentEditor
+              value={value}
+              onChange={onChange}
+              codeEditor={FormattingCodeEditor}
+            />,
           );
 
           // Turn off edit mode so only the preview is shown.
@@ -725,7 +738,11 @@ describe("Property 3: Format Preserves Validity", () => {
           const onChange = vi.fn();
 
           const { unmount } = render(
-            <ContentEditor value={value} onChange={onChange} />,
+            <ContentEditor
+              value={value}
+              onChange={onChange}
+              codeEditor={FormattingCodeEditor}
+            />,
           );
 
           // Open fullscreen
@@ -766,7 +783,11 @@ describe("Property 3: Format Preserves Validity", () => {
           const onChange = vi.fn();
 
           const { unmount } = render(
-            <ContentEditor value={value} onChange={onChange} />,
+            <ContentEditor
+              value={value}
+              onChange={onChange}
+              codeEditor={FormattingCodeEditor}
+            />,
           );
 
           // Open fullscreen
@@ -2240,6 +2261,7 @@ describe("Accessibility", () => {
           onChange={onChange}
           onSave={onSave}
           isSaving={false}
+          codeEditor={FormattingCodeEditor}
         />,
       );
 
@@ -2254,7 +2276,13 @@ describe("Accessibility", () => {
       const onChange = vi.fn();
       const value = { html: "<p>Test</p>", css: "p { color: red; }" };
 
-      render(<ContentEditor value={value} onChange={onChange} />);
+      render(
+        <ContentEditor
+          value={value}
+          onChange={onChange}
+          codeEditor={FormattingCodeEditor}
+        />,
+      );
 
       // Check HTML format button
       expect(screen.getByLabelText(/Format HTML/i)).toBeInTheDocument();

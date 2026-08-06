@@ -99,11 +99,16 @@ packages/
 
 The demo includes several examples:
 
-- **Basic Example**: Simple usage with HTML and CSS editing
-- **Auto-Save Example**: Demonstrates auto-save functionality
-- **Theme Example**: Shows dark theme support
-- **Fullscreen Example**: Fullscreen mode with split view
-- **Error Handling Example**: Error state handling
+- **Quick Start**: Guided tour of the API
+- **Basic Usage**: Simple usage with HTML and CSS editing, on the built-in textarea editor
+- **Code Editor**: Switches the code panes between the built-in textarea editor and the optional `MonacoCodeEditor`
+- **WYSIWYG**: The standalone rich-text editor
+- **All Controls**: Every WYSIWYG control in one toolbar
+- **Composition**: The editor assembled from its compound parts
+- **Fullscreen Mode**: Fullscreen mode with split view
+- **Auto-Save**: Demonstrates auto-save functionality
+- **Themes**: Light and dark theme support
+- **Error Handling**: Error state handling
 
 ## Adding New Examples
 
@@ -137,16 +142,28 @@ function MyExample() {
 export default MyExample;
 ```
 
-2. Import and add it to `App.tsx`:
+2. Register it in `App.tsx` — the id goes in the `ExampleTab` union, a `NAV`
+   entry drives the sidebar, and a `PANELS` entry renders the page:
 
 ```tsx
 import MyExample from "./examples/MyExample";
 
-// Add to the examples array
-const examples = [
-  // ... existing examples
-  { id: "my-example", label: "My Example", component: MyExample },
+type ExampleTab = /* … */ | "my-example";
+
+const NAV: NavGroup[] = [
+  {
+    title: "Examples",
+    items: [
+      // … existing items
+      { id: "my-example", label: "My Example", icon: "✨" },
+    ],
+  },
 ];
+
+const PANELS: Record<ExampleTab, ReactElement> = {
+  // … existing panels
+  "my-example": <MyExample />,
+};
 ```
 
 ## Troubleshooting

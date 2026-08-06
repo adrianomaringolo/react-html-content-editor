@@ -32,13 +32,13 @@ export function QuickStartExample() {
         <p
           style={{ fontSize: "1.25rem", opacity: 0.95, marginBottom: "1.5rem" }}
         >
-          A powerful, feature-rich HTML and CSS editor built with React and
-          Monaco Editor
+          A powerful, feature-rich HTML and CSS editor for React, with an
+          optional Monaco-powered code view
         </p>
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <span style={{ fontSize: "1.5rem" }}>✨</span>
-            <span>Monaco Editor Integration</span>
+            <span>Optional Monaco Integration</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <span style={{ fontSize: "1.5rem" }}>🎨</span>
@@ -327,7 +327,7 @@ function App() {
               boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
             }}
           >
-            <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>🎨</div>
+            <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>🔌</div>
             <h3
               style={{
                 fontSize: "1.125rem",
@@ -335,11 +335,12 @@ function App() {
                 marginBottom: "0.5rem",
               }}
             >
-              Monaco Editor
+              Optional Monaco
             </h3>
             <p style={{ color: "#6b7280", fontSize: "0.875rem", margin: 0 }}>
-              Powered by VS Code's editor with syntax highlighting,
-              IntelliSense, and code formatting
+              Ships with a dependency-free textarea editor (line numbers, smart
+              indentation). Pass <code>codeEditor</code> to swap in VS Code's
+              editor for highlighting, IntelliSense and formatting
             </p>
           </div>
 
@@ -463,7 +464,8 @@ function App() {
               Themes
             </h3>
             <p style={{ color: "#6b7280", fontSize: "0.875rem", margin: 0 }}>
-              Support for light and dark themes with customizable Monaco themes
+              Light and dark themes, CSS variables for the built-in code
+              surface, and full Monaco theming when Monaco is enabled
             </p>
           </div>
 

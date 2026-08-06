@@ -1,12 +1,12 @@
 import { useCallback, useRef } from "react";
-import type { editor } from "monaco-editor";
+import type { CodeEditorHandle } from "../components/code-editor/types";
 
 /**
  * Props for the useScrollSync hook.
  */
 interface UseScrollSyncProps {
-  /** Reference to the Monaco Editor instance */
-  editorRef: React.RefObject<editor.IStandaloneCodeEditor | null>;
+  /** Reference to the code editor handle (see {@link CodeEditorHandle}) */
+  editorRef: React.RefObject<CodeEditorHandle | null>;
   /** Reference to the preview container element */
   previewRef: React.RefObject<HTMLDivElement | null>;
   /** Whether scroll synchronization is enabled */
@@ -32,7 +32,7 @@ interface UseScrollSyncReturn {
  *
  * @example
  * ```tsx
- * const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+ * const editorRef = useRef<CodeEditorHandle | null>(null);
  * const previewRef = useRef<HTMLDivElement | null>(null);
  *
  * const { handleEditorScroll, handlePreviewScroll } = useScrollSync({
@@ -42,12 +42,10 @@ interface UseScrollSyncReturn {
  * });
  *
  * // Attach to editor
- * useEffect(() => {
- *   const disposable = editorRef.current?.onDidScrollChange(() => {
- *     handleEditorScroll();
- *   });
- *   return () => disposable?.dispose();
- * }, [handleEditorScroll]);
+ * useEffect(
+ *   () => editorRef.current?.onScroll(handleEditorScroll),
+ *   [handleEditorScroll],
+ * );
  * ```
  *
  * @param {UseScrollSyncProps} props - Hook configuration
@@ -74,9 +72,7 @@ export function useScrollSync({
     const preview = previewRef.current;
 
     const scrollTop = editor.getScrollTop();
-    const scrollHeight = editor.getScrollHeight();
-    const clientHeight = editor.getLayoutInfo().height;
-    const maxScroll = scrollHeight - clientHeight;
+    const maxScroll = editor.getMaxScroll();
 
     if (maxScroll <= 0) return;
 
@@ -106,11 +102,9 @@ export function useScrollSync({
       if (maxScroll <= 0) return;
 
       const scrollPercent = scrollTop / maxScroll;
-      const editorMaxScroll =
-        editor.getScrollHeight() - editor.getLayoutInfo().height;
 
       isScrollingSyncRef.current = true;
-      editor.setScrollTop(scrollPercent * editorMaxScroll);
+      editor.setScrollTop(scrollPercent * editor.getMaxScroll());
 
       requestAnimationFrame(() => {
         isScrollingSyncRef.current = false;

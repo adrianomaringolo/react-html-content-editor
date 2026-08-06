@@ -1,22 +1,27 @@
 # react-html-content-editor
 
-> A React HTML + CSS content editor built on Monaco (the VS Code editor), with a
-> live preview, an integrated rich-text WYSIWYG mode, auto-save, fullscreen, and
-> a composition API. Everything ships from a single package: `react-html-content-editor`.
+> A React HTML + CSS content editor with a live preview, an integrated rich-text
+> WYSIWYG mode, auto-save, fullscreen, and a composition API. Code editing works
+> with zero editor dependencies and upgrades to Monaco (the VS Code editor) via one
+> prop. Everything ships from a single package: `react-html-content-editor`.
 > This file is optimized for AI coding agents: it is self-contained — you can use
 > the library correctly from this file alone, without fetching anything else.
 
 - Package: `react-html-content-editor` (npm), version 1.2.0+
-- Peer deps: `react` >=18, `react-dom` >=18, `@monaco-editor/react` ^4.6, `monaco-editor` >=0.44, `lucide-react`
+- Peer deps: `react` >=18, `react-dom` >=18, `lucide-react`
+- Optional peer deps (Monaco only): `@monaco-editor/react` ^4.7, `monaco-editor` >=0.55 — needed ONLY if you import `react-html-content-editor/monaco`
 - License: MIT. Repo: https://github.com/adrianomaringolo/react-html-content-editor
-- Module formats: ESM (`index.mjs`) + CJS (`index.cjs`), types included. Tree-shakeable (~9 KB gzip JS).
+- Entry points: `react-html-content-editor` (main) and `react-html-content-editor/monaco` (Monaco adapter only)
+- Module formats: ESM (`index.mjs`) + CJS (`index.cjs`), types included. Tree-shakeable; main entry ~21 KB gzip JS + ~7 KB gzip CSS.
 
 ## Setup (required)
 
 ```bash
 npm install react-html-content-editor
 # peer deps, if not already present:
-npm install react react-dom @monaco-editor/react monaco-editor lucide-react
+npm install react react-dom lucide-react
+# OPTIONAL — only for Monaco-powered code panes:
+npm install @monaco-editor/react monaco-editor
 ```
 
 You MUST import the stylesheet once in your app, or the editor renders unstyled:
@@ -34,10 +39,66 @@ interface ContentValue { html: string; css: string }
 `ContentEditor` is controlled: pass `value` and `onChange`. It is NOT sanitized —
 see "Security" below.
 
+## Code editor: textarea vs Monaco
+
+Monaco is OPTIONAL. Default (no extra install): the HTML/CSS panes render
+`TextareaCodeEditor` — a textarea with a line-number gutter (documents up to
+2,000 lines), Tab/Shift+Tab indent-outdent, indentation-preserving Enter,
+light/dark palettes and preview scroll sync. No syntax highlighting; the Format
+action is hidden because there is nothing to format with.
+
+To use Monaco, install the optional peers and pass the adapter. It lives in a
+SEPARATE entry point — this is what keeps Monaco out of projects that do not want
+it, so never import it from the main entry:
+
+```tsx
+import { ContentEditor } from "react-html-content-editor";
+import { MonacoCodeEditor } from "react-html-content-editor/monaco";
+
+<ContentEditor value={value} onChange={setValue} codeEditor={MonacoCodeEditor} />;
+```
+
+Both accept identical props, so switching is a one-line change.
+
+Any component implementing `CodeEditorProps` works as `codeEditor`:
+
+```ts
+interface CodeEditorProps {
+  defaultValue: string;                 // uncontrolled seed; report edits via onChange
+  language: "html" | "css";
+  theme: string;                        // "vs-dark" | "vs-light"
+  options?: Record<string, unknown>;
+  onChange: (value: string) => void;
+  onReady?: (handle: CodeEditorHandle | null) => void;  // handle on mount, null on unmount
+  className?: string;
+  ariaLabel?: string;
+}
+
+interface CodeEditorHandle {
+  focus(): void;
+  format(): boolean;                    // false when unsupported
+  getScrollTop(): number;
+  getMaxScroll(): number;
+  setScrollTop(top: number): void;
+  onScroll(listener: () => void): () => void;   // returns unsubscribe
+}
+```
+
+Set `MyEditor.canFormat = false` when the implementation cannot reformat; the
+toolbars then hide the Format action.
+
+`TextareaCodeEditor` follows Monaco's `vs` / `vs-dark` palettes (from the `theme`
+prop) and can be restyled with `--rhce-code-bg`, `--rhce-code-fg`,
+`--rhce-code-gutter-bg`, `--rhce-code-gutter-fg`, `--rhce-code-selection` and
+`--rhce-code-font`. These do nothing under `MonacoCodeEditor`, which paints its
+own surface.
+
 ## Quick start (default layout)
 
-Batteries-included editor: toolbar, Monaco HTML/CSS editors, live preview,
-fullscreen, keyboard shortcuts. Just pass `value`/`onChange`.
+Batteries-included editor: toolbar, HTML/CSS code editors, live preview,
+fullscreen, keyboard shortcuts. Just pass `value`/`onChange`. The code panes use
+the built-in dependency-free `TextareaCodeEditor` unless you pass `codeEditor`
+(see "Code editor: textarea vs Monaco").
 
 ```tsx
 import { useState } from "react";
@@ -65,8 +126,9 @@ export function App() {
 | `className` | `string` | `""` | Applied to the container. |
 | `height` | `string \| number` | `"400px"` | Number ⇒ px. |
 | `defaultTab` | `"html" \| "css"` | `"html"` | Initial code tab. |
-| `editorOptions` | `Record<string, unknown>` | `{}` | Merged into Monaco options. |
-| `theme` | `"vs-dark" \| "vs-light"` | `"vs-dark"` | Monaco theme. |
+| `editorOptions` | `Record<string, unknown>` | `{}` | Merged into the code editor options (Monaco naming). |
+| `codeEditor` | `CodeEditorComponent` | `TextareaCodeEditor` | Code editor implementation. Pass `MonacoCodeEditor` from `react-html-content-editor/monaco` for Monaco. |
+| `theme` | `"vs-dark" \| "vs-light"` | `"vs-dark"` | Code editor theme. |
 | `error` | `string` | — | Error message shown below the editor. |
 | `children` | `ReactNode` | — | Opt into composition mode (see below). |
 | `defaultMode` | `"code" \| "wysiwyg"` | `"code"` | Initial mode (composition). |
@@ -102,10 +164,10 @@ import {
 Parts:
 - `ContentEditorToolbar` — mode switch (Code/Visual, shown only when a `ContentEditorWysiwyg` is present), view toggles, HTML/CSS tabs, format & save. Props: `className?`, `children?` (children replace the left group; built-in right-side actions are hidden).
 - `ContentEditorBody` — responsive split/stacked layout container. Props: `className?`, `children`.
-- `ContentEditorCode` — Monaco HTML/CSS editors. Visible in `code` mode. Props: `className?`.
+- `ContentEditorCode` — HTML/CSS code editors. Visible in `code` mode. Props: `className?`.
 - `ContentEditorPreview` — live HTML+CSS preview. Visible in `code` mode. Props: `className?`.
 - `ContentEditorWysiwyg` — rich-text surface bound to the HTML value; adding it makes the toolbar show the Code/Visual switch. The `css` value is applied to the surface via a `<style>` tag. Props: `placeholder?`, `minHeight?` (`string|number`), `className?`, `children?` (compose your own `WysiwygToolbar`/`WysiwygContent`; default toolbar used if omitted).
-- `useContentEditorContext()` — hook exposing shared state to custom toolbar children: `{ value, onChange, onHtmlChange, onCssChange, onSave, saveStatus, hasUnsavedChanges, isSaving, mode, setMode, showEdit, showPreview, toggleEdit, togglePreview, activeEditor, setActiveEditor, formatHtml, formatCss, theme, htmlLabel, cssLabel, ... }`. Throws if used outside `<ContentEditor>`.
+- `useContentEditorContext()` — hook exposing shared state to custom toolbar children: `{ value, onChange, onHtmlChange, onCssChange, onSave, saveStatus, hasUnsavedChanges, isSaving, mode, setMode, showEdit, showPreview, toggleEdit, togglePreview, activeEditor, setActiveEditor, formatHtml, formatCss, canFormat, theme, htmlLabel, cssLabel, codeEditor, ... }`. Throws if used outside `<ContentEditor>`.
 
 Also exported (advanced/manual wiring): `ContentEditorProvider`, `ContentEditorShell`.
 
@@ -113,7 +175,7 @@ Also exported (advanced/manual wiring): `ContentEditorProvider`, `ContentEditorS
 
 ## Standalone WYSIWYG editor
 
-A self-contained rich-text editor over an HTML string (no Monaco/CSS panes).
+A self-contained rich-text editor over an HTML string (no code/CSS panes).
 Compound components — include only the controls you need, in any order.
 
 ```tsx
@@ -282,7 +344,8 @@ Values: `ContentEditor`, `ContentEditorProvider`, `ContentEditorShell`,
 `useKeyboardShortcuts`, `version`.
 
 Types: `ContentValue`, `ContentEditorProps`, `SaveStatus`, `ViewMode`,
-`EditorType`, `ContentEditorMode`, `ContentEditorContextValue`,
+`EditorType`, `ContentEditorMode`, `ContentEditorContextValue`, `CodeEditorProps`,
+`CodeEditorHandle`, `CodeEditorComponent`,
 `ContentEditor*Props` (Provider/Shell/Toolbar/Body/Code/Preview/Wysiwyg),
 `WysiwygProps`, `WysiwygControlProps`, `WysiwygDropdownProps`, `WysiwygHeadingProps`,
 `WysiwygHeadingMenuProps`, `WysiwygAlignProps`,

@@ -1,0 +1,142 @@
+/*
+ * Plain-textarea code editor. Colors mirror Monaco's "vs" / "vs-dark" themes so
+ * swapping implementations does not change the look of the surrounding editor.
+ * Every color is overridable through the --rhce-code-* custom properties.
+ */
+.editor {
+  --code-bg: var(--rhce-code-bg, #ffffff);
+  --code-fg: var(--rhce-code-fg, #1f2328);
+  --code-gutter-fg: var(--rhce-code-gutter-fg, #237893);
+  --code-gutter-bg: var(--rhce-code-gutter-bg, var(--code-bg));
+  --code-selection: var(--rhce-code-selection, #add6ff);
+  --code-line-height: 1.5;
+
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  font-family: var(
+    --rhce-code-font,
+    ui-monospace,
+    SFMono-Regular,
+    "SF Mono",
+    Menlo,
+    Consolas,
+    "Liberation Mono",
+    monospace
+  );
+  line-height: var(--code-line-height);
+  font-variant-ligatures: none;
+  text-align: left;
+}
+
+.editor[data-theme="dark"] {
+  --code-bg: var(--rhce-code-bg, #1e1e1e);
+  --code-fg: var(--rhce-code-fg, #d4d4d4);
+  --code-gutter-fg: var(--rhce-code-gutter-fg, #858585);
+  --code-selection: var(--rhce-code-selection, #264f78);
+}
+
+.scroll {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  /* The caret can sit right at the edge; keep scrolling smooth-ish but instant
+     for programmatic sync from the preview pane. */
+  overscroll-behavior: contain;
+}
+
+/*
+ * One grid row per logical line: column 1 holds the line number, column 2 the
+ * hidden "ghost" copy that gives the row its (possibly wrapped) height. The
+ * textarea spans every row in column 2, so it never scrolls internally — the
+ * .scroll container does, which keeps numbers and text locked together.
+ */
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-content: start;
+  min-height: 100%;
+  padding: 0.5rem 0;
+  box-sizing: border-box;
+}
+
+.lineNumber {
+  grid-column: 1;
+  /* Stays put while the code scrolls horizontally (word wrap off). */
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  padding: 0 0.625rem 0 0.75rem;
+  background: var(--code-gutter-bg);
+  color: var(--code-gutter-fg);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ghost,
+.textarea {
+  grid-column: 2;
+  padding: 0 0.75rem 0 0.25rem;
+  box-sizing: border-box;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  /* Must match the textarea's soft-wrap behaviour exactly. */
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.ghost {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.textarea {
+  /* The row span is set inline: it depends on the live line count, and `-1`
+     would resolve against the explicit grid, which has no rows of its own. */
+  z-index: 1;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  resize: none;
+  /*
+   * No explicit height: the grid item stretches over the rows it spans, which
+   * the ghosts have already sized to the wrapped content. A percentage height
+   * would resolve against auto-sized rows (an indefinite size) and collapse to
+   * the textarea's intrinsic two-row height, clipping the document.
+   */
+  align-self: stretch;
+  min-height: 0;
+  /* Height always equals the content height, so no inner scrollbar. */
+  overflow: hidden;
+}
+
+.editor[data-word-wrap="off"] .ghost,
+.editor[data-word-wrap="off"] .textarea {
+  white-space: pre;
+  overflow-wrap: normal;
+}
+
+.editor[data-line-numbers="off"] .lineNumber {
+  display: none;
+}
+
+.textarea::selection {
+  background: var(--code-selection);
+}
+
+.editor:focus-within {
+  box-shadow: inset 0 0 0 1px var(--color-primary, #3b82f6);
+}

@@ -15,7 +15,11 @@ These shortcuts work anywhere in the editor:
 
 ## Editor Shortcuts
 
-These shortcuts are provided by Monaco Editor and work when the editor has focus:
+These shortcuts come from the code editor and work when it has focus. The table
+below describes `MonacoCodeEditor` (see the README on enabling Monaco). The
+built-in textarea editor supports the subset the browser provides — Undo/Redo,
+Select All, Home/End and word-wise motion — plus `Tab` / `Shift + Tab` to indent
+and outdent the selection:
 
 | Action                     | Windows/Linux                    | macOS       |
 | -------------------------- | -------------------------------- | ----------- |
@@ -41,7 +45,7 @@ These shortcuts are provided by Monaco Editor and work when the editor has focus
 
 ## Notes
 
-- **Format Code** (`Ctrl/⌘ + Shift + F`): Formats the currently active editor (HTML or CSS) with proper indentation and structure
+- **Format Code** (`Ctrl/⌘ + Shift + F`): Formats the currently active editor (HTML or CSS) with proper indentation and structure. Requires a code editor that can format, such as `MonacoCodeEditor`; with the built-in textarea editor the shortcut and its toolbar button are inactive
 - **Save** (`Ctrl/⌘ + S`): Only works if the `onSave` prop is provided and there are unsaved changes
 - **Toggle Fullscreen** (`Ctrl/⌘ + Shift + M`): Opens or closes the fullscreen editor mode
 - **Exit Fullscreen** (`Esc`): Closes fullscreen mode (will prompt if there are unsaved changes)
@@ -61,4 +65,4 @@ The keyboard shortcuts are built into the component and cannot be customized. Ho
 
 - Disable auto-save to control when saves happen
 - Use the `onSave` callback to implement your own save logic
-- Access Monaco Editor's command palette with `F1` for additional commands
+- Access Monaco's command palette with `F1` for additional commands (when using `MonacoCodeEditor`)

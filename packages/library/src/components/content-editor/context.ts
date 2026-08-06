@@ -1,13 +1,15 @@
 import { createContext, useContext } from "react";
-import type { editor } from "monaco-editor";
-import type { OnMount } from "@monaco-editor/react";
+import type {
+  CodeEditorComponent,
+  CodeEditorHandle,
+} from "../code-editor/types";
 import type { ContentValue, EditorType } from "../../types";
 import type { SaveStatus } from "../../hooks/useAutoSave";
 
 /**
  * View mode of the {@link ContentEditor}.
  *
- * - `code`: Monaco HTML/CSS editors and/or the rendered preview.
+ * - `code`: HTML/CSS code editors and/or the rendered preview.
  * - `wysiwyg`: rich-text editing surface bound to the HTML value.
  */
 export type ContentEditorMode = "code" | "wysiwyg";
@@ -62,30 +64,43 @@ export interface ContentEditorContextValue {
   /** Select the active code editor tab. */
   setActiveEditor: (editor: EditorType) => void;
 
-  /** Format the HTML editor content. */
+  /** Format the HTML editor content. No-op when the editor cannot format. */
   formatHtml: () => void;
-  /** Format the CSS editor content. */
+  /** Format the CSS editor content. No-op when the editor cannot format. */
   formatCss: () => void;
+  /**
+   * Whether the active code editor implementation can reformat documents.
+   * `false` for the default {@link TextareaCodeEditor}; toolbars use it to hide
+   * the Format action.
+   */
+  canFormat: boolean;
 
-  /** Monaco theme. */
+  /** Editor theme (`"vs-dark"` / `"vs-light"`). */
   theme: string;
-  /** Monaco options for the HTML editor. */
+  /** Options for the HTML code editor. */
   htmlEditorOptions: Record<string, unknown>;
-  /** Monaco options for the CSS editor. */
+  /** Options for the CSS code editor. */
   cssEditorOptions: Record<string, unknown>;
   /** Label for the HTML editor. */
   htmlLabel: string;
   /** Label for the CSS editor. */
   cssLabel: string;
 
-  /** Ref to the mounted HTML Monaco editor. */
-  htmlEditorRef: React.MutableRefObject<editor.IStandaloneCodeEditor | null>;
-  /** Ref to the mounted CSS Monaco editor. */
-  cssEditorRef: React.MutableRefObject<editor.IStandaloneCodeEditor | null>;
-  /** Monaco mount handler for the HTML editor. */
-  handleHtmlEditorMount: OnMount;
-  /** Monaco mount handler for the CSS editor. */
-  handleCssEditorMount: OnMount;
+  /**
+   * Code editor implementation to render in the code panes. Defaults to
+   * {@link TextareaCodeEditor}; pass `MonacoCodeEditor` from
+   * `react-html-content-editor/monaco` for the Monaco experience.
+   */
+  codeEditor: CodeEditorComponent;
+
+  /** Handle of the mounted HTML code editor, or `null` before mount. */
+  htmlEditorRef: React.MutableRefObject<CodeEditorHandle | null>;
+  /** Handle of the mounted CSS code editor, or `null` before mount. */
+  cssEditorRef: React.MutableRefObject<CodeEditorHandle | null>;
+  /** Receives the HTML editor handle on mount, and `null` on unmount. */
+  handleHtmlEditorReady: (handle: CodeEditorHandle | null) => void;
+  /** Receives the CSS editor handle on mount, and `null` on unmount. */
+  handleCssEditorReady: (handle: CodeEditorHandle | null) => void;
 }
 
 export const ContentEditorContext = createContext<

@@ -154,8 +154,14 @@ export type {
   ContentEditorMode,
 } from "./content-editor";
 
+export { TextareaCodeEditor } from "./code-editor";
+export type {
+  CodeEditorComponent,
+  CodeEditorHandle,
+  CodeEditorProps,
+} from "./code-editor";
+
 export { SaveStatusIndicator } from "./SaveStatusIndicator";
 export { EditorToolbar } from "./EditorToolbar";
-export { MonacoEditorWrapper } from "./MonacoEditorWrapper";
 export { PreviewPane } from "./PreviewPane";
 export { FullscreenOverlay } from "./FullscreenOverlay";

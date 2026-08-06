@@ -9,15 +9,21 @@ export default defineConfig({
     dts({
       insertTypesEntry: true,
       include: ["src/**/*"],
-      exclude: ["src/**/*.test.ts", "src/**/*.test.tsx"],
+      exclude: ["src/**/*.test.ts", "src/**/*.test.tsx", "src/test/**"],
     }),
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, "src/index.ts"),
+      // "monaco" is a separate entry so that importing the main one never pulls
+      // in the optional @monaco-editor/react / monaco-editor peers.
+      entry: {
+        index: resolve(__dirname, "src/index.ts"),
+        monaco: resolve(__dirname, "src/monaco/index.ts"),
+      },
       name: "ReactHTMLContentEditor",
       formats: ["es", "cjs"],
-      fileName: (format) => `index.${format === "es" ? "mjs" : "cjs"}`,
+      fileName: (format, entryName) =>
+        `${entryName}.${format === "es" ? "mjs" : "cjs"}`,
       // Keep the published CSS asset name stable (Vite 8 otherwise names it
       // after the package): consumers import "…/dist/style.css".
       cssFileName: "style",

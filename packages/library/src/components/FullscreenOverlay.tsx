@@ -11,11 +11,13 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 import { Button } from "./Button";
 import { SaveStatusIndicator } from "./SaveStatusIndicator";
-import { MonacoEditorWrapper } from "./MonacoEditorWrapper";
 import { PreviewPane } from "./PreviewPane";
 import type { SaveStatus } from "../hooks/useAutoSave";
 import type { EditorType, ContentValue } from "../types";
-import type { OnMount } from "@monaco-editor/react";
+import type {
+  CodeEditorComponent,
+  CodeEditorHandle,
+} from "./code-editor/types";
 import styles from "./content-editor.module.css";
 
 interface FullscreenOverlayProps {
@@ -25,6 +27,10 @@ interface FullscreenOverlayProps {
   htmlLabel: string;
   cssLabel: string;
   theme: string;
+  /** Code editor implementation to render in both panes. */
+  codeEditor: CodeEditorComponent;
+  /** Whether the code editor can reformat documents. */
+  canFormat?: boolean;
   htmlEditorOptions: any;
   cssEditorOptions: any;
   syncScroll: boolean;
@@ -41,8 +47,8 @@ interface FullscreenOverlayProps {
   onFormatCss: () => void;
   onHtmlChange: (value: string | undefined) => void;
   onCssChange: (value: string | undefined) => void;
-  onFullscreenHtmlEditorMount: OnMount;
-  onFullscreenCssEditorMount: OnMount;
+  onFullscreenHtmlEditorReady: (handle: CodeEditorHandle | null) => void;
+  onFullscreenCssEditorReady: (handle: CodeEditorHandle | null) => void;
   onPreviewScroll: (e: React.UIEvent<HTMLDivElement>) => void;
 }
 
@@ -56,6 +62,8 @@ export function FullscreenOverlay({
   htmlLabel,
   cssLabel,
   theme,
+  codeEditor: CodeEditor,
+  canFormat = true,
   htmlEditorOptions,
   cssEditorOptions,
   syncScroll,
@@ -72,8 +80,8 @@ export function FullscreenOverlay({
   onFormatCss,
   onHtmlChange,
   onCssChange,
-  onFullscreenHtmlEditorMount,
-  onFullscreenCssEditorMount,
+  onFullscreenHtmlEditorReady,
+  onFullscreenCssEditorReady,
   onPreviewScroll,
 }: FullscreenOverlayProps) {
   return (
@@ -147,7 +155,7 @@ export function FullscreenOverlay({
                 <TabsTrigger value='css'>{cssLabel}</TabsTrigger>
               </TabsList>
               <div className={styles.editorActions}>
-                {activeEditor === "html" && (
+                {canFormat && activeEditor === "html" && (
                   <Button
                     variant='ghost'
                     size='icon'
@@ -158,7 +166,7 @@ export function FullscreenOverlay({
                     <WandSparkles size={18} />
                   </Button>
                 )}
-                {activeEditor === "css" && (
+                {canFormat && activeEditor === "css" && (
                   <Button
                     variant='ghost'
                     size='icon'
@@ -173,27 +181,31 @@ export function FullscreenOverlay({
             </div>
 
             <TabsContent value='html'>
-              <MonacoEditorWrapper
-                editorKey='fullscreen-edit-html'
-                defaultValue={normalizedValue.html}
-                language='html'
-                theme={theme}
-                options={htmlEditorOptions}
-                onChange={onHtmlChange}
-                onMount={onFullscreenHtmlEditorMount}
-              />
+              <div className={styles.monacoWrapper}>
+                <CodeEditor
+                  defaultValue={normalizedValue.html}
+                  language='html'
+                  theme={theme}
+                  options={htmlEditorOptions}
+                  ariaLabel={`${htmlLabel} code`}
+                  onChange={onHtmlChange}
+                  onReady={onFullscreenHtmlEditorReady}
+                />
+              </div>
             </TabsContent>
 
             <TabsContent value='css'>
-              <MonacoEditorWrapper
-                editorKey='fullscreen-edit-css'
-                defaultValue={normalizedValue.css}
-                language='css'
-                theme={theme}
-                options={cssEditorOptions}
-                onChange={onCssChange}
-                onMount={onFullscreenCssEditorMount}
-              />
+              <div className={styles.monacoWrapper}>
+                <CodeEditor
+                  defaultValue={normalizedValue.css}
+                  language='css'
+                  theme={theme}
+                  options={cssEditorOptions}
+                  ariaLabel={`${cssLabel} code`}
+                  onChange={onCssChange}
+                  onReady={onFullscreenCssEditorReady}
+                />
+              </div>
             </TabsContent>
           </Tabs>
         )}
@@ -228,7 +240,7 @@ export function FullscreenOverlay({
                   </button>
                 </div>
                 <div className={styles.editorActions}>
-                  {activeEditor === "html" && (
+                  {canFormat && activeEditor === "html" && (
                     <Button
                       variant='ghost'
                       size='icon'
@@ -239,7 +251,7 @@ export function FullscreenOverlay({
                       <WandSparkles size={18} />
                     </Button>
                   )}
-                  {activeEditor === "css" && (
+                  {canFormat && activeEditor === "css" && (
                     <Button
                       variant='ghost'
                       size='icon'
@@ -274,14 +286,14 @@ export function FullscreenOverlay({
                     display: activeEditor === "html" ? "flex" : "none",
                   }}
                 >
-                  <MonacoEditorWrapper
-                    editorKey='fullscreen-split-html'
+                  <CodeEditor
                     defaultValue={normalizedValue.html}
                     language='html'
                     theme={theme}
                     options={htmlEditorOptions}
+                    ariaLabel={`${htmlLabel} code`}
                     onChange={onHtmlChange}
-                    onMount={onFullscreenHtmlEditorMount}
+                    onReady={onFullscreenHtmlEditorReady}
                   />
                 </div>
                 <div
@@ -290,14 +302,14 @@ export function FullscreenOverlay({
                     display: activeEditor === "css" ? "flex" : "none",
                   }}
                 >
-                  <MonacoEditorWrapper
-                    editorKey='fullscreen-split-css'
+                  <CodeEditor
                     defaultValue={normalizedValue.css}
                     language='css'
                     theme={theme}
                     options={cssEditorOptions}
+                    ariaLabel={`${cssLabel} code`}
                     onChange={onCssChange}
-                    onMount={onFullscreenCssEditorMount}
+                    onReady={onFullscreenCssEditorReady}
                   />
                 </div>
               </div>
