@@ -4,8 +4,14 @@ on:
   push:
     branches:
       - main
+  # Manual trigger, so a release can be re-run on demand when a push-triggered
+  # run never starts (e.g. Actions queue stalls) or needs to be retried.
+  workflow_dispatch:
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # A stuck/superseded run must not block the next one: the newest run wins.
+  cancel-in-progress: true
 
 jobs:
   release:
