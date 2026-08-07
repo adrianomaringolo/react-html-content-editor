@@ -91,9 +91,25 @@ packages/
 └── demo/              # Demo application
     ├── src/
     │   ├── examples/  # Example components
+    │   ├── editors/   # Example `codeEditor` adapters (copy these)
     │   └── App.tsx    # Main demo app
     └── dist/          # Built demo (generated)
 ```
+
+### Code editor adapters
+
+`src/editors/` holds the pluggable code editors the **Code Editor** example
+switches between. They are demo code, not library exports — copy the one you
+want into your own project and adapt it.
+
+| File                        | Surface       | Dependencies                              | `canFormat` |
+| --------------------------- | ------------- | ----------------------------------------- | ----------- |
+| `CodeMirrorCodeEditor.tsx`  | CodeMirror 6  | `codemirror` + `@codemirror/*`            | `false`     |
+| `AceCodeEditor.tsx`         | Ace           | `ace-builds`                              | `true`      |
+| `HighlightCodeEditor.tsx`   | hand-rolled   | none (`highlight.ts` + a CSS file)        | `false`     |
+
+The built-in `TextareaCodeEditor` and `MonacoCodeEditor` come from the library
+itself, so they have no file here.
 
 ## Demo Examples
 
@@ -101,7 +117,7 @@ The demo includes several examples:
 
 - **Quick Start**: Guided tour of the API
 - **Basic Usage**: Simple usage with HTML and CSS editing, on the built-in textarea editor
-- **Code Editor**: Switches the code panes between the built-in textarea editor and the optional `MonacoCodeEditor`
+- **Code Editor**: Switches the code panes between five surfaces — the built-in textarea editor, the optional `MonacoCodeEditor`, CodeMirror 6, Ace and a dependency-free custom editor
 - **WYSIWYG**: The standalone rich-text editor
 - **All Controls**: Every WYSIWYG control in one toolbar
 - **Composition**: The editor assembled from its compound parts

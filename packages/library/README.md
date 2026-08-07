@@ -317,6 +317,24 @@ surface. Two contracts to honour:
 2. **Handle out** — call `onReady(handle)` on mount and `onReady(null)` on
    unmount. The handle powers the Format action and preview scroll sync.
 
+Set `MyEditor.canFormat = false` when the implementation cannot reformat
+documents; the toolbars then hide the Format action entirely instead of showing
+a button that does nothing.
+
+> The [Code Editor demo](https://adrianomaringolo.github.io/react-html-content-editor/#code-editor)
+> runs all five surfaces below side by side, and the adapters live in
+> [`packages/demo/src/editors/`](../demo/src/editors) ready to copy.
+
+| Adapter                | Install                                    | Format |
+| ---------------------- | ------------------------------------------ | ------ |
+| `TextareaCodeEditor`   | built in, the default                      | no     |
+| `MonacoCodeEditor`     | `@monaco-editor/react` + `monaco-editor`   | yes    |
+| CodeMirror 6           | `codemirror` + language/theme packages     | no     |
+| Ace                    | `ace-builds`                               | yes    |
+| Your own               | nothing                                    | up to you |
+
+### Minimal example
+
 ```tsx
 import type { CodeEditorHandle, CodeEditorProps } from "react-html-content-editor";
 
@@ -355,6 +373,233 @@ function MyCodeEditor({ defaultValue, onChange, onReady }: CodeEditorProps) {
 // the toolbars then hide the Format action entirely.
 MyCodeEditor.canFormat = false;
 ```
+
+### CodeMirror 6
+
+Highlighting, bracket matching and a real undo history at a fraction of Monaco's
+weight. CodeMirror ships no formatter, hence `canFormat = false`.
+
+```bash
+npm install codemirror @codemirror/state @codemirror/view \
+  @codemirror/lang-html @codemirror/lang-css @codemirror/theme-one-dark
+```
+
+```tsx
+import { useEffect, useRef } from "react";
+import { EditorState } from "@codemirror/state";
+import { EditorView } from "@codemirror/view";
+import { basicSetup } from "codemirror";
+import { html } from "@codemirror/lang-html";
+import { css } from "@codemirror/lang-css";
+import { oneDark } from "@codemirror/theme-one-dark";
+import type { CodeEditorHandle, CodeEditorProps } from "react-html-content-editor";
+
+function CodeMirrorCodeEditor({
+  defaultValue,
+  language,
+  theme,
+  onChange,
+  onReady,
+  className,
+  ariaLabel,
+}: CodeEditorProps) {
+  const hostRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const view = new EditorView({
+      parent: hostRef.current!,
+      state: EditorState.create({
+        doc: defaultValue,
+        extensions: [
+          basicSetup,
+          language === "css" ? css() : html(),
+          EditorView.lineWrapping,
+          EditorView.contentAttributes.of({ "aria-label": ariaLabel ?? language }),
+          // The pane owns the height; CodeMirror fills it.
+          EditorView.theme({ "&": { height: "100%" } }),
+          theme === "vs-light" ? [] : oneDark,
+          EditorView.updateListener.of((update) => {
+            if (update.docChanged) onChange(update.state.doc.toString());
+          }),
+        ],
+      }),
+    });
+
+    const handle: CodeEditorHandle = {
+      focus: () => view.focus(),
+      format: () => false,
+      getScrollTop: () => view.scrollDOM.scrollTop,
+      getMaxScroll: () =>
+        Math.max(0, view.scrollDOM.scrollHeight - view.scrollDOM.clientHeight),
+      setScrollTop: (top) => {
+        view.scrollDOM.scrollTop = top;
+      },
+      onScroll: (listener) => {
+        view.scrollDOM.addEventListener("scroll", listener);
+        return () => view.scrollDOM.removeEventListener("scroll", listener);
+      },
+    };
+    onReady?.(handle);
+
+    return () => {
+      onReady?.(null);
+      view.destroy();
+    };
+    // Built once: the pane remounts the editor when the seed changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div
+      ref={hostRef}
+      className={className}
+      style={{ flex: 1, minHeight: 0, minWidth: 0, overflow: "hidden" }}
+    />
+  );
+}
+
+CodeMirrorCodeEditor.canFormat = false;
+```
+
+Use a [`Compartment`](https://codemirror.net/docs/ref/#state.Compartment) for the
+theme extension if you want light/dark switches to reconfigure the view in place
+rather than tear it down — the demo adapter does.
+
+### Ace
+
+The only non-Monaco option here that can reformat: `ext-beautify` handles HTML and
+CSS, so `canFormat` stays `true` and the Format action keeps working. Ace's syntax
+workers are separate files, so the adapter turns them off to stay a single import.
+
+```bash
+npm install ace-builds
+```
+
+```tsx
+import { useEffect, useRef } from "react";
+import ace from "ace-builds/src-noconflict/ace";
+import "ace-builds/src-noconflict/mode-html";
+import "ace-builds/src-noconflict/mode-css";
+import "ace-builds/src-noconflict/theme-monokai";
+import beautify from "ace-builds/src-noconflict/ext-beautify";
+import type { CodeEditorHandle, CodeEditorProps } from "react-html-content-editor";
+
+function AceCodeEditor({
+  defaultValue,
+  language,
+  onChange,
+  onReady,
+  className,
+}: CodeEditorProps) {
+  const hostRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const host = hostRef.current!;
+    const editor = ace.edit(host, {
+      value: defaultValue,
+      mode: `ace/mode/${language}`,
+      theme: "ace/theme/monokai",
+      wrap: true,
+      showPrintMargin: false,
+      useWorker: false,
+    });
+
+    const handleChange = () => onChange(editor.getValue());
+    editor.on("change", handleChange);
+
+    // Ace measures its container once and never observes it, so split-view and
+    // fullscreen toggles have to ask it to re-layout.
+    const observer = new ResizeObserver(() => editor.resize());
+    observer.observe(host);
+
+    const handle: CodeEditorHandle = {
+      focus: () => editor.focus(),
+      format: () => {
+        beautify.beautify(editor.session);
+        return true;
+      },
+      getScrollTop: () => editor.session.getScrollTop(),
+      getMaxScroll: () =>
+        Math.max(
+          0,
+          editor.renderer.layerConfig.maxHeight -
+            editor.renderer.$size.scrollerHeight,
+        ),
+      setScrollTop: (top) => editor.session.setScrollTop(top),
+      onScroll: (listener) => {
+        editor.session.on("changeScrollTop", listener);
+        return () => editor.session.off("changeScrollTop", listener);
+      },
+    };
+    onReady?.(handle);
+
+    return () => {
+      observer.disconnect();
+      editor.off("change", handleChange);
+      onReady?.(null);
+      editor.destroy();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Ace positions its layers absolutely, so the host needs a positioning context.
+  return (
+    <div
+      ref={hostRef}
+      className={className}
+      style={{ flex: 1, minHeight: 0, minWidth: 0, position: "relative" }}
+    />
+  );
+}
+
+AceCodeEditor.canFormat = true;
+```
+
+`ace-builds` ships type declarations but does not point at them from its
+`package.json`, so under `moduleResolution: "bundler"` you need a one-line
+ambient reference somewhere in your sources:
+
+```ts
+/// <reference path="../node_modules/ace-builds/ace.d.ts" />
+```
+
+### Rolling your own
+
+`codeEditor` is not limited to wrapping an existing library. The demo's
+`HighlightCodeEditor` is a transparent `<textarea>` layered over a coloured
+`<pre>` with a ~40-line regex highlighter and no dependencies at all. The whole
+trick is that both layers declare identical `font`, `line-height`, `padding`,
+`tab-size` and `white-space: pre-wrap`, so the caret lands exactly on the
+coloured glyphs:
+
+```css
+.hce-highlight,
+.hce-input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  border: 0;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  line-height: 1.5;
+  tab-size: inherit;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.hce-input {
+  overflow: auto;
+  resize: none;
+  background: transparent;
+  color: transparent; /* the layer underneath is what you read */
+  caret-color: var(--hce-fg);
+}
+```
+
+The textarea is the scroller, so `getScrollTop` / `setScrollTop` read and write
+`textarea.scrollTop`, and the `<pre>` is dragged along in the scroll handler.
+Note that a controlled `<textarea>` has a weak native undo stack — reach for
+CodeMirror or Ace if undo history matters to you.
 
 ## Composition API
 

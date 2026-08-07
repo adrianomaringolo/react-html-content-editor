@@ -39,7 +39,7 @@ interface ContentValue { html: string; css: string }
 `ContentEditor` is controlled: pass `value` and `onChange`. It is NOT sanitized —
 see "Security" below.
 
-## Code editor: textarea vs Monaco
+## Code editor: pluggable (textarea, Monaco, CodeMirror, Ace, your own)
 
 Monaco is OPTIONAL. Default (no extra install): the HTML/CSS panes render
 `TextareaCodeEditor` — a textarea with a line-number gutter (documents up to
@@ -86,6 +86,21 @@ interface CodeEditorHandle {
 
 Set `MyEditor.canFormat = false` when the implementation cannot reformat; the
 toolbars then hide the Format action.
+
+Adapters that are NOT shipped by the library but are documented, tested and
+runnable in the demo (`packages/demo/src/editors/`, live at
+`https://adrianomaringolo.github.io/react-html-content-editor/#code-editor`).
+Copy them into your project rather than importing them from the package:
+
+| Surface | Install | `canFormat` | Notes |
+| --- | --- | --- | --- |
+| `TextareaCodeEditor` | built in, default | `false` | no syntax highlighting |
+| `MonacoCodeEditor` | `@monaco-editor/react` `monaco-editor` | `true` | `react-html-content-editor/monaco` |
+| CodeMirror 6 | `codemirror` `@codemirror/state` `@codemirror/view` `@codemirror/lang-html` `@codemirror/lang-css` `@codemirror/theme-one-dark` | `false` | no built-in formatter; use a `Compartment` to hot-swap the theme |
+| Ace | `ace-builds` | `true` | formats via `ext-beautify`; set `useWorker: false`; needs a `ResizeObserver` calling `editor.resize()`; add `/// <reference path="../node_modules/ace-builds/ace.d.ts" />` for types |
+| Hand-rolled | none | `false` | transparent `<textarea>` over a coloured `<pre>`; both layers need identical font/line-height/padding/tab-size/`white-space: pre-wrap` |
+
+Full source for each is in the library README under "Custom code editors".
 
 `TextareaCodeEditor` follows Monaco's `vs` / `vs-dark` palettes (from the `theme`
 prop) and can be restyled with `--rhce-code-bg`, `--rhce-code-fg`,

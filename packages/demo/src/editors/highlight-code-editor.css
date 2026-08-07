@@ -1,0 +1,116 @@
+/*
+ * Styles for HighlightCodeEditor.
+ *
+ * The whole technique rests on one rule: `.hce-highlight` and `.hce-input`
+ * must lay text out identically. Every property below that affects glyph
+ * position — font, line-height, padding, wrapping, tab size — is declared on
+ * the shared `.hce-highlight, .hce-input` selector precisely so the two layers
+ * cannot drift apart.
+ */
+
+.hce-editor {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+
+  --hce-bg: #ffffff;
+  --hce-fg: #1f2328;
+  --hce-comment: #6a737d;
+  --hce-tag: #116329;
+  --hce-attr: #953800;
+  --hce-string: #0a3069;
+  --hce-number: #0550ae;
+  --hce-property: #8250df;
+  --hce-punctuation: #57606a;
+}
+
+.hce-editor[data-theme="dark"] {
+  --hce-bg: #1e1e1e;
+  --hce-fg: #d4d4d4;
+  --hce-comment: #6a9955;
+  --hce-tag: #569cd6;
+  --hce-attr: #9cdcfe;
+  --hce-string: #ce9178;
+  --hce-number: #b5cea8;
+  --hce-property: #c586c0;
+  --hce-punctuation: #808080;
+}
+
+.hce-highlight,
+.hce-input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  border: 0;
+  padding: 0.75rem 1rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+  font-size: inherit;
+  line-height: 1.5;
+  tab-size: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.hce-highlight {
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--hce-bg);
+  color: var(--hce-fg);
+}
+
+.hce-highlight code {
+  font: inherit;
+  color: inherit;
+}
+
+.hce-input {
+  overflow: auto;
+  resize: none;
+  background: transparent;
+  /* The highlighted layer underneath is what the reader sees; the textarea
+     contributes only its caret and selection. */
+  color: transparent;
+  caret-color: var(--hce-fg);
+}
+
+.hce-input::selection {
+  background: rgb(56 139 253 / 30%);
+}
+
+.hce-input:focus {
+  outline: 2px solid rgb(56 139 253 / 60%);
+  outline-offset: -2px;
+}
+
+.hce-comment {
+  color: var(--hce-comment);
+  font-style: italic;
+}
+.hce-doctype {
+  color: var(--hce-comment);
+}
+.hce-tag {
+  color: var(--hce-tag);
+}
+.hce-attr {
+  color: var(--hce-attr);
+}
+.hce-string {
+  color: var(--hce-string);
+}
+.hce-number {
+  color: var(--hce-number);
+}
+.hce-at-rule {
+  color: var(--hce-property);
+}
+.hce-property {
+  color: var(--hce-property);
+}
+.hce-punctuation {
+  color: var(--hce-punctuation);
+}
