@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-label="React HTML Content Editor — Monaco-powered HTML/CSS editor with an integrated WYSIWYG mode">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-label="React HTML Content Editor — HTML/CSS editor with a live preview and an integrated WYSIWYG mode">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#2e1065"/>
@@ -38,26 +38,26 @@
   <g font-family="Manrope, 'DejaVu Sans', sans-serif" fill="#ffffff">
     <text x="312" y="170" font-size="66" font-weight="700" letter-spacing="-1">React HTML</text>
     <text x="312" y="242" font-size="66" font-weight="700" letter-spacing="-1">Content Editor</text>
-    <text x="314" y="292" font-size="26" font-weight="500" fill="#ddd6fe">Monaco-powered HTML/CSS editor with an integrated WYSIWYG mode.</text>
+    <text x="314" y="292" font-size="26" font-weight="500" fill="#ddd6fe">HTML/CSS editor with live preview and integrated WYSIWYG mode.</text>
   </g>
 
   <!-- feature chips -->
   <g font-family="Manrope, 'DejaVu Sans', sans-serif" font-size="20" font-weight="600" fill="#ede9fe">
     <g>
-      <rect x="314" y="322" width="150" height="40" rx="20" fill="#ffffff" opacity="0.12"/>
-      <text x="389" y="349" text-anchor="middle">Monaco</text>
+      <rect x="314" y="322" width="228" height="40" rx="20" fill="#ffffff" opacity="0.12"/>
+      <text x="428" y="349" text-anchor="middle">Monaco optional</text>
     </g>
     <g>
-      <rect x="476" y="322" width="164" height="40" rx="20" fill="#ffffff" opacity="0.12"/>
-      <text x="558" y="349" text-anchor="middle">WYSIWYG</text>
+      <rect x="554" y="322" width="164" height="40" rx="20" fill="#ffffff" opacity="0.12"/>
+      <text x="636" y="349" text-anchor="middle">WYSIWYG</text>
     </g>
     <g>
-      <rect x="652" y="322" width="176" height="40" rx="20" fill="#ffffff" opacity="0.12"/>
-      <text x="740" y="349" text-anchor="middle">Composable</text>
+      <rect x="730" y="322" width="176" height="40" rx="20" fill="#ffffff" opacity="0.12"/>
+      <text x="818" y="349" text-anchor="middle">Composable</text>
     </g>
     <g>
-      <rect x="840" y="322" width="156" height="40" rx="20" fill="#ffffff" opacity="0.12"/>
-      <text x="918" y="349" text-anchor="middle">Auto-save</text>
+      <rect x="918" y="322" width="156" height="40" rx="20" fill="#ffffff" opacity="0.12"/>
+      <text x="996" y="349" text-anchor="middle">Auto-save</text>
     </g>
   </g>
 </svg>

@@ -22,12 +22,24 @@ single prop when you want it.
 > (also served at `/llms.txt` on the docs site). It covers the full API, imports,
 > composition, custom WYSIWYG controls, and common gotchas in one file.
 
+## Contents
+
+- [Features](#features) · [Installation](#installation) · [Peer dependencies](#peer-dependencies) · [Importing styles](#importing-styles) · [Basic usage](#basic-usage)
+- [API reference](#api-reference) — every `ContentEditor` prop
+- [Custom code editors](#custom-code-editors) — Monaco, CodeMirror, Ace or your own surface
+- [Composition API](#composition-api) — assemble the editor from parts
+- [WYSIWYG editor](#wysiwyg-editor) — standalone usage and the full [control reference](#control-reference)
+- [Hooks and primitives](#hooks-and-primitives) · [Type exports](#type-exports)
+- [Styling customization](#styling-customization) · [Keyboard shortcuts](#keyboard-shortcuts) · [Security](#security-warning)
+
 ## Features
 
 - **Dual Editor Support**: Separate code editors for HTML and CSS
 - **Optional Monaco**: Ships with a dependency-free textarea editor (line numbers, indentation handling); pass `codeEditor={MonacoCodeEditor}` for syntax highlighting and formatting
 - **Composition API**: Assemble the editor from small parts (`ContentEditorToolbar`, `ContentEditorBody`, `ContentEditorCode`, `ContentEditorPreview`, `ContentEditorWysiwyg`) — or drop in the batteries-included default
 - **Integrated WYSIWYG**: Toggle between the code view (HTML/CSS + preview) and a rich-text visual editor, both editing the same value
+- **Standalone WYSIWYG**: The same rich-text editor also works on its own over a plain HTML string, with no code panes
+- **~50 WYSIWYG Controls**: Headings, inline formatting, colors, lists, task lists, tables, callouts, images, links, emoji, find & replace, print and export — pick only the ones you need (see [Control reference](#control-reference))
 - **Multiple View Modes**: Edit, preview, and split view options
 - **Fullscreen Mode**: Distraction-free editing experience
 - **Scroll Synchronization**: Synchronized scrolling between HTML editor and preview
@@ -616,6 +628,8 @@ rendered exactly as before, so this is fully backwards compatible.
 | `ContentEditorCode`     | HTML/CSS code editors. Visible in `code` mode.                       |
 | `ContentEditorPreview`  | Live HTML+CSS preview. Visible in `code` mode.                       |
 | `ContentEditorWysiwyg`  | Rich-text surface bound to the HTML value. Visible in `wysiwyg` mode.|
+| `ContentEditorProvider` | Advanced: the context provider on its own, without the shell markup. |
+| `ContentEditorShell`    | Advanced: the root container (height, fullscreen, error slot) on its own. |
 
 Each pane decides its own visibility from the shared context, so you place them
 in any order and the current mode/toggles determine what shows.
@@ -665,6 +679,237 @@ Compose the WYSIWYG toolbar yourself, or omit children for a sensible default:
   <WysiwygContent placeholder='Start writing…' />
 </ContentEditorWysiwyg>
 ```
+
+`ContentEditorWysiwyg` props: `placeholder?`, `minHeight?` (`string | number`),
+`className?` and `children?`. The full control set is documented under
+[WYSIWYG editor](#wysiwyg-editor).
+
+### Custom context access
+
+Build your own controls with the `useContentEditorContext` hook, which exposes
+the value, save state, current mode, view toggles and editor refs:
+
+```tsx
+import { useContentEditorContext } from "react-html-content-editor";
+
+function WordCount() {
+  const { value } = useContentEditorContext();
+  const words = value.html.replace(/<[^>]+>/g, " ").trim().split(/\s+/).filter(Boolean);
+  return <span>{words.length} words</span>;
+}
+
+// then: <ContentEditorToolbar><WordCount /></ContentEditorToolbar>
+```
+
+It throws when called outside a `<ContentEditor>`. For manual wiring the
+underlying `ContentEditorProvider` and `ContentEditorShell` are exported too.
+
+## WYSIWYG editor
+
+The rich-text editor is available two ways, and both share the same controls,
+the same `useWysiwygContext()` hook and the same custom-control API:
+
+- **Inside `ContentEditor`** — add a `ContentEditorWysiwyg` pane in composition
+  mode (see [Integrated WYSIWYG](#integrated-wysiwyg)). The toolbar gains a
+  **Code / Visual** switch and both views edit the same `value.html`.
+- **Standalone `Wysiwyg`** — a self-contained editor over a single HTML string,
+  with no code panes, preview or CSS.
+
+### Standalone usage
+
+`Wysiwyg` is a compound component: you place the controls you want in the
+toolbar, in any order, and nothing you leave out ships in your bundle.
+
+```tsx
+import { useState } from "react";
+import {
+  Wysiwyg,
+  WysiwygToolbar,
+  WysiwygContent,
+  WysiwygSeparator,
+  WysiwygHeadingMenu,
+  WysiwygBold,
+  WysiwygItalic,
+  WysiwygUnorderedList,
+  WysiwygOrderedList,
+  WysiwygAlignMenu,
+  WysiwygLink,
+  WysiwygLinkEditor,
+  WysiwygWordCount,
+} from "react-html-content-editor";
+import "react-html-content-editor/dist/style.css";
+
+function Editor() {
+  const [html, setHtml] = useState("<p>Hi</p>");
+
+  return (
+    <Wysiwyg value={html} onChange={setHtml}>
+      <WysiwygToolbar>
+        <WysiwygHeadingMenu />
+        <WysiwygSeparator />
+        <WysiwygBold />
+        <WysiwygItalic />
+        <WysiwygSeparator />
+        <WysiwygUnorderedList />
+        <WysiwygOrderedList />
+        <WysiwygAlignMenu />
+        <WysiwygLink />
+        <WysiwygWordCount />
+      </WysiwygToolbar>
+      <WysiwygContent placeholder='Start writing…' minHeight='320px' />
+      <WysiwygLinkEditor />
+    </Wysiwyg>
+  );
+}
+```
+
+#### `Wysiwyg` props
+
+| Prop           | Type                       | Default | Notes                                          |
+| -------------- | -------------------------- | ------- | ---------------------------------------------- |
+| `value`        | `string`                   | —       | Controlled HTML value.                         |
+| `defaultValue` | `string`                   | `""`    | Initial HTML when uncontrolled.                |
+| `onChange`     | `(html: string) => void`   | —       | Fired with the new HTML on every edit.         |
+| `disabled`     | `boolean`                  | `false` | Read-only surface; every control is disabled.  |
+| `className`    | `string`                   | `""`    | Applied to the root element.                   |
+| `children`     | `ReactNode`                | —       | Required. The toolbar, content and extras.     |
+
+#### `WysiwygContent` props
+
+| Prop         | Type               | Default              |
+| ------------ | ------------------ | -------------------- |
+| `placeholder`| `string`           | `"Start writing…"`   |
+| `minHeight`  | `string \| number` | `"240px"`            |
+| `className`  | `string`           | `""`                 |
+| `aria-label` | `string`           | `"Rich text editor"` |
+
+`WysiwygToolbar` is the `role="toolbar"` container for the controls — it takes
+`className?` and `aria-label?` (default `"Formatting"`). `WysiwygSeparator`
+draws a vertical divider between groups and takes a `className?`.
+
+### Control reference
+
+Every control accepts `className?` and `title?` (`NamedControlProps`) — `title`
+is the tooltip *and* the accessible label, so translate it for non-English UIs.
+Extra props are listed below where they exist.
+
+Controls marked **contextual** render no toolbar button: place them anywhere
+inside the editor and they appear as a floating bar when the caret (or the
+click) lands on the element they edit.
+
+> The [All Controls demo](https://adrianomaringolo.github.io/react-html-content-editor/#wysiwyg-controls)
+> renders every one of these in a single toolbar, with its icon and description.
+
+#### History
+
+| Control        | Function                    |
+| -------------- | --------------------------- |
+| `WysiwygUndo`  | Undo the last edit          |
+| `WysiwygRedo`  | Redo the last undone edit   |
+
+#### Blocks
+
+| Control                  | Function                                        | Extra props                        |
+| ------------------------ | ----------------------------------------------- | ---------------------------------- |
+| `WysiwygHeading`         | Turn the block into a heading                   | `level: 1\|2\|3\|4\|5\|6` (required) |
+| `WysiwygHeadingMenu`     | H1–H6 + paragraph in one dropdown; the trigger shows the current level | `levels?` (default `[1..6]`) |
+| `WysiwygParagraph`       | Reset the block to a paragraph                  |                                    |
+| `WysiwygBlockquote`      | Format the block as a quote                     |                                    |
+| `WysiwygCodeBlock`       | Format the block as a `<pre>` code block        |                                    |
+| `WysiwygHorizontalRule`  | Insert a horizontal rule                        |                                    |
+| `WysiwygIndent`          | Increase block indentation                      |                                    |
+| `WysiwygOutdent`         | Decrease block indentation                      |                                    |
+
+#### Inline formatting
+
+| Control                  | Function                                        | Extra props                                    |
+| ------------------------ | ----------------------------------------------- | ---------------------------------------------- |
+| `WysiwygBold`            | Toggle bold                                     |                                                |
+| `WysiwygItalic`          | Toggle italic                                   |                                                |
+| `WysiwygUnderline`       | Toggle underline                                |                                                |
+| `WysiwygStrikethrough`   | Toggle strikethrough                            |                                                |
+| `WysiwygSubscript`       | Toggle subscript                                |                                                |
+| `WysiwygSuperscript`     | Toggle superscript                              |                                                |
+| `WysiwygInlineCode`      | Wrap the selection in inline `<code>` (or unwrap it) |                                           |
+| `WysiwygFontSize`        | Dropdown of preset font sizes                   | `options?: WysiwygFontSizeOption[]`            |
+| `WysiwygFontSizeInput`   | Type an exact size in px, with −/+ steppers     | `min?` (`1`), `max?` (`400`), `step?` (`1`)    |
+| `WysiwygFontFamily`      | Dropdown to set the font family                 | `options?: WysiwygFontFamilyOption[]`          |
+| `WysiwygTextColor`       | Swatch picker for text color (`foreColor`)      | `colors?: string[]`                            |
+| `WysiwygClearColor`      | Reset the text color to the inherited default   |                                                |
+| `WysiwygHighlight`       | Swatch picker for highlight color (`hiliteColor`) | `colors?: string[]` — include `"transparent"` to clear |
+| `WysiwygCaseTransform`   | Change case: UPPER / lower / Title / Sentence   | `modes?: WysiwygCaseMode[]`                    |
+| `WysiwygLineHeight`      | Set the line height of the selected block(s)    | `options?: WysiwygLineHeightOption[]`          |
+| `WysiwygLetterSpacing`   | Set the letter spacing of the selection         | `options?: WysiwygLetterSpacingOption[]`       |
+| `WysiwygEmoji`           | Insert an emoji from a picker                   | `emojis?: string[]`                            |
+| `WysiwygSpecialChar`     | Insert a special character (—, ©, ±, …)         | `characters?: string[]`                        |
+
+#### Lists
+
+| Control                 | Function                                                        |
+| ----------------------- | --------------------------------------------------------------- |
+| `WysiwygUnorderedList`  | Toggle a bulleted list                                           |
+| `WysiwygOrderedList`    | Toggle a numbered list                                           |
+| `WysiwygTaskList`       | Insert a checklist; clicking an item's box toggles `data-checked` |
+
+The task-list checkbox is drawn in CSS rather than embedded as an `<input>`, so
+`Enter` continues the list normally and the emitted HTML stays clean. The
+toggle handler lives on the control, so keep `WysiwygTaskList` mounted for
+existing checklists to stay interactive.
+
+#### Tables
+
+| Control              | Function                                                            | Extra props                                                       |
+| -------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `WysiwygTable`       | Insert a table by dragging over a size grid                         | `maxRows?` (`8`), `maxCols?` (`8`), `withHeaderRow?` (`true`)      |
+| `WysiwygTableEditor` | **Contextual** — caret inside a cell opens a bar to insert/delete rows and columns, or delete the table | `className?`               |
+
+#### Documents
+
+| Control                   | Function                                                | Extra props                                          |
+| ------------------------- | -------------------------------------------------------- | ---------------------------------------------------- |
+| `WysiwygCallout`          | Insert a colored callout / info box you can type into    | `variants?: WysiwygCalloutVariant[]` (info, success, warning, danger) |
+| `WysiwygTableOfContents`  | Insert a TOC built from the headings, adding `id`s as needed (a static snapshot — re-run it after editing headings) |                          |
+| `WysiwygFindReplace`      | Find and replace text, with a case-sensitivity toggle    |                                                      |
+| `WysiwygPrint`            | Open the content in a new window and print it            | `documentTitle?` (default `document.title`), `css?`   |
+| `WysiwygExport`           | Download as HTML, Markdown or plain text                 | `fileName?` (`"document"`), `formats?: WysiwygExportFormat[]` |
+
+`htmlToMarkdown(html)` — the Markdown serializer behind the export control — is
+exported on its own, so you can reuse it for a "copy as Markdown" action.
+
+#### Alignment
+
+| Control            | Function                                                            | Extra props                                            |
+| ------------------ | -------------------------------------------------------------------- | ------------------------------------------------------ |
+| `WysiwygAlign`     | Align a block — one button per value                                 | `value: "left"\|"center"\|"right"\|"justify"` (required) |
+| `WysiwygAlignMenu` | One button showing the current alignment; opens a picker             |                                                        |
+
+#### Links
+
+| Control             | Function                                                                    | Extra props                                    |
+| ------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- |
+| `WysiwygLink`       | Wrap the selection in a link (built-in URL popover)                          | `getUrl?: () => string \| null` to use your own dialog; return `null` to cancel |
+| `WysiwygUnlink`     | Remove the link from the selection                                            |                                                |
+| `WysiwygLinkEditor` | **Contextual** — caret inside a link opens a bar to open / edit / remove it   | `getUrl?: (current: string) => string \| null` |
+
+#### Images
+
+See [Image controls](#image-controls) below for the full walkthrough.
+
+| Control                | Function                                                       |
+| ---------------------- | -------------------------------------------------------------- |
+| `WysiwygImage`         | Insert an image as a base64 data URI, or by URL via `getSrc`    |
+| `WysiwygImageUpload`   | Pick a file, upload it with your handler, insert the returned URL |
+| `WysiwygImageResizer`  | **Contextual** — click an image to resize it with presets or an exact pixel width |
+
+#### Utilities
+
+| Control                   | Function                                              | Extra props                                                  |
+| ------------------------- | ------------------------------------------------------ | ------------------------------------------------------------ |
+| `WysiwygClearFormatting`  | Strip inline formatting from the selection             |                                                              |
+| `WysiwygFullscreen`       | Toggle fullscreen on the `Wysiwyg` root (Fullscreen API) |                                                            |
+| `WysiwygWordCount`        | Read-only word / character counter (not a button)      | `render?: ({ words, characters }) => ReactNode`               |
+| `WysiwygDropdown`         | The popover primitive the grouped controls are built on | `title`, `trigger`, `triggerAriaLabel?`, `triggerData?`, `active?`, `closeOnSelect?` (`true`) |
+| `WysiwygControl`          | The button primitive every named control is built on   | See [Building custom WYSIWYG controls](#building-custom-wysiwyg-controls) |
 
 ### Image controls
 
@@ -841,50 +1086,104 @@ function WysiwygTextColor() {
 > Call `e.preventDefault()` on `onMouseDown` in any custom control so pressing
 > it doesn't collapse the editor's text selection before your command runs.
 
-`useWysiwygContext()` exposes `exec(command, value?, useCss?)`, `commit(html)`,
-`isActive(command)`, `queryValue(command)`, the current `value`, `disabled`,
-and `editorRef` for anything more advanced.
+`useWysiwygContext()` exposes:
 
-### Custom context access
+| Member         | Type                                                        | Use                                                     |
+| -------------- | ----------------------------------------------------------- | ------------------------------------------------------- |
+| `exec`         | `(command, value?, useCss?) => void`                        | Run a `document.execCommand` against the selection.      |
+| `commit`       | `(html: string) => void`                                    | Persist HTML you mutated in the DOM yourself.            |
+| `isActive`     | `(command: string) => boolean`                              | Whether a toggle command is on for the selection.        |
+| `queryValue`   | `(command: string) => string`                               | Resolved command value (e.g. `formatBlock` → `"h2"`).    |
+| `value`        | `string`                                                    | Current HTML.                                            |
+| `version`      | `number`                                                    | Bumped on every selection/content change — read it to re-render on selection. |
+| `disabled`     | `boolean`                                                   | The editor is read-only.                                 |
+| `editorRef`    | `RefObject<HTMLDivElement>`                                 | The `contentEditable` surface.                           |
+| `rootRef`      | `RefObject<HTMLDivElement>`                                 | The `Wysiwyg` root (used for fullscreen, portals).       |
 
-Build your own controls with the `useContentEditorContext` hook, which exposes
-the value, save state, current mode, view toggles and editor refs:
+Controls that reflect the selection (a dropdown showing the current font size,
+say) should read `version` so React re-renders them when the caret moves.
 
-```tsx
-import { useContentEditorContext } from "react-html-content-editor";
+## Hooks and primitives
 
-function WordCount() {
-  const { value } = useContentEditorContext();
-  const words = value.html.replace(/<[^>]+>/g, " ").trim().split(/\s+/).filter(Boolean);
-  return <span>{words.length} words</span>;
-}
+Beyond the editor components, the package exports:
 
-// then: <ContentEditorToolbar><WordCount /></ContentEditorToolbar>
-```
+| Export                     | What it is                                                                    |
+| -------------------------- | ----------------------------------------------------------------------------- |
+| `useContentEditorContext`  | Shared `ContentEditor` state (composition mode).                               |
+| `useWysiwygContext`        | Shared `Wysiwyg` state, for custom controls.                                   |
+| `useScrollSync`            | Keeps two scrollable elements proportionally in sync.                          |
+| `useAutoSave`              | Change detection + save status (`saved` / `unsaved` / `saving`).               |
+| `useKeyboardShortcuts`     | The Ctrl/Cmd+S, Ctrl/Cmd+Shift+F and Ctrl/Cmd+Shift+M bindings.                |
+| `TextareaCodeEditor`       | The default, dependency-free code surface — usable standalone.                 |
+| `htmlToMarkdown`           | HTML → Markdown serializer used by `WysiwygExport`.                            |
+| `Button`, `Tabs`, `Dialog` | The unstyled-ish UI primitives the editor is built from (with their sub-parts). |
+| `version`                  | The package version string.                                                    |
 
 ## Type Exports
 
-The library exports the following TypeScript types:
+Everything is exported from the package root:
 
 ```typescript
+// Core
 import type {
   ContentValue,
   ContentEditorProps,
-  CodeEditorComponent,
-  CodeEditorHandle,
-  CodeEditorProps,
   SaveStatus,
   ViewMode,
   EditorType,
   ContentEditorMode,
   ContentEditorContextValue,
+} from "react-html-content-editor";
+
+// Code editors
+import type {
+  CodeEditorComponent,
+  CodeEditorHandle,
+  CodeEditorProps,
+} from "react-html-content-editor";
+
+// Composition parts
+import type {
+  ContentEditorProviderProps,
+  ContentEditorShellProps,
   ContentEditorToolbarProps,
   ContentEditorBodyProps,
   ContentEditorCodeProps,
   ContentEditorPreviewProps,
   ContentEditorWysiwygProps,
 } from "react-html-content-editor";
+
+// WYSIWYG
+import type {
+  WysiwygProps,
+  WysiwygContextValue,
+  WysiwygToolbarProps,
+  WysiwygContentProps,
+  WysiwygControlProps,
+  WysiwygDropdownProps,
+  NamedControlProps, // { className?, title? } — shared by the named controls
+} from "react-html-content-editor";
 ```
+
+Parametrized controls export their own props (and, where relevant, an option
+type): `WysiwygHeadingProps`, `WysiwygHeadingMenuProps`, `WysiwygAlignProps`,
+`WysiwygAlignMenuProps`, `WysiwygFontSizeProps` + `WysiwygFontSizeOption`,
+`WysiwygFontSizeInputProps`, `WysiwygFontFamilyProps` +
+`WysiwygFontFamilyOption`, `WysiwygTextColorProps`,
+`WysiwygCaseTransformProps` + `WysiwygCaseMode`, `WysiwygLineHeightProps` +
+`WysiwygLineHeightOption`, `WysiwygLetterSpacingProps` +
+`WysiwygLetterSpacingOption`, `WysiwygHighlightProps`, `WysiwygEmojiProps`,
+`WysiwygSpecialCharProps`, `WysiwygWordCountProps`, `WysiwygLinkProps`,
+`WysiwygLinkEditorProps`, `WysiwygTableProps`, `WysiwygTableEditorProps`,
+`WysiwygCalloutProps` + `WysiwygCalloutVariant`, `WysiwygPrintProps`,
+`WysiwygExportProps` + `WysiwygExportFormat`, `WysiwygImageProps`,
+`WysiwygImageUploadProps`, `WysiwygImageResizerProps` +
+`WysiwygImageSizeOption`.
+
+The bundled UI primitives export theirs as well: `ButtonProps`, `TabsProps`,
+`TabsListProps`, `TabsTriggerProps`, `TabsContentProps`, `DialogProps`,
+`DialogTriggerProps`, `DialogContentProps`, `DialogHeaderProps`,
+`DialogTitleProps`, `DialogDescriptionProps`, `DialogFooterProps`.
 
 ### `ContentValue`
 
@@ -1138,7 +1437,7 @@ With `MonacoCodeEditor`, all Monaco shortcuts are available:
 
 ## Security Warning
 
-⚠️ **XSS Prevention**: This component uses `dangerouslySetInnerHTML` to render HTML content in the preview. You **must** sanitize user-provided HTML before passing it to the component to prevent XSS attacks.
+⚠️ **XSS Prevention**: The preview pane and the WYSIWYG surface both render the HTML you pass in as real DOM (`dangerouslySetInnerHTML` / `contentEditable`). The library does **not** sanitize it. If the HTML can come from someone other than the person looking at the screen — stored content, an API, another user — sanitize it before passing it in, and sanitize again on the server before storing or re-serving it.
 
 ### Recommended: Use DOMPurify
 
@@ -1168,7 +1467,7 @@ The library requires modern browser features and does not support IE11.
 
 ## License
 
-MIT © [Your Name]
+MIT © [Adriano Maringolo](https://github.com/adrianomaringolo)
 
 ## Contributing
 

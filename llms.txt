@@ -1,7 +1,9 @@
 # react-html-content-editor
 
 > A React HTML + CSS content editor with a live preview, an integrated rich-text
-> WYSIWYG mode, auto-save, fullscreen, and a composition API. Code editing works
+> WYSIWYG mode, auto-save, fullscreen, and a composition API. The WYSIWYG side
+> ships ~50 opt-in controls (formatting, colors, lists, task lists, tables,
+> callouts, images, links, find & replace, print, export). Code editing works
 > with zero editor dependencies and upgrades to Monaco (the VS Code editor) via one
 > prop. Everything ships from a single package: `react-html-content-editor`.
 > This file is optimized for AI coding agents: it is self-contained — you can use
@@ -227,10 +229,10 @@ const [html, setHtml] = useState("<p>Hi</p>");
   - `WysiwygHeading` — `level: 1|2|3|4|5|6` (required).
   - `WysiwygAlign` — `value: "left"|"center"|"right"|"justify"` (required).
   - `WysiwygAlignMenu` — single alignment control: the trigger shows the alignment applied to the selection and opens a picker (left/center/justify/right, composed from `WysiwygAlign`). Props: `className?`, `title?`.
-  - `WysiwygLink` — `getUrl?: () => string | null` (defaults to `window.prompt`).
+  - `WysiwygLink` — opens a built-in URL popover; pass `getUrl?: () => string | null` to use your own dialog (return `null` to cancel).
   - `WysiwygHeadingMenu` — H1–H6 + paragraph grouped in one dropdown; trigger shows the current level. Props: `levels?`, `className?`, `title?`.
   - `WysiwygFontSize` — dropdown of preset sizes; `options?: WysiwygFontSizeOption[]`.
-  - `WysiwygFontSizeInput` — numeric input to type an exact size in px (applies `font-size: Npx` to the selection); `min?`, `max?`.
+  - `WysiwygFontSizeInput` — numeric input to type an exact size in px (applies `font-size: Npx` to the selection); `min?` (1), `max?` (400), `step?` (1).
   - `WysiwygFontFamily` — dropdown; `options?: WysiwygFontFamilyOption[]` ({label,value}).
   - `WysiwygTextColor` — swatch picker (`foreColor`); `colors?: string[]`.
   - `WysiwygClearColor` — reset text color to inherited default.
@@ -244,7 +246,19 @@ const [html, setHtml] = useState("<p>Hi</p>");
   - `WysiwygImage` — insert an image. Default: file picker → embed as base64 data URI (no server). Pass `getSrc?: () => string | null | Promise<string | null>` to insert by URL/link instead. `accept?` defaults to `"image/*"`.
   - `WysiwygImageUpload` — file picker → `upload(file)` → insert the returned URL. `upload: (file: File) => Promise<string>` (required); `accept?` (`"image/*"`), `onError?`. Disables itself + shows a spinner while uploading.
   - `WysiwygImageResizer` — not a toolbar button; place it inside `<Wysiwyg>`/`<ContentEditorWysiwyg>`. Clicking an image shows a floating bar (rendered in a body portal, anchored to the image) with size presets AND a pixel-width input that set the image `width` (height auto). Props: `options?: WysiwygImageSizeOption[]` (default S 25% / M 50% / L 100%), `showReset?` (default true), `showPixelInput?` (default true), `resetTitle?`, `className?`.
-- Inline: `WysiwygBold`, `WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygSubscript`, `WysiwygSuperscript`, `WysiwygInlineCode`. Block: `WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygCodeBlock`, `WysiwygHorizontalRule`, `WysiwygIndent`, `WysiwygOutdent`. Lists: `WysiwygUnorderedList`, `WysiwygOrderedList`. Utilities: `WysiwygUnlink`, `WysiwygClearFormatting`. History: `WysiwygUndo`, `WysiwygRedo`. Layout: `WysiwygToolbar`, `WysiwygSeparator`.
+  - `WysiwygCaseTransform` — dropdown: UPPERCASE / lowercase / Title Case / Sentence case, applied to the selected text only (inline formatting is preserved); `modes?: WysiwygCaseMode[]`.
+  - `WysiwygLineHeight` — dropdown setting `line-height` on the selected block(s); `options?: WysiwygLineHeightOption[]` (an empty `value` clears it).
+  - `WysiwygLetterSpacing` — dropdown wrapping the selection in `<span style="letter-spacing: …">`; `options?: WysiwygLetterSpacingOption[]`.
+  - `WysiwygTaskList` — inserts a checklist (`<ul data-wysiwyg-task-list="true">`). The checkbox is drawn in CSS in the left gutter, so Enter continues the list; clicking the gutter toggles the item's `data-checked` attribute. The click handler is attached while this control is mounted — keep it in the toolbar for existing checklists to stay interactive.
+  - `WysiwygTable` — inserts a table from a hover/drag size grid. Props: `maxRows?` (8), `maxCols?` (8), `withHeaderRow?` (true → first row is `<th>`). Emits `<table data-wysiwyg-table="true">` plus a trailing paragraph.
+  - `WysiwygTableEditor` — not a toolbar button; place it inside the editor. When the caret is in a `td`/`th`, a portaled bar anchored to the table offers insert row above/below, delete row, insert column left/right, delete column, delete table. Props: `className?`.
+  - `WysiwygCallout` — dropdown inserting `<div data-wysiwyg-callout="info|success|warning|danger">` (a colored info box you type into); `variants?: WysiwygCalloutVariant[]` ({label,value}).
+  - `WysiwygTableOfContents` — inserts `<nav data-wysiwyg-toc="true">` built from the `h1`–`h6` currently in the editor, assigning slugified `id`s where missing and indenting by level. Static snapshot: re-run it after changing headings.
+  - `WysiwygFindReplace` — opens a panel with find/replace fields, match count, next/prev, "Replace" and "Replace all", plus an `Aa` case-sensitivity toggle (default insensitive).
+  - `WysiwygPrint` — opens the content in a new window and calls `print()`. Props: `documentTitle?` (default `document.title`), `css?` (CSS injected into the print document — pass your `value.css` to match the preview).
+  - `WysiwygExport` — dropdown downloading the content. Props: `fileName?` (default `"document"`), `formats?: WysiwygExportFormat[]` (default HTML / Markdown / plain text). A format is `{ label, extension, mime, render(html) }`.
+  - `htmlToMarkdown(html: string): string` — the Markdown serializer behind the export control, exported standalone (common tags only).
+- Inline: `WysiwygBold`, `WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygSubscript`, `WysiwygSuperscript`, `WysiwygInlineCode` (Range API, no execCommand). Block: `WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygCodeBlock`, `WysiwygHorizontalRule`, `WysiwygIndent`, `WysiwygOutdent`. Lists: `WysiwygUnorderedList`, `WysiwygOrderedList`, `WysiwygTaskList`. Utilities: `WysiwygUnlink`, `WysiwygClearFormatting`. History: `WysiwygUndo`, `WysiwygRedo`. Layout: `WysiwygToolbar`, `WysiwygSeparator`.
 
 ## Building custom WYSIWYG controls
 
@@ -286,8 +300,11 @@ function WysiwygInsertDate() {
 }
 ```
 
-`useWysiwygContext()` exposes: `exec(command, value?, useCss?)`, `commit(html)`,
-`isActive(command)`, `queryValue(command)`, `value`, `disabled`, `editorRef`.
+`useWysiwygContext()` exposes: `exec(command, value?, useCss?)`, `commit(html)`
+(persist HTML you mutated in the DOM yourself), `isActive(command)`,
+`queryValue(command)`, `value`, `version` (bumped on every selection/content
+change — read it so your control re-renders when the caret moves), `disabled`,
+`editorRef` (the contentEditable surface), `rootRef` (the `Wysiwyg` root).
 Common `execCommand` ids: `bold`, `italic`, `underline`, `strikethrough`,
 `insertUnorderedList`, `insertOrderedList`, `formatBlock` (value `<h1>`…`<h6>`,
 `<p>`, `<blockquote>`), `justifyLeft|Center|Right|Full`, `createLink`, `unlink`,
@@ -338,22 +355,30 @@ import DOMPurify from "dompurify";
 
 ## Full export list
 
-Values: `ContentEditor`, `ContentEditorProvider`, `ContentEditorShell`,
+Values — editor: `ContentEditor`, `ContentEditorProvider`, `ContentEditorShell`,
 `ContentEditorToolbar`, `ContentEditorBody`, `ContentEditorCode`,
 `ContentEditorPreview`, `ContentEditorWysiwyg`, `useContentEditorContext`,
-`Wysiwyg`, `WysiwygToolbar`, `WysiwygSeparator`, `WysiwygControl`, `WysiwygBold`,
-`WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`, `WysiwygSubscript`,
-`WysiwygSuperscript`, `WysiwygInlineCode`, `WysiwygHeading`, `WysiwygHeadingMenu`,
-`WysiwygParagraph`, `WysiwygBlockquote`, `WysiwygCodeBlock`, `WysiwygHorizontalRule`,
-`WysiwygIndent`, `WysiwygOutdent`, `WysiwygUnorderedList`,
-`WysiwygOrderedList`, `WysiwygAlign`, `WysiwygAlignMenu`, `WysiwygUndo`,
-`WysiwygRedo`, `WysiwygLink`, `WysiwygUnlink`,
-`WysiwygImage`, `WysiwygImageUpload`, `WysiwygImageResizer`, `WysiwygFontSize`,
-`WysiwygFontSizeInput`, `WysiwygFontFamily`, `WysiwygTextColor`, `WysiwygClearColor`,
-`WysiwygHighlight`, `WysiwygEmoji`, `WysiwygSpecialChar`, `WysiwygLinkEditor`,
-`WysiwygFullscreen`, `WysiwygDropdown`,
-`WysiwygClearFormatting`, `WysiwygWordCount`, `WysiwygContent`,
-`useWysiwygContext`, `Button`, `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`,
+`TextareaCodeEditor` (default code surface; `MonacoCodeEditor` comes from the
+`/monaco` entry point instead).
+
+Values — WYSIWYG: `Wysiwyg`, `WysiwygContent`, `WysiwygToolbar`,
+`WysiwygSeparator`, `WysiwygControl`, `WysiwygDropdown`, `useWysiwygContext`,
+`WysiwygBold`, `WysiwygItalic`, `WysiwygUnderline`, `WysiwygStrikethrough`,
+`WysiwygSubscript`, `WysiwygSuperscript`, `WysiwygInlineCode`, `WysiwygHeading`,
+`WysiwygHeadingMenu`, `WysiwygParagraph`, `WysiwygBlockquote`,
+`WysiwygCodeBlock`, `WysiwygHorizontalRule`, `WysiwygIndent`, `WysiwygOutdent`,
+`WysiwygUnorderedList`, `WysiwygOrderedList`, `WysiwygTaskList`, `WysiwygTable`,
+`WysiwygTableEditor`, `WysiwygCallout`, `WysiwygTableOfContents`,
+`WysiwygFindReplace`, `WysiwygPrint`, `WysiwygExport`, `htmlToMarkdown`,
+`WysiwygAlign`, `WysiwygAlignMenu`, `WysiwygUndo`, `WysiwygRedo`, `WysiwygLink`,
+`WysiwygUnlink`, `WysiwygLinkEditor`, `WysiwygImage`, `WysiwygImageUpload`,
+`WysiwygImageResizer`, `WysiwygFontSize`, `WysiwygFontSizeInput`,
+`WysiwygFontFamily`, `WysiwygTextColor`, `WysiwygClearColor`,
+`WysiwygHighlight`, `WysiwygCaseTransform`, `WysiwygLineHeight`,
+`WysiwygLetterSpacing`, `WysiwygEmoji`, `WysiwygSpecialChar`,
+`WysiwygFullscreen`, `WysiwygClearFormatting`, `WysiwygWordCount`.
+
+Values — other: `Button`, `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`,
 `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`,
 `DialogDescription`, `DialogFooter`, `useScrollSync`, `useAutoSave`,
 `useKeyboardShortcuts`, `version`.
@@ -362,19 +387,26 @@ Types: `ContentValue`, `ContentEditorProps`, `SaveStatus`, `ViewMode`,
 `EditorType`, `ContentEditorMode`, `ContentEditorContextValue`, `CodeEditorProps`,
 `CodeEditorHandle`, `CodeEditorComponent`,
 `ContentEditor*Props` (Provider/Shell/Toolbar/Body/Code/Preview/Wysiwyg),
-`WysiwygProps`, `WysiwygControlProps`, `WysiwygDropdownProps`, `WysiwygHeadingProps`,
-`WysiwygHeadingMenuProps`, `WysiwygAlignProps`,
+`WysiwygProps`, `WysiwygContentProps`, `WysiwygContextValue`, `WysiwygToolbarProps`,
+`WysiwygControlProps`, `WysiwygDropdownProps`, `NamedControlProps`,
+`WysiwygHeadingProps`, `WysiwygHeadingMenuProps`, `WysiwygAlignProps`,
 `WysiwygAlignMenuProps`, `WysiwygFontFamilyProps`, `WysiwygFontFamilyOption`,
 `WysiwygTextColorProps`, `WysiwygHighlightProps`, `WysiwygEmojiProps`,
-`WysiwygSpecialCharProps`, `WysiwygLinkEditorProps`, `WysiwygWordCountProps`,
-`WysiwygLinkProps`, `WysiwygImageProps`, `WysiwygImageUploadProps`,
+`WysiwygSpecialCharProps`, `WysiwygCaseTransformProps`, `WysiwygCaseMode`,
+`WysiwygLineHeightProps`, `WysiwygLineHeightOption`, `WysiwygLetterSpacingProps`,
+`WysiwygLetterSpacingOption`, `WysiwygLinkEditorProps`, `WysiwygWordCountProps`,
+`WysiwygLinkProps`, `WysiwygTableProps`, `WysiwygTableEditorProps`,
+`WysiwygCalloutProps`, `WysiwygCalloutVariant`, `WysiwygPrintProps`,
+`WysiwygExportProps`, `WysiwygExportFormat`,
+`WysiwygImageProps`, `WysiwygImageUploadProps`,
 `WysiwygImageResizerProps`, `WysiwygImageSizeOption`,
 `WysiwygFontSizeProps`, `WysiwygFontSizeOption`, `WysiwygFontSizeInputProps`,
-`WysiwygContentProps`, `WysiwygContextValue`, `NamedControlProps`,
-`WysiwygToolbarProps`, plus `Button`/`Tabs`/`Dialog` prop types.
+plus `Button`/`Tabs`/`Dialog` prop types.
 
 ## More
 
-- README (full prose docs): https://github.com/adrianomaringolo/react-html-content-editor/blob/main/packages/library/README.md
+- README (full prose docs + control reference): https://github.com/adrianomaringolo/react-html-content-editor/blob/main/packages/library/README.md
 - Live demo with runnable examples: https://adrianomaringolo.github.io/react-html-content-editor/
+- Every WYSIWYG control in one toolbar: https://adrianomaringolo.github.io/react-html-content-editor/#wysiwyg-controls
+- Pluggable code editors side by side: https://adrianomaringolo.github.io/react-html-content-editor/#code-editor
 - Keyboard shortcuts: https://github.com/adrianomaringolo/react-html-content-editor/blob/main/packages/library/KEYBOARD_SHORTCUTS.md

@@ -43,7 +43,10 @@
     "wysiwyg",
     "typescript"
   ],
-  "author": "",
+  "author": {
+    "name": "Adriano Maringolo",
+    "url": "https://github.com/adrianomaringolo"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",

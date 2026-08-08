@@ -22,7 +22,10 @@
     "monaco-editor",
     "content-editor"
   ],
-  "author": "",
+  "author": {
+    "name": "Adriano Maringolo",
+    "url": "https://github.com/adrianomaringolo"
+  },
   "license": "MIT",
   "devDependencies": {
     "@changesets/cli": "^2.27.1",

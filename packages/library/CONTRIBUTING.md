@@ -14,7 +14,7 @@ Thank you for your interest in contributing to React HTML Content Editor! This d
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/react-html-content-editor.git
+git clone https://github.com/adrianomaringolo/react-html-content-editor.git
 cd react-html-content-editor
 ```
 
@@ -33,23 +33,36 @@ The project uses a pnpm workspace monorepo structure:
 ```
 react-html-content-editor/
 ├── packages/
-│   ├── library/          # The main library package
+│   ├── library/                  # The published package
 │   │   ├── src/
 │   │   │   ├── components/
+│   │   │   │   ├── code-editor/     # TextareaCodeEditor + the CodeEditor contract
+│   │   │   │   ├── content-editor/  # Composition parts (provider, shell, panes)
+│   │   │   │   └── wysiwyg/         # Wysiwyg root + every control
 │   │   │   ├── hooks/
 │   │   │   ├── types/
-│   │   │   └── index.ts
+│   │   │   ├── monaco/              # The optional /monaco entry point
+│   │   │   └── index.ts             # The main entry point
 │   │   ├── package.json
 │   │   └── vite.config.ts
 │   │
-│   └── demo/             # Demo application
+│   └── demo/                     # Demo application (private)
 │       ├── src/
+│       │   ├── examples/            # One file per demo page
+│       │   └── editors/             # Example codeEditor adapters
 │       ├── package.json
 │       └── vite.config.ts
 │
-├── package.json          # Root workspace config
+├── llms.txt                      # LLM-oriented API reference — update with the API
+├── package.json                  # Root workspace config
 └── pnpm-workspace.yaml
 ```
+
+Tests sit next to the code they cover (`*.test.tsx`).
+
+> **Monaco stays out of the main entry point.** `src/monaco/` must be the only
+> place that imports `@monaco-editor/react` / `monaco-editor` — importing them
+> anywhere else pulls Monaco back into every consumer's bundle.
 
 ## Development Workflow
 
@@ -66,7 +79,7 @@ cd packages/demo
 pnpm dev
 ```
 
-The demo app will be available at `http://localhost:5173` and will hot-reload when you make changes to the library.
+The demo app will be available at `http://localhost:3000` (Vite picks the next free port if it's taken). It hot-reloads on demo changes; library changes need a rebuild — see the [demo README](../demo/README.md) for the watch-mode loop.
 
 ### Building the Library
 
@@ -74,7 +87,7 @@ To build the library for production:
 
 ```bash
 # From the root directory
-pnpm --filter library build
+pnpm --filter react-html-content-editor build
 
 # Or from the library directory
 cd packages/library
@@ -97,30 +110,29 @@ The library uses Vitest for testing with both unit tests and property-based test
 
 ```bash
 # Run all tests once
-pnpm --filter library test
+pnpm --filter react-html-content-editor test
 
 # Run tests in watch mode
-pnpm --filter library test:watch
+pnpm --filter react-html-content-editor test:watch
 
 # Run tests with coverage
-pnpm --filter library test -- --coverage
+pnpm --filter react-html-content-editor test -- --coverage
 ```
 
 ### Type Checking
 
 ```bash
 # Type check the library
-pnpm --filter library type-check
-
-# Type check the demo
-pnpm --filter demo type-check
+pnpm --filter react-html-content-editor type-check
 ```
+
+The demo has no separate `type-check` script — its build (`pnpm --filter demo build`) runs `tsc` first.
 
 ### Linting
 
 ```bash
 # Lint the library
-pnpm --filter library lint
+pnpm --filter react-html-content-editor lint
 
 # Lint the demo
 pnpm --filter demo lint
@@ -186,13 +198,29 @@ describe("Property: Content Change Propagation", () => {
 });
 ```
 
+### Updating the Docs
+
+Public API changes touch more than one file. When you add, rename or change a
+prop, component or control, update all of these in the same PR:
+
+| File                                   | What to update                                                      |
+| -------------------------------------- | ------------------------------------------------------------------- |
+| `packages/library/README.md`            | Props tables and the WYSIWYG [control reference](./README.md#control-reference). |
+| `llms.txt` (repo root)                  | The matching section **and** the "Full export list" at the bottom. Copy the file to `packages/demo/public/llms.txt` so the docs site serves the same version. |
+| `packages/library/KEYBOARD_SHORTCUTS.md`| Any new or changed shortcut.                                        |
+| `packages/demo/src/examples/`           | A runnable example; new controls also go in `WysiwygControlsExample.tsx`. |
+| `.changeset/`                           | A changeset describing the change (see below).                      |
+
+`llms.txt` is served to AI coding agents as the single self-contained reference,
+so an export missing from it is effectively invisible to them.
+
 ### Testing Your Changes
 
 Before submitting a pull request:
 
-1. Run all tests: `pnpm --filter library test`
-2. Type check: `pnpm --filter library type-check`
-3. Build the library: `pnpm --filter library build`
+1. Run all tests: `pnpm --filter react-html-content-editor test`
+2. Type check: `pnpm --filter react-html-content-editor type-check`
+3. Build the library: `pnpm --filter react-html-content-editor build`
 4. Test in the demo app: `pnpm --filter demo dev`
 5. Test the built package:
 
@@ -216,7 +244,7 @@ pnpm changeset
 
 This will prompt you to:
 
-1. Select which packages have changed (usually just `library`)
+1. Select which packages have changed (usually just `react-html-content-editor`)
 2. Select the type of change:
    - **patch**: Bug fixes, minor improvements (0.0.X)
    - **minor**: New features, non-breaking changes (0.X.0)
@@ -262,14 +290,14 @@ To publish a new version:
 pnpm changeset version
 
 # 2. Build the library
-pnpm --filter library build
+pnpm --filter react-html-content-editor build
 
 # 3. Commit the version changes
 git add .
 git commit -m "chore: release"
 
 # 4. Publish to npm
-pnpm --filter library publish
+pnpm --filter react-html-content-editor publish
 
 # 5. Push changes and tags
 git push --follow-tags
@@ -297,9 +325,9 @@ git push --follow-tags
 
 ### Pull Request Checklist
 
-- [ ] Tests pass (`pnpm --filter library test`)
-- [ ] Type checking passes (`pnpm --filter library type-check`)
-- [ ] Build succeeds (`pnpm --filter library build`)
+- [ ] Tests pass (`pnpm --filter react-html-content-editor test`)
+- [ ] Type checking passes (`pnpm --filter react-html-content-editor type-check`)
+- [ ] Build succeeds (`pnpm --filter react-html-content-editor build`)
 - [ ] Changeset created (if applicable)
 - [ ] Documentation updated (if applicable)
 - [ ] Demo app tested

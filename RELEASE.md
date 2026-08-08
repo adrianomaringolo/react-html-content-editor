@@ -94,6 +94,17 @@ After merging the release PR:
 4. 🏷️ Creates a Git tag (e.g., `v1.0.1`)
 5. 📋 Creates a GitHub Release with the changelog
 
+### Re-running the release workflow by hand
+
+`release.yml` also declares `workflow_dispatch`, so you can start it without
+pushing: **Actions** → **Release** → **Run workflow**. Useful when a run failed
+on a transient error (npm hiccup, expired token) and you want to retry without
+an empty commit.
+
+The workflow uses a `concurrency` group with `cancel-in-progress: true`, so a
+newer run cancels an older one still in flight — the newest run wins and a stuck
+run never blocks the next release.
+
 ## 📝 Changeset Examples
 
 ### Bug Fix (patch)
